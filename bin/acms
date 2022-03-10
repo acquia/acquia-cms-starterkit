@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * @file
+ * ORCA command line executable.
+ */
+
+require __DIR__ . '/acms.php';

@@ -1,0 +1,42 @@
+{
+    "name": "acquia/acquia-cms-starterkit",
+    "description": "Acquia CMS starterkit cli command.",
+    "type": "project",
+    "keywords": [
+        "cli",
+        "console",
+        "drupal",
+        "acquia_cms",
+        "starterkit"
+    ],
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Acquia Engineering",
+            "homepage": "https://www.acquia.com",
+            "role": "Maintainer"
+        },
+        {
+            "name": "Vishal Khode",
+            "role": "Maintainer",
+            "email": "vishal.khode@acquia.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "^4.1",
+        "symfony/http-kernel": "^4.1",
+        "symfony/config": "^4.1",
+        "symfony/dependency-injection": "^4.1",
+        "stecman/symfony-console-completion": "^0.10.1",
+        "symfony/process": "^4.1",
+        "symfony/yaml": "^4.1"
+    },
+    "bin": [
+        "bin/acms"
+    ],
+    "autoload": {
+        "psr-4": {
+            "AcquiaCMS\\Cli\\": "src/"
+        }
+    }
+}

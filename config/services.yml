@@ -1,0 +1,14 @@
+---
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+    public: true
+
+  AcquiaCMS\Cli\:
+    exclude: ../src/Kernel.php
+    public: false
+    resource: ../src
+
+  Symfony\Component\Console\Application:
+    public: true
