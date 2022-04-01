@@ -12,3 +12,6 @@ services:
 
   Symfony\Component\Console\Application:
     public: true
+  AcquiaCMS\Cli\Commands\AcmsInstallCommand:
+    arguments:
+      $project_dir: "%kernel.project_dir%"

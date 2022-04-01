@@ -29,6 +29,7 @@ if (in_array($input->getFirstArgument(), ['cache:clear', 'cc'])) {
     $cache_dir = $kernel->getCacheDir();
     $filesystem->remove($cache_dir);
     $filesystem->mkdir($cache_dir);
+    $filesystem->touch("{$cache_dir}/.gitkeep");
     $process = new Process(["printf", '\033[1;32m[ok]\033[0m All caches have been cleared.\n']);
     $process->run();
     // executes after the command finishes
