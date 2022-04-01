@@ -38,5 +38,13 @@
         "psr-4": {
             "AcquiaCMS\\Cli\\": "src/"
         }
-    }
+    },
+    "repositories": {
+        "assets": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

@@ -7,7 +7,7 @@ starter_kits:
       - acquia_cms_common
       - acquia_cms_event
       - acquia_cms_article
-      - acquia_cms_tour
+      #- acquia_cms_tour
       - acquia_cms_video
       - acquia_cms_search
       - acquia_cms_page
@@ -21,7 +21,7 @@ starter_kits:
       - acquia_cms_common
       - acquia_cms_search
       - acquia_cms_page
-      - acquia_cms_tour
+      #- acquia_cms_tour
     themes:
       - acquia_claro
       - cohesion_theme
@@ -33,7 +33,7 @@ starter_kits:
       - acquia_cms_common
       - acquia_cms_event
       - acquia_cms_article
-      - acquia_cms_tour
+      #- acquia_cms_tour
       - acquia_cms_video
       - acquia_cms_search
     themes:
@@ -44,7 +44,7 @@ starter_kits:
     description: "Acquia CMS in a blank slate, ideal for custom PS."
     modules:
       - acquia_cms_common
-      - acquia_cms_tour
+      #- acquia_cms_tour
       - acquia_cms_search
     themes:
       - acquia_claro
