@@ -29,7 +29,8 @@
         "symfony/dependency-injection": "^4.1",
         "stecman/symfony-console-completion": "^0.10.1",
         "symfony/process": "^4.1",
-        "symfony/yaml": "^4.1"
+        "symfony/yaml": "^4.1",
+        "symfony/http-client": "^4.1"
     },
     "bin": [
         "bin/acms"

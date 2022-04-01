@@ -2,19 +2,24 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
+use AcquiaCMS\Cli\Helpers\Process\ProcessFactory;
+use AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
 class AcmsInstallCommand extends Command {
 
     protected $projectDirectory;
-    public function __construct(string $project_dir) {
+    public function __construct(string $project_dir, ProcessFactory $processFactory, SymfonyStyle $output, AcquiaMinimalClient $minimalClient) {
         $this->projectDirectory = $project_dir;
+        $this->processFactory = $processFactory->getInstance();
         parent::__construct();
     }
 
@@ -45,7 +50,9 @@ class AcmsInstallCommand extends Command {
 //        $output->getFormatter()->setStyle('"Welcome to Acquia CMS starterkit installer."', $outputStyle);
         $table = new Table($output);
         $table->setHeaders(['ID', 'Name', 'Description']);
+        $useCases = [];
 	    foreach($acmsData["starter_kits"] as $starter_kit) {
+            $useCases[$starter_kit['id']] = $starter_kit;
             $table->addRow([$starter_kit['id'], $starter_kit['name'], $starter_kit['description']]);
         }
         $table->setStyle('box');
@@ -64,5 +71,40 @@ class AcmsInstallCommand extends Command {
         });
         $question->setMaxAttempts(3);
         $bundle = $helper->ask($input, $output, $question);
+        array_walk($useCases[$bundle]["modules"], function(&$item) { $item = "drupal/$item"; });
+        $output->writeln(
+            'Will only be printed in verbose mode or higher',
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+//        $this->processFactory->add(['composer', 'config', "minimum-stability", "dev"], "Setting composer minimum stability to `dev`");
+//        $this->processFactory->add(['composer', 'configura', "prefer-stable", "true"]);
+//        $this->processFactory->add(['composer', 'require', "drupal/core:~9.3", "-W"], "Adding latest Drupal core.");
+        $this->processFactory->add(['composer', 'require'] + $useCases[$bundle]["modules"], "Downloading all modules required by the starter: `$bundle`.");
+        $this->processFactory->run();
+        //print_r($useCases[$bundle]["modules"]);
+//        $process = new Process(['composer', 'config', "minimum-stability", "dev"]);
+//        $process->start();
+//        $process->wait(function ($type, $buffer) {
+//            print $buffer;
+//        });
+//        $process = new Process(['composer', 'config', "prefer-stable", "true"]);
+//        $process->start();
+//        $process->wait(function ($type, $buffer) {
+//            print $buffer;
+//        });
+//        $process = new Process(['composer', 'require', "drupal/core:~9.3", "-W"]);
+//        $process->setTty(true);
+//        $process->setTimeout(3600);
+//        $process->start();
+//        $process->wait(function ($type, $buffer) {
+//            print $buffer;
+//        });
+//        $process = new Process(['composer', 'require'] + $useCases[$bundle]["modules"]);
+//        $process->setTty(true);
+//        $process->setTimeout(3600);
+//        $process->start();
+//        $process->wait(function ($type, $buffer) {
+//            print $buffer;
+//        });
 	}
 }
