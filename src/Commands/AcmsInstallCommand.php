@@ -107,6 +107,11 @@ class AcmsInstallCommand extends Command {
             $themesInstallProcess = Process::fromShellCommandline('./vendor/bin/drush theme:enable -y ' . $themes);
             $this->setCommonProcessTask($themesInstallProcess, $output);
 
+            // Set state variable for future use.
+            $stateProcess = Process::fromShellCommandline('./vendor/bin/drush state:set acquia_cms_starter_kit ' . $bundle['id']);
+            $this->setCommonProcessTask($stateProcess, $output);
+
+            // Set message on successful completion.
             $output->writeln("<info>" . file_get_contents($this->projectDirectory . "/assets/acquia_cms.icon.ascii") . "</info>");
             $output->writeln('<fg=cyan>Thank you for choosing acquia CMS, we have successfully setup your project with bundle <info>[' . $bundle_name . ']</info></>');
           }
