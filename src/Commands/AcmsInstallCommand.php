@@ -30,7 +30,7 @@ class AcmsInstallCommand extends Command {
    *
    * @var string
    */
-  protected static $defaultDescription = 'The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.';
+  protected static $defaultDescription = 'The <info>acms:install</info> command downloads & setup Drupal project based on user selected use case.';
 
   /**
    * The project directory path.
@@ -82,7 +82,7 @@ class AcmsInstallCommand extends Command {
     $bundle = $input->getOption('bundle');
     if (!empty($bundle)) {
       $bundle_name = $bundle['name'];
-      $output->writeln('Please wait, while we are setting up site with bundle [' . $bundle_name . ']');
+      $output->writeln('<fg=cyan>Please wait, while we are setting up project with bundle <info>[' . $bundle_name . ']</info> </>');
       $requiredModules = $bundle['modules'];
       $requiredThemes = $bundle['themes'];
 
@@ -107,6 +107,8 @@ class AcmsInstallCommand extends Command {
             $themesInstallProcess = Process::fromShellCommandline('./vendor/bin/drush theme:enable -y ' . $themes);
             $this->setCommonProcessTask($themesInstallProcess, $output);
 
+            $output->writeln("<info>" . file_get_contents($this->projectDirectory . "/assets/acquia_cms.icon.ascii") . "</info>");
+            $output->writeln('<fg=cyan>Thank you for choosing acquia CMS, we have successfully setup your project with bundle <info>[' . $bundle_name . ']</info></>');
           }
         }
       }
