@@ -14,68 +14,70 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
  * Manages an environment made of bundles.
  */
 class Kernel extends BaseKernel {
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheDir(): string {
-        return "{$this->getProjectDir()}/var/caches";
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLogDir(): string {
-        return "{$this->getProjectDir()}/var/logs";
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheDir(): string {
+    return "{$this->getProjectDir()}/var/caches";
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerBundles(): array {
-        return [];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getLogDir(): string {
+    return "{$this->getProjectDir()}/var/logs";
+  }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception
-     */
-    public function registerContainerConfiguration(LoaderInterface $loader): void {
-        $loader->load("{$this->getProjectDir()}/config/services.yml");
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function registerBundles(): array {
+    return [];
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function build(ContainerBuilder $container_builder): void {
-        $container_builder->addCompilerPass($this->createCollectingCompilerPass());
-    }
+  /**
+   * {@inheritdoc}
+   *
+   * @throws \Exception
+   */
+  public function registerContainerConfiguration(LoaderInterface $loader): void {
+    $loader->load("{$this->getProjectDir()}/config/services.yml");
+  }
 
-    /**
-     * Creates a collecting compiler pass.
-     *
-     * @SuppressWarnings(PHPMD.UndefinedVariable)
-     */
-    private function createCollectingCompilerPass(): CompilerPassInterface {
-        return new class implements CompilerPassInterface {
+  /**
+   * {@inheritdoc}
+   */
+  protected function build(ContainerBuilder $container_builder): void {
+    $container_builder->addCompilerPass($this->createCollectingCompilerPass());
+  }
 
-            /**
-             * {@inheritdoc}
-             */
-            public function process(ContainerBuilder $container_builder): void {
-                $app_definition = $container_builder->findDefinition(Application::class);
+  /**
+   * Creates a collecting compiler pass.
+   *
+   * @SuppressWarnings(PHPMD.UndefinedVariable)
+   */
+  private function createCollectingCompilerPass(): CompilerPassInterface {
+    return new class implements CompilerPassInterface {
 
-                foreach ($container_builder->getDefinitions() as $definition) {
-                    if (!is_a($definition->getClass(), Command::class, TRUE)) {
-                        continue;
-                    }
+      /**
+       * {@inheritdoc}
+       */
+      public function process(ContainerBuilder $container_builder): void {
+        $app_definition = $container_builder->findDefinition(Application::class);
 
-                    $app_definition->addMethodCall('add', [
-                        new Reference($definition->getClass()),
-                    ]);
-                }
-            }
+        foreach ($container_builder->getDefinitions() as $definition) {
+          if (!is_a($definition->getClass(), Command::class, TRUE)) {
+            continue;
+          }
 
-        };
-    }
+          $app_definition->addMethodCall('add', [
+            new Reference($definition->getClass()),
+          ]);
+        }
+      }
+
+    };
+  }
+
 }

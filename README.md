@@ -13,7 +13,13 @@ will present you the following use cases:
 - You can add your own cases and define the modules/themes that needs to be installed & enabled.
 - You can edit/remove the default use cases provided by this cli tool.
 
-# Installation
+## Prerequisites
+Created composer based drupal project using below command and use this tool to choose your use case.
+```
+composer create-project --no-interaction acquia/drupal-recommended-project
+```
+
+## Installation
 Composer is the recommended way to download this tool. In order to download this tool, run the below composer command:
 
 ```
@@ -34,9 +40,9 @@ After the composer repository is added, run the below composer command to downlo
 composer require acquia/acquia-cms-starterkit:dev-develop
 ```
 
-# Usage
+## Usage
 
 Run the following command to print hello world:
 ```
-./vendor/bin/acms hello
+./vendor/bin/acms acms:install
 ```
