@@ -1,0 +1,29 @@
+<?php
+
+namespace tests\AcquiaCMS\Cli\Command;
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
+
+require_once __DIR__ . '/../../../bootstrap.php';
+
+class AcmsInstallCommand extends \PHPUnit_Framework_TestCase {
+
+  /**
+   * Test if command returns expected string.
+   *
+   * @test
+   */
+  public function testExecute() {
+    $application = new Application();
+    $application->add(new AcmsInstallCommand());
+
+    $command = $application->find('acms:install');
+    $commandTester = new CommandTester($command);
+    $commandTester->execute(['command' => $command->getName()]);
+
+    // $this->assertRegExp('/Hello World!/', $commandTester->getDisplay());
+    // @todo add some assertion to test the command behaviour.
+  }
+
+}

@@ -14,9 +14,10 @@ will present you the following use cases:
 - You can edit/remove the default use cases provided by this cli tool.
 
 ## Prerequisites
-Created composer based drupal project using below command and use this tool to choose your use case.
+Create drupal project using below command and use this tool to choose your use case.
 ```
-composer create-project --no-interaction acquia/drupal-recommended-project
+composer create-project drupal/recommended-project acms-variant
+cd acms-variant
 ```
 
 ## Installation
