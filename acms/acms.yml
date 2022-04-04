@@ -1,6 +1,5 @@
 starter_kits:
-  -
-    id: "acquia_cms_demo"
+  acquia_cms_demo:
     name: "Acquia CMS Demo"
     description: "Low-code demonstration of ACMS with default content."
     modules:
@@ -13,8 +12,7 @@ starter_kits:
       - acquia_cms_page
     themes:
       - acquia_claro
-  -
-    id: "acquia_cms_low_code"
+  acquia_cms_low_code:
     name: "Acquia CMS Low Code"
     description: "Acquia CMS with Site Studio but no content opinion."
     modules:
@@ -25,8 +23,7 @@ starter_kits:
     themes:
       - acquia_claro
       - cohesion_theme
-  -
-    id: "acquia_cms_standard"
+  acquia_cms_standard:
     name: "Acquia CMS Standard"
     description: "Acquia CMS with a starter content model, but no demo content, classic custom themes."
     modules:
@@ -38,8 +35,7 @@ starter_kits:
       - acquia_cms_search
     themes:
       - acquia_claro
-  -
-    id: "acquia_cms_minimal"
+  acquia_cms_minimal:
     name: "Acquia CMS Minimal"
     description: "Acquia CMS in a blank slate, ideal for custom PS."
     modules:
@@ -48,8 +44,7 @@ starter_kits:
       - acquia_cms_search
     themes:
       - acquia_claro
-  -
-    id: "acquia_cms_headless"
+  acquia_cms_headless:
     name: "Acquia CMS Headless"
     description: "ACMS with headless functionality."
     modules:

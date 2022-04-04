@@ -25,6 +25,6 @@ services:
   Symfony\Contracts\HttpClient\HttpClientInterface:
     factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
 
-  AcquiaCMS\Cli\Commands\AcmsInstallCommand:
+  AcquiaCMS\Cli\Cli:
     arguments:
       $project_dir: "%kernel.project_dir%"

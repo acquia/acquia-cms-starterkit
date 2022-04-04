@@ -2,7 +2,6 @@
 
 namespace AcquiaCMS\Cli\Http\Client;
 
-use Acquia\Orca\Exception\OrcaHttpException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -47,7 +46,7 @@ abstract class HttpClientBase {
    *
    * @noinspection PhpDocMissingThrowsInspection
    */
-  public function request($url) {
+  public function request(string $url) {
     $response = $this->httpClient
       ->request($this->method, $this->baseUrl  . $url, $this->getOptions());
 
@@ -55,18 +54,18 @@ abstract class HttpClientBase {
     return $response;
   }
 
-  protected function setMethod($method) {
+  public function setMethod(string $method) {
     $this->method = $method;
   }
 
-  protected function setOptions(array $options) {
+  public function setOptions(array $options) {
     $this->options = $options;
   }
 
-  protected function getOptions() {
+  public function getOptions() {
     return $this->options;
   }
-  protected function setBaseUrl(string $baseUrl = "") {
+  public function setBaseUrl(string $baseUrl = "") {
     $this->baseUrl = $baseUrl;
   }
 }

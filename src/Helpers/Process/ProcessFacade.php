@@ -18,7 +18,7 @@ class ProcessFacade {
 
   }
 
-  protected function isDrupalProject() {
+  public function isDrupalProject() {
     $process = new Process(["composer", "config", "extra.drupal-scaffold"]);
     $process->setTimeout(NULL)
       ->setIdleTimeout(NULL);
@@ -29,17 +29,37 @@ class ProcessFacade {
     return TRUE;
   }
 
-  public function add(array $command, string $description = NULL) {
+  public function add(array $command) {
     $process = new Process($command);
     $process->setTimeout(NULL)
       ->setIdleTimeout(NULL)
       ->setTty(true);
-    $this->process[] = [
-      "process" => $process,
-      "description" => $description
-    ];
+    $this->process[] = $process;
   }
+
+//  public function add(array $command, string $description = NULL) {
+//    $process = new Process($command);
+//    $process->setTimeout(NULL)
+//      ->setIdleTimeout(NULL)
+//      ->setTty(true);
+//    $this->process[] = [
+//      "process" => $process,
+//      "description" => $description
+//    ];
+//  }
   public function run() {
+    foreach ($this->process as $process) {
+      array_shift($this->process);
+      $this->output->writeln(sprintf('> %s', $process->getCommandLine()));
+      $process->start();
+      $process->wait(function ($type, $buffer) {
+        print $buffer;
+      });
+      if (!$process->isSuccessful()) {
+        break;
+      }
+    }
+    die;
     #if (!$this->isDrupalProject()) {
       $this->output->newLine();
       $this->output->writeln(
