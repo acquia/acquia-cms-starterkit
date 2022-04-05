@@ -5,16 +5,29 @@ namespace AcquiaCMS\Cli\Http\Client;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
- * Interacts with the Acquia Minimal Github API client.
- *
- * @see https://www.drupal.org/drupalorg/docs/apis
+ * Interacts with the http request.
  */
 abstract class HttpClientBase {
 
+  /**
+   * Stores the http request method. Ex: "GET", "POST" etc.
+   *
+   * @var string
+   */
   protected $method;
 
+  /**
+   * Stores an array of options to pass on http request.
+   *
+   * @var array
+   */
   protected $options;
 
+  /**
+   * Stores the base url for making an http request.
+   *
+   * @var string
+   */
   protected $baseUrl;
 
   /**
@@ -37,35 +50,51 @@ abstract class HttpClientBase {
   }
 
   /**
-   * Gets the oldest supported branch of Drupal core.
+   * Makes a http request to given url.
    *
-   * @return string
-   *   The branch name.
-   *
-   * @throws \Acquia\Orca\Exception\OrcaHttpException
-   *
-   * @noinspection PhpDocMissingThrowsInspection
+   * @param string $url
+   *   String having url path to make a http request.
    */
   public function request(string $url) {
     $response = $this->httpClient
-      ->request($this->method, $this->baseUrl  . $url, $this->getOptions());
+      ->request($this->method, $this->baseUrl . $url, $this->getOptions());
 
     $response = $response->getContent();
     return $response;
   }
 
+  /**
+   * Sets the given method to http request. Ex: 'GET', 'POST' etc.
+   */
   public function setMethod(string $method) {
     $this->method = $method;
   }
 
+  /**
+   * Sets the given options to http request.
+   *
+   * @param array $options
+   *   An array of options to pass on http request.
+   */
   public function setOptions(array $options) {
     $this->options = $options;
   }
 
+  /**
+   * Returns the given options.
+   */
   public function getOptions() {
     return $this->options;
   }
+
+  /**
+   * Sets the base url to http request.
+   *
+   * @param string $baseUrl
+   *   A string having baseUrl.
+   */
   public function setBaseUrl(string $baseUrl = "") {
     $this->baseUrl = $baseUrl;
   }
+
 }

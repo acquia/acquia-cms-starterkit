@@ -9,7 +9,10 @@ namespace AcquiaCMS\Cli\Http\Client\Github;
  */
 class AcquiaMinimalClient extends GithubBase {
 
-  function getRepoName() {
+  /**
+   * Returns the github repo name.
+   */
+  public function getRepoName() {
     return "acquia/drupal-minimal-project";
   }
 

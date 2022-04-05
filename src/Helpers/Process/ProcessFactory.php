@@ -2,23 +2,26 @@
 
 namespace AcquiaCMS\Cli\Helpers\Process;
 
-
-use Symfony\Component\Console\Style\SymfonyStyle;
-
+/**
+ * Factory to provide the ProcessManager class object.
+ */
 class ProcessFactory {
-    // Hold the class instance.
-    private ?ProcessFacade $instance = null;
 
-    public function __construct(SymfonyStyle $output) {
-      $this->output = $output;
-    }
+  /**
+   * The ProcessManager object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   */
+  private $instance = NULL;
 
-    // The object is created from within the class itself
-    // only if the class has no instance.
-    public function getInstance() {
-      if (!$this->instance) {
-          $this->instance = new ProcessFacade($this->output);
-      }
-      return $this->instance;
+  /**
+   * Returns the instance of factory manager class.
+   */
+  public function getInstance() {
+    if (!$this->instance) {
+      $this->instance = new ProcessManager($this->output);
     }
+    return $this->instance;
+  }
+
 }

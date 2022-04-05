@@ -30,7 +30,8 @@
         "stecman/symfony-console-completion": "^0.10.1",
         "symfony/process": "^4.1",
         "symfony/yaml": "^4.1",
-        "symfony/http-client": "^4.1"
+        "symfony/http-client": "^4.1",
+        "acquia/coding-standards": "^0.8.0"
     },
     "bin": [
         "bin/acms"
@@ -47,5 +48,13 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
+    }
 }

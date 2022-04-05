@@ -10,17 +10,26 @@ use AcquiaCMS\Cli\Http\Client\HttpClientBase;
  * @see https://docs.github.com/en/rest/reference/repos
  */
 abstract class GithubBase extends HttpClientBase {
+
+  /**
+   * Defines the baseurl for github repos.
+   *
+   * @var string
+   */
   protected $baseUrl = "https://api.github.com/repos";
 
+  /**
+   * Holds the lastest release defined for given github repo.
+   *
+   * @var string
+   */
   protected $latestReleaseTag;
+
   /**
    * Gets the latest tag of acquia-minimal-project.
    *
    * @return string
-   *   The branch name.
-   *
-   *
-   * @noinspection PhpDocMissingThrowsInspection
+   *   Returns the lastest release tag.
    */
   public function getLatestReleaseTag(): string {
     if ($this->latestReleaseTag) {
@@ -33,11 +42,19 @@ abstract class GithubBase extends HttpClientBase {
     return $this->latestReleaseTag;
   }
 
+  /**
+   * Returns the contents of given file.
+   */
   public function getFileContents($file_name) {
     $tag_name = $this->getLatestReleaseTag();
     $this->setBaseUrl("https://raw.githubusercontent.com");
     $response = $this->request("/" . $this->getRepoName() . "/" . $tag_name . "/" . $file_name);
     return $response;
   }
-  abstract function getRepoName();
+
+  /**
+   * Ab abstract method to get the repository name.
+   */
+  abstract public function getRepoName();
+
 }
