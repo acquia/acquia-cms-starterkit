@@ -32,7 +32,7 @@ class Kernel extends BaseKernel {
   /**
    * {@inheritdoc}
    */
-  public function registerBundles(): array {
+  public function registerBundles(): iterable {
     return [];
   }
 

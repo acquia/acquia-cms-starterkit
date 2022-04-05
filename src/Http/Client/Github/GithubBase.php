@@ -19,7 +19,7 @@ abstract class GithubBase extends HttpClientBase {
   protected $baseUrl = "https://api.github.com/repos";
 
   /**
-   * Holds the lastest release defined for given github repo.
+   * Holds the latest release defined for given github repo.
    *
    * @var string
    */
@@ -44,8 +44,11 @@ abstract class GithubBase extends HttpClientBase {
 
   /**
    * Returns the contents of given file.
+   *
+   * @return string
+   *   Returns the http response.
    */
-  public function getFileContents($file_name) {
+  public function getFileContents(string $file_name) {
     $tag_name = $this->getLatestReleaseTag();
     $this->setBaseUrl("https://raw.githubusercontent.com");
     $response = $this->request("/" . $this->getRepoName() . "/" . $tag_name . "/" . $file_name);
@@ -55,6 +58,6 @@ abstract class GithubBase extends HttpClientBase {
   /**
    * Ab abstract method to get the repository name.
    */
-  abstract public function getRepoName();
+  abstract public function getRepoName(): string;
 
 }

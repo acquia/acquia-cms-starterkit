@@ -13,23 +13,23 @@ class DownloadDrupal {
   /**
    * A process manager object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
    */
   protected $processManager;
 
   /**
    * An acquia minimal client object.
    *
-   * @var AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient
+   * @var \AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient
    */
   protected $acquiaMinimalClient;
 
   /**
    * Constructs an object.
    *
-   * @param AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
+   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
    *   Hold the process manager class object.
-   * @param AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient $acquiaMinimalClient
+   * @param \AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient $acquiaMinimalClient
    *   Hold the Acquia Minimal http cliend object.
    */
   public function __construct(ProcessManager $processManager, AcquiaMinimalClient $acquiaMinimalClient) {
@@ -39,8 +39,11 @@ class DownloadDrupal {
 
   /**
    * Run all the commands needed to download Drupal.
+   *
+   * @param array $args
+   *   An array of params argument to pass.
    */
-  public function execute($args = []) {
+  public function execute(array $args = []) :bool {
     $jsonArray = json_decode($this->acquiaMinimalClient->getFileContents("composer.json"));
     foreach ($jsonArray->repositories as $repoName => $data) {
       $this->processManager->add([

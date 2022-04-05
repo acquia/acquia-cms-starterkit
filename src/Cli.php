@@ -20,7 +20,7 @@ class Cli {
   /**
    * Holds the symfony console output object.
    *
-   * @var Symfony\Component\Console\Output\OutputInterface
+   * @var \Symfony\Component\Console\Output\OutputInterface
    */
   protected $output;
 
@@ -36,7 +36,7 @@ class Cli {
    *
    * @param string $project_dir
    *   Returns an absolute path to project.
-   * @param Symfony\Component\Console\Output\OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Holds the symfony console output object.
    */
   public function __construct(string $project_dir, OutputInterface $output) {
@@ -47,21 +47,21 @@ class Cli {
   /**
    * Prints the Acquia CMS logo in terminal.
    */
-  public function printLogo() {
+  public function printLogo() :void {
     $this->output->writeln("<info>" . file_get_contents($this->getLogo()) . "</info>");
   }
 
   /**
    * Returns the path to Acquia CMS logo.
    */
-  public function getLogo() {
+  public function getLogo() :string {
     return $this->projectDirectory . "/assets/acquia_cms.icon.ascii";
   }
 
   /**
    * Prints the Acquia CMS welcome headline.
    */
-  public function printHeadline() {
+  public function printHeadline() :void {
     $this->output->writeln("<fg=cyan;options=bold,underscore> " . $this->headline . "</>");
     $this->output->writeln("");
   }
@@ -69,16 +69,23 @@ class Cli {
   /**
    * Gets the Acquia CMS file contents.
    */
-  public function getAcquiaCmsFile() {
-    return Yaml::parseFile($this->projectDirectory . '/acms/acms.yml');
+  public function getAcquiaCmsFile() :array {
+    $fileContents = [];
+    try {
+      $fileContents = Yaml::parseFile($this->projectDirectory . '/acms/acms.yml');
+    }
+    catch (\Exception $e) {
+      $this->output->writeln("<error>" . $e->getMessage() . "</error>");
+    }
+    return $fileContents;
   }
 
   /**
    * Returns an array of starter-kits defined in acms.yml file.
    */
-  public function getStarterKits() {
+  public function getStarterKits() :array {
     $fileContent = $this->getAcquiaCmsFile();
-    return $fileContent['starter_kits'];
+    return $fileContent['starter_kits'] ?? [];
   }
 
 }

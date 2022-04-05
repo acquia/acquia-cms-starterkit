@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
+use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +19,7 @@ class HelloCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() {
+  protected function configure() :void {
     $this->setName("hello")
       ->setDescription("This command prints 'Hello World!'")
       ->setDefinition([
@@ -31,19 +32,20 @@ class HelloCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
       $name = "";
       if ($input->getOption("name")) {
-        $name = $input->getOption("name");
+        $name = (string) $input->getOption("name");
       }
 
       $output->writeln("Hello World $name!");
     }
     catch (AcmsCliException $e) {
-      return FALSE;
+      $output->writeln("<error>" . $e->getMessage() . "</error>");
+      return StatusCodes::ERROR;
     }
-    return TRUE;
+    return StatusCodes::OK;
   }
 
 }

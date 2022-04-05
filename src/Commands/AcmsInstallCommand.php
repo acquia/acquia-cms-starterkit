@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
+use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
 use Symfony\Component\Console\Command\Command;
@@ -25,14 +26,14 @@ class AcmsInstallCommand extends Command {
   /**
    * The AcquiaCMS InstallTask object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Task\InstallTask
+   * @var \AcquiaCMS\Cli\Helpers\Task\InstallTask
    */
   protected $installTask;
 
   /**
    * Constructs an instance.
    *
-   * @param AcquiaCMS\Cli\Helpers\Task\InstallTask $installTask
+   * @param \AcquiaCMS\Cli\Helpers\Task\InstallTask $installTask
    *   Provides the Acquia CMS Install task object.
    */
   public function __construct(InstallTask $installTask) {
@@ -43,7 +44,7 @@ class AcmsInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() {
+  protected function configure() :void {
     $this->setName("acms:install")
       ->setDescription("Use this command to setup & install site.")
       ->setHelp("The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.");
@@ -52,15 +53,16 @@ class AcmsInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
       $this->installTask->configure($input, $output, $this);
       $this->installTask->run();
     }
     catch (AcmsCliException $e) {
-      return FALSE;
+      $output->writeln("<error>" . $e->getMessage() . "</error>");
+      return StatusCodes::ERROR;
     }
-    return TRUE;
+    return StatusCodes::OK;
   }
 
 }

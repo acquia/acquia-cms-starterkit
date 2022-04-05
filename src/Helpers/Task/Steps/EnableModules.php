@@ -12,14 +12,14 @@ class EnableModules {
   /**
    * An process manager object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
    */
   protected $processManager;
 
   /**
    * Constructs an object.
    *
-   * @param AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
+   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
    *   Hold the process manager class object.
    */
   public function __construct(ProcessManager $processManager) {
@@ -28,8 +28,11 @@ class EnableModules {
 
   /**
    * Run the drush commands to enable Drupal modules.
+   *
+   * @param array $args
+   *   An array of params argument to pass.
    */
-  public function execute($args = []) {
+  public function execute(array $args = []) :bool {
     $inputArgument = array_merge(["./vendor/bin/drush", "en", "--yes"], $args['modules']);
     $this->processManager->add($inputArgument);
     return $this->processManager->runAll();

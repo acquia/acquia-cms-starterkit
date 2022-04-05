@@ -36,7 +36,8 @@
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
-        "phpro/grumphp-shim": "^1.5"
+        "phpro/grumphp-shim": "^1.5",
+        "phpstan/phpstan": "^1.5"
     },
     "repositories": {
         "assets": {

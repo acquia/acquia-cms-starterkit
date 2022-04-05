@@ -1,0 +1,9 @@
+parameters:
+	level: 6
+	paths:
+		- src
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+		- "#Method .*has parameter .*with no value type specified in iterable type array#"
+		- "#Method .* return type has no value type specified in iterable type array.#"
+		- "#Property .* type has no value type specified in iterable type array.#"

@@ -12,14 +12,14 @@ class ValidateDrupal {
   /**
    * An process manager object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
    */
   protected $processManager;
 
   /**
    * Constructs an object.
    *
-   * @param AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
+   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
    *   Hold the process manager class object.
    */
   public function __construct(ProcessManager $processManager) {
@@ -28,8 +28,11 @@ class ValidateDrupal {
 
   /**
    * Run the commands to check if current project is Drupal project.
+   *
+   * @param array $args
+   *   An array of params argument to pass.
    */
-  public function execute($args = []) {
+  public function execute(array $args = []) :bool {
     $this->processManager->add(["composer", "config", "extra.drupal-scaffold"]);
     $process = $this->processManager->getLastProcess();
     $process->setTty(FALSE);

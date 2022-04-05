@@ -15,6 +15,9 @@ grumphp:
     yamllint: ~
     composer: ~
     composer_normalize: ~
+    phpstan:
+      configuration: phpstan.neon
+      use_grumphp_paths: false
     phpcs:
       standard: ['phpcs.xml.dist']
       ignore_patterns:

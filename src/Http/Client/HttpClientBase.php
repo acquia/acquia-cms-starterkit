@@ -55,7 +55,7 @@ abstract class HttpClientBase {
    * @param string $url
    *   String having url path to make a http request.
    */
-  public function request(string $url) {
+  public function request(string $url) :string {
     $response = $this->httpClient
       ->request($this->method, $this->baseUrl . $url, $this->getOptions());
 
@@ -66,7 +66,7 @@ abstract class HttpClientBase {
   /**
    * Sets the given method to http request. Ex: 'GET', 'POST' etc.
    */
-  public function setMethod(string $method) {
+  public function setMethod(string $method) :void {
     $this->method = $method;
   }
 
@@ -76,14 +76,17 @@ abstract class HttpClientBase {
    * @param array $options
    *   An array of options to pass on http request.
    */
-  public function setOptions(array $options) {
+  public function setOptions(array $options) :void {
     $this->options = $options;
   }
 
   /**
    * Returns the given options.
+   *
+   * @return array
+   *   Returns an array of http request options.
    */
-  public function getOptions() {
+  public function getOptions() :array {
     return $this->options;
   }
 
@@ -93,7 +96,7 @@ abstract class HttpClientBase {
    * @param string $baseUrl
    *   A string having baseUrl.
    */
-  public function setBaseUrl(string $baseUrl = "") {
+  public function setBaseUrl(string $baseUrl = "") :void {
     $this->baseUrl = $baseUrl;
   }
 

@@ -22,87 +22,87 @@ class InstallTask {
   /**
    * Holds the Acquia CMS cli object.
    *
-   * @var AcquiaCMS\Cli\Cli
+   * @var \AcquiaCMS\Cli\Cli
    */
   protected $acquiaCmsCli;
 
   /**
    * Holds an array of defined starter kits.
    *
-   * @var array
+   * @var mixed
    */
   protected $starterKits;
 
   /**
    * Holds the Validate Drupal step object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal
    */
   protected $validateDrupal;
 
   /**
    * Holds the validate Drupal step object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal
    */
   protected $downloadDrupal;
 
   /**
    * Holds the Drupal site install step object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall
    */
   protected $siteInstall;
 
   /**
    * Holds the enable drupal modules step object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules
    */
   protected $enableModules;
 
   /**
    * Holds the status message object.
    *
-   * @var AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage
    */
   protected $statusMessage;
 
   /**
    * Holds the symfony console command object.
    *
-   * @var Symfony\Component\Console\Command\Command
+   * @var \Symfony\Component\Console\Command\Command
    */
   protected $command;
 
   /**
    * Holds the symfony console input object.
    *
-   * @var Symfony\Component\Console\Input\InputInterface
+   * @var \Symfony\Component\Console\Input\InputInterface
    */
   protected $input;
 
   /**
    * Holds the symfony console output object.
    *
-   * @var Symfony\Component\Console\Input\OutputInterface
+   * @var \Symfony\Component\Console\Output\OutputInterface
    */
   protected $output;
 
   /**
    * Constructs an object.
    *
-   * @param AcquiaCMS\Cli\Cli $cli
+   * @param \AcquiaCMS\Cli\Cli $cli
    *   An Acquia CMS cli class object.
-   * @param AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal $validateDrupal
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal $validateDrupal
    *   A Validate Drupal class object.
-   * @param AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal $downloadDrupal
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal $downloadDrupal
    *   Download Drupal class object.
-   * @param AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall $siteInstall
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall $siteInstall
    *   A Drupal Site Install class object.
-   * @param AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules $enableModules
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules $enableModules
    *   Enable Drupal modules class object.
-   * @param AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage $statusMessage
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage $statusMessage
    *   Status Message class object.
    */
   public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, SiteInstall $siteInstall, EnableModules $enableModules, StatusMessage $statusMessage) {
@@ -125,7 +125,7 @@ class InstallTask {
    * @poram Symfony\Component\Console\Command\Command $output
    *   The site:install Symfony console command object.
    */
-  public function configure(InputInterface $input, OutputInterface $output, Command $command) {
+  public function configure(InputInterface $input, OutputInterface $output, Command $command) :void {
     $this->command = $command;
     $this->input = $input;
     $this->output = $output;
@@ -134,7 +134,7 @@ class InstallTask {
   /**
    * Executes all the steps needed for install task.
    */
-  public function run() {
+  public function run() :void {
     $this->acquiaCmsCli->printLogo();
     $this->acquiaCmsCli->printHeadline();
     $this->renderStarterKits();
@@ -156,7 +156,7 @@ class InstallTask {
   /**
    * Renders the table showing list of all starter kits.
    */
-  protected function renderStarterKits() {
+  protected function renderStarterKits() :void {
     $table = new Table($this->output);
     $table->setHeaders(['ID', 'Name', 'Description']);
     foreach ($this->starterKits as $id => $starter_kit) {
@@ -170,7 +170,7 @@ class InstallTask {
   /**
    * Providing input to user, asking to select the starter-kit.
    */
-  protected function askBundleQuestion() {
+  protected function askBundleQuestion() :string {
     $helper = $this->command->getHelper('question');
     $bundles = array_keys($this->starterKits);
     $question = new Question("Please choose bundle from one of the above use case: <comment>[$bundles[0]]</comment>: ", $bundles[0]);

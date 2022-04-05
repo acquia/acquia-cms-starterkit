@@ -12,7 +12,7 @@ class AcquiaMinimalClient extends GithubBase {
   /**
    * Returns the github repo name.
    */
-  public function getRepoName() {
+  public function getRepoName() :string {
     return "acquia/drupal-minimal-project";
   }
 
