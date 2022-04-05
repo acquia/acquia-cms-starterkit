@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
+use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -52,8 +53,14 @@ class AcmsInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $this->installTask->configure($input, $output, $this);
-    $this->installTask->run();
+    try {
+      $this->installTask->configure($input, $output, $this);
+      $this->installTask->run();
+    }
+    catch (AcmsCliException $e) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }

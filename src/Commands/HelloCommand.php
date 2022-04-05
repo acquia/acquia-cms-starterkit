@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
+use AcquiaCMS\Cli\Exception\AcmsCliException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,12 +32,18 @@ class HelloCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $name = "";
-    if ($input->getOption("name")) {
-      $name = $input->getOption("name");
-    }
+    try {
+      $name = "";
+      if ($input->getOption("name")) {
+        $name = $input->getOption("name");
+      }
 
-    $output->writeln("Hello World $name!");
+      $output->writeln("Hello World $name!");
+    }
+    catch (AcmsCliException $e) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }
