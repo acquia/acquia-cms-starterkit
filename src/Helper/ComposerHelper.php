@@ -36,6 +36,8 @@ class ComposerHelper {
     array_walk($modules, function (&$module, $key) {
       $module = "drupal/$module:^1.0";
     });
+    // Add drush to the module list.
+    array_push($modules, 'drush/drush');
     return implode(" ", array_merge($modules, $themes));
   }
 

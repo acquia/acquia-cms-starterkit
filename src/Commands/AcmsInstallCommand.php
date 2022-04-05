@@ -86,8 +86,12 @@ class AcmsInstallCommand extends Command {
       $requiredModules = $bundle['modules'];
       $requiredThemes = $bundle['themes'];
 
-      // Run composer require modules/themes for selected package.
       try {
+        // Composer set minimum-stability to dev.
+        $composerMinStab = Process::fromShellCommandline("composer config minimum-stability dev");
+        $this->setCommonProcessTask($composerMinStab, $output);
+
+        // Run composer require modules/themes for selected package.
         $requiredModulesThemes = $this->composerHelper->getRequiredModulesThemes($requiredModules, $requiredThemes);
         $composerRequireProcess = Process::fromShellCommandline('composer require ' . $requiredModulesThemes);
         $this->setCommonProcessTask($composerRequireProcess, $output);
