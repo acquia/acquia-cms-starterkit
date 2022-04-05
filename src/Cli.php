@@ -63,7 +63,7 @@ class Cli {
    */
   public function printHeadline() {
     $this->output->writeln("<fg=cyan;options=bold,underscore> " . $this->headline . "</>");
-    $this->output->newLine();
+    $this->output->writeln("");
   }
 
   /**

@@ -30,7 +30,12 @@ class SiteInstall {
    * Run the drush commands to install Drupal.
    */
   public function execute(array $args = []) {
-    $this->processManager->add(["./vendor/bin/drush", "site:install", "minimal", "--yes"]);
+    $this->processManager->add([
+      "./vendor/bin/drush",
+      "site:install",
+      "minimal",
+      "--yes",
+    ]);
     return $this->processManager->runAll();
   }
 
