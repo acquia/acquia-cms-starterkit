@@ -32,6 +32,7 @@ class ProcessManager {
    */
   public function __construct(OutputInterface $output) {
     $this->output = $output;
+    $this->process = [];
   }
 
   /**
@@ -54,8 +55,8 @@ class ProcessManager {
    * @return \Symfony\Component\Process\Process
    *   Returns a process object or null (when empty)
    */
-  public function getLastProcess() :Process {
-    return reset($this->process);
+  public function getLastProcess() :?Process {
+    return $this->process ? reset($this->process) : NULL;
   }
 
   /**
@@ -75,6 +76,7 @@ class ProcessManager {
     $status = TRUE;
     foreach ($this->getAllProcess() as $process) {
       $status = $this->run($process);
+      array_shift($this->process);
       if (!$status) {
         $status = FALSE;
         break;
@@ -90,7 +92,6 @@ class ProcessManager {
    *   A Process object.
    */
   public function run(Process $process = NULL) :bool {
-    $process = array_shift($this->process);
     $this->output->writeln(sprintf('> %s', $process->getCommandLine()));
     $process->start();
     $process->wait(function ($type, $buffer) {

@@ -1,0 +1,95 @@
+<?php
+
+namespace tests;
+
+use AcquiaCMS\Cli\Cli;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class CliTest extends TestCase {
+  use ProphecyTrait;
+
+  /**
+   * Holds the symfony console output object.
+   *
+   * @var \Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $output;
+
+  /**
+   * An absolute directory to project.
+   *
+   * @var string
+   */
+  protected $projectDirectory;
+
+  /**
+   * An acquia minimal client object.
+   *
+   * @var \AcquiaCMS\Cli\Cli
+   */
+  protected $acquiaCli;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    $this->output = $this->prophesize(OutputInterface::class);
+    $output = $this->output->reveal();
+    $this->projectDirectory = getcwd();
+    $this->acquiaCli = new Cli($this->projectDirectory, $output);
+  }
+
+  /**
+   * Test the welcome message that display when running command acms:install.
+   *
+   * @test
+   */
+  public function testExecute() :void {
+    $this->assertEquals("Welcome to Acquia CMS starterkit installer", $this->acquiaCli->headline);
+    $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
+    $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile());
+  }
+
+  /**
+   * An array of default contents for acms/acms.yml file.
+   */
+  protected function getAcmsFileContents() :array {
+    return [
+      "starter_kits" => [
+        "acquia_cms_demo" => [
+          'name' => 'Acquia CMS Demo',
+          'description' => 'Low-code demonstration of ACMS with default content.',
+          'modules' => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search", "acquia_cms_page"],
+          'themes' => ['acquia_claro'],
+        ],
+        "acquia_cms_low_code" => [
+          "name" => "Acquia CMS Low Code",
+          "description" => "Acquia CMS with Site Studio but no content opinion.",
+          "modules" => ["acquia_cms_common", "acquia_cms_search", "acquia_cms_page"],
+          "themes" => ["acquia_claro", "cohesion_theme"],
+        ],
+        "acquia_cms_standard" => [
+          "name" => "Acquia CMS Standard",
+          "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
+          "modules" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search"],
+          "themes" => ["acquia_claro"],
+        ],
+        "acquia_cms_minimal" => [
+          "name" => "Acquia CMS Minimal",
+          "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
+          "modules" => ["acquia_cms_common", "acquia_cms_search"],
+          "themes" => ["acquia_claro"],
+        ],
+        "acquia_cms_headless" => [
+          "name" => "Acquia CMS Headless",
+          "description" => "ACMS with headless functionality.",
+          "modules" => ["acquia_cms_headless"],
+          "themes" => ["acquia_claro"],
+        ],
+      ],
+    ];
+  }
+
+}

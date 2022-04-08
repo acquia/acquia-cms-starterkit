@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="tests/unit/bootstrap.php">
+<phpunit colors="true"
+         cacheResultFile="var/phpunit/test-results"
+         bootstrap="vendor/autoload.php"
+>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <env name="COLUMNS" value="80" force="true" />
+  </php>
+
     <testsuites>
-        <testsuite name="Symfony console tests">
+        <testsuite name="Acquia CMS Starterkit">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
