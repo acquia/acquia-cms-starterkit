@@ -21,8 +21,7 @@ class GithubBaseTest extends TestCase
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void
-  {
+  protected function setUp(): void {
     $http_client = $this->prophesize(HttpClientInterface::class);
     $this->http_client = $http_client->reveal();
   }

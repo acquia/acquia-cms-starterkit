@@ -1,8 +1,7 @@
 {
     "name": "acquia/acquia-cms-starterkit",
-    "description": "Acquia CMS starterkit cli command.",
-    "license": "GPL-2.0-or-later",
     "type": "project",
+    "description": "Acquia CMS starterkit cli command.",
     "keywords": [
         "cli",
         "console",
@@ -10,6 +9,7 @@
         "acquia_cms",
         "starterkit"
     ],
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Acquia Engineering",
@@ -41,6 +41,20 @@
         "phpstan/phpstan": "^1.5",
         "phpunit/phpunit": "^9"
     },
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "phpro/grumphp-shim": true,
+            "webdriver-binary/binary-chromedriver": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "AcquiaCMS\\Cli\\": "src/"
+        }
+    },
     "repositories": {
         "assets": {
             "type": "composer",
@@ -49,19 +63,7 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "AcquiaCMS\\Cli\\": "src/"
-        }
-    },
     "bin": [
         "bin/acms"
-    ],
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "phpro/grumphp-shim": true,
-            "ergebnis/composer-normalize": true
-        }
-    }
+    ]
 }
