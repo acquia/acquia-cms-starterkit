@@ -4,11 +4,13 @@ namespace AcquiaCMS\Cli\Helpers\Task;
 
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
+use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -90,6 +92,13 @@ class InstallTask {
   protected $output;
 
   /**
+   * Holds the download modules & themes step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules
+   */
+  protected $downloadModules;
+
+  /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Cli $cli
@@ -98,6 +107,8 @@ class InstallTask {
    *   A Validate Drupal class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal $downloadDrupal
    *   Download Drupal class object.
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules $downloadModules
+   *   Download Modules & themes class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall $siteInstall
    *   A Drupal Site Install class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules $enableModules
@@ -105,7 +116,7 @@ class InstallTask {
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage $statusMessage
    *   Status Message class object.
    */
-  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, SiteInstall $siteInstall, EnableModules $enableModules, StatusMessage $statusMessage) {
+  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, StatusMessage $statusMessage) {
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->validateDrupal = $validateDrupal;
@@ -113,6 +124,7 @@ class InstallTask {
     $this->statusMessage = $statusMessage;
     $this->enableModules = $enableModules;
     $this->siteInstall = $siteInstall;
+    $this->downloadModules = $downloadModules;
   }
 
   /**
@@ -135,6 +147,7 @@ class InstallTask {
    * Executes all the steps needed for install task.
    */
   public function run() :void {
+    $this->validationOptions();
     $this->acquiaCmsCli->printLogo();
     $this->acquiaCmsCli->printHeadline();
     $this->renderStarterKits();
@@ -147,6 +160,8 @@ class InstallTask {
     else {
       $this->statusMessage->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", StatusMessage::TYPE_SUCCESS);
     }
+    $this->statusMessage->print("Downloading all modules/themes required by the starter-kit", StatusMessage::TYPE_HEADLINE);
+    $this->downloadModules->execute($this->starterKits[$bundle]);
     $this->statusMessage->print("Installing Site", StatusMessage::TYPE_HEADLINE);
     $this->siteInstall->execute();
     $this->statusMessage->print("Enabling modules for the bundle: `$bundle`.", StatusMessage::TYPE_HEADLINE);
@@ -173,7 +188,8 @@ class InstallTask {
   protected function askBundleQuestion() :string {
     $helper = $this->command->getHelper('question');
     $bundles = array_keys($this->starterKits);
-    $question = new Question("Please choose bundle from one of the above use case: <comment>[$bundles[0]]</comment>: ", $bundles[0]);
+    $defaultStarterKit = $this->input->getArgument('name');
+    $question = new Question("Please choose bundle from one of the above use case: <comment>[$defaultStarterKit]</comment>: ", $defaultStarterKit);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
@@ -185,6 +201,18 @@ class InstallTask {
     });
     $question->setMaxAttempts(3);
     return $helper->ask($this->input, $this->output, $question);
+  }
+
+  /**
+   * Validate all input options/arguments.
+   */
+  protected function validationOptions() :bool {
+    $name = $this->input->getArgument('name');
+    $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
+    if (!in_array($name, $starterKits)) {
+      throw new InvalidArgumentException("Invalid starter kit. If should be from one of the following: " . implode(", ", $starterKits) . ".");
+    }
+    return TRUE;
   }
 
 }
