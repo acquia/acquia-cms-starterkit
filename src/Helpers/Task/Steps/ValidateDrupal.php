@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
+use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
 
 /**
@@ -17,13 +18,23 @@ class ValidateDrupal {
   protected $processManager;
 
   /**
+   * The AcquiaCMS Cli object.
+   *
+   * @var \AcquiaCMS\Cli\Cli
+   */
+  protected $acquiaCmsCli;
+
+  /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
    *   Hold the process manager class object.
+   * @param \AcquiaCMS\Cli\Cli $acquiaCmsCli
+   *   Hold an Acquia CMS Cli object.
    */
-  public function __construct(ProcessManager $processManager) {
+  public function __construct(ProcessManager $processManager, Cli $acquiaCmsCli) {
     $this->processManager = $processManager;
+    $this->acquiaCmsCli = $acquiaCmsCli;
   }
 
   /**
@@ -33,10 +44,12 @@ class ValidateDrupal {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :bool {
-    $this->processManager->add(["composer", "config", "extra.drupal-scaffold"]);
-    $process = $this->processManager->getLastProcess();
-    $process->setTty(FALSE);
-    return $this->processManager->runAll();
+    $jsonContents = $this->acquiaCmsCli->getRootComposer();
+    $jsonContents = json_decode($jsonContents);
+    if (isset($jsonContents->extra) && isset($jsonContents->extra->{'drupal-scaffold'})) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }

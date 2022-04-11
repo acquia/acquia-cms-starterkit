@@ -2,7 +2,9 @@
 
 namespace AcquiaCMS\Cli\Helpers\Process;
 
+use AcquiaCMS\Cli\Enum\StatusCodes;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -72,15 +74,11 @@ class ProcessManager {
   /**
    * Executes all process commands from the array.
    */
-  public function runAll() :bool {
-    $status = TRUE;
+  public function runAll() :int {
+    $status = StatusCodes::OK;
     foreach ($this->getAllProcess() as $process) {
       $status = $this->run($process);
       array_shift($this->process);
-      if (!$status) {
-        $status = FALSE;
-        break;
-      }
     }
     return $status;
   }
@@ -89,20 +87,23 @@ class ProcessManager {
    * Executes the command from the process array.
    *
    * @param \Symfony\Component\Process\Process $process
+   *   A Process object to execute.
+   *
+   * @throws \Symfony\Component\Process\Exception\ProcessFailedException
    *   A Process object.
    */
-  public function run(Process $process = NULL) :bool {
+  public function run(Process $process = NULL) :int {
     $this->output->writeln(sprintf('> %s', $process->getCommandLine()));
-    $process->start();
-    $process->wait(function ($type, $buffer) {
+    $status = $process->run(function ($type, $buffer) {
       if (Process::ERR != $type) {
         $this->output->writeln($buffer);
       }
     });
     if (!$process->isSuccessful()) {
-      return FALSE;
-    };
-    return TRUE;
+      $process->disableOutput();
+      throw new ProcessFailedException($process);
+    }
+    return $status;
   }
 
 }

@@ -160,7 +160,7 @@ class InstallTask {
     else {
       $this->statusMessage->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", StatusMessage::TYPE_SUCCESS);
     }
-    $this->statusMessage->print("Downloading all modules/themes required by the starter-kit", StatusMessage::TYPE_HEADLINE);
+    $this->statusMessage->print("Downloading all packages/modules/themes required by the starter-kit", StatusMessage::TYPE_HEADLINE);
     $this->downloadModules->execute($this->starterKits[$bundle]);
     $this->statusMessage->print("Installing Site", StatusMessage::TYPE_HEADLINE);
     $this->siteInstall->execute();

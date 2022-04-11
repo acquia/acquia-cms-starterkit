@@ -88,4 +88,28 @@ class Cli {
     return $fileContent['starter_kits'] ?? [];
   }
 
+  /**
+   * Returns the composer.json string.
+   *
+   * @return string
+   *   Returns the contents of composer.json file exist at root directory.
+   */
+  public function getRootComposer() :string {
+    $rootComposerJson = $this->getRootDir() . "/composer.json";
+    if (!file_exists($rootComposerJson)) {
+      return "";
+    }
+    return file_get_contents($rootComposerJson);
+  }
+
+  /**
+   * Returns the root directory of the project.
+   *
+   * @return string
+   *   Returns current working directory.
+   */
+  public function getRootDir(): string {
+    return getcwd();
+  }
+
 }

@@ -63,9 +63,11 @@ class AcmsInstallCommand extends Command {
       $this->installTask->run();
       $formatter = $this->getHelper('formatter');
       $name = $input->getArgument("name");
+      $output->writeln("");
       $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$name`.";
-      $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green;options=bold', TRUE);
+      $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
       $output->writeln($formattedInfoBlock);
+      $output->writeln("");
     }
     catch (AcmsCliException $e) {
       $output->writeln("<error>" . $e->getMessage() . "</error>");

@@ -32,7 +32,7 @@ class EnableModules {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :bool {
+  public function execute(array $args = []) :int {
     $inputArgument = array_merge(["./vendor/bin/drush", "en", "--yes"], $args['modules']);
     $this->processManager->add($inputArgument);
     return $this->processManager->runAll();

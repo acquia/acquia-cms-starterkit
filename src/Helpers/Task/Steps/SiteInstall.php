@@ -32,7 +32,7 @@ class SiteInstall {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :bool {
+  public function execute(array $args = []) :int {
     $this->processManager->add([
       "./vendor/bin/drush",
       "site:install",

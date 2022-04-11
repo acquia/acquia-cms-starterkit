@@ -43,7 +43,7 @@ class DownloadDrupal {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :bool {
+  public function execute(array $args = []) :int {
     $jsonArray = json_decode($this->acquiaMinimalClient->getFileContents("composer.json"));
     foreach ($jsonArray->repositories as $repoName => $data) {
       $this->processManager->add([
