@@ -2,6 +2,7 @@
 
 namespace tests\Helpers\Process;
 
+use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -64,7 +65,7 @@ class ProcessManagerTest extends TestCase {
     $lastProcess = $this->processManager->getLastProcess();
     $this->assertInstanceOf(Process::class, $lastProcess);
     $lastProcess->setTty(FALSE);
-    $this->assertTrue($this->processManager->runAll());
+    $this->assertEquals(StatusCodes::OK, $this->processManager->runAll());
   }
 
   /**
@@ -75,7 +76,7 @@ class ProcessManagerTest extends TestCase {
     $lastProcess = $this->processManager->getLastProcess();
     $this->assertInstanceOf(Process::class, $lastProcess);
     $lastProcess->setTty(FALSE);
-    $this->assertTrue($this->processManager->run($lastProcess));
+    $this->assertEquals(StatusCodes::OK, $this->processManager->run($lastProcess));
   }
 
   /**
