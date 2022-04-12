@@ -61,32 +61,58 @@ class CliTest extends TestCase {
         "acquia_cms_demo" => [
           'name' => 'Acquia CMS Demo',
           'description' => 'Low-code demonstration of ACMS with default content.',
-          'modules' => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search", "acquia_cms_page"],
-          'themes' => ['acquia_claro'],
+          'modules' => [
+            "install" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search", "acquia_cms_page"],
+          ],
+          'themes' => [
+            "install" => ["acquia_claro"],
+            "admin" => "acquia_claro",
+          ],
         ],
         "acquia_cms_low_code" => [
           "name" => "Acquia CMS Low Code",
           "description" => "Acquia CMS with Site Studio but no content opinion.",
-          "modules" => ["acquia_cms_common", "acquia_cms_search", "acquia_cms_page"],
-          "themes" => ["acquia_claro", "cohesion_theme"],
+          "modules" => [
+            "install" => ["acquia_cms_common", "acquia_cms_search", "acquia_cms_page"],
+          ],
+          "themes" => [
+            "install" => ["acquia_claro", "cohesion_theme"],
+            "admin" => "acquia_claro",
+            "default" => "cohesion_theme",
+          ],
         ],
         "acquia_cms_standard" => [
           "name" => "Acquia CMS Standard",
           "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
-          "modules" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search"],
-          "themes" => ["acquia_claro"],
+          "modules" => [
+            "install" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search"],
+          ],
+          "themes" => [
+            "install" => ["acquia_claro"],
+            "admin" => "acquia_claro",
+          ],
         ],
         "acquia_cms_minimal" => [
           "name" => "Acquia CMS Minimal",
           "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
-          "modules" => ["acquia_cms_common", "acquia_cms_search"],
-          "themes" => ["acquia_claro"],
+          "modules" => [
+            "install" => ["acquia_cms_common", "acquia_cms_search"],
+          ],
+          "themes" => [
+            "install" => ["acquia_claro"],
+            "admin" => "acquia_claro",
+          ],
         ],
         "acquia_cms_headless" => [
           "name" => "Acquia CMS Headless",
           "description" => "ACMS with headless functionality.",
-          "modules" => ["acquia_cms_headless"],
-          "themes" => ["acquia_claro"],
+          "modules" => [
+            "install" => ["acquia_cms_headless"],
+          ],
+          "themes" => [
+            "install" => ["acquia_claro"],
+            "admin" => "acquia_claro",
+          ],
         ],
       ],
     ];

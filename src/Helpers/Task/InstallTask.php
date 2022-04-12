@@ -153,21 +153,29 @@ class InstallTask {
     $this->renderStarterKits();
     $bundle = $this->askBundleQuestion();
     if (!$this->validateDrupal->execute()) {
-      $this->statusMessage->print("Looks like, current project is not a Drupal project.", StatusMessage::TYPE_WARNING);
-      $this->statusMessage->print("Converting the current project to Drupal project.", StatusMessage::TYPE_HEADLINE);
+      $this->statusMessage->print("Looks like, current project is not a Drupal project:", StatusMessage::TYPE_WARNING);
+      $this->statusMessage->print("Converting the current project to Drupal project:", StatusMessage::TYPE_HEADLINE);
       $this->downloadDrupal->execute();
     }
     else {
       $this->statusMessage->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", StatusMessage::TYPE_SUCCESS);
     }
-    $this->statusMessage->print("Downloading all packages/modules/themes required by the starter-kit", StatusMessage::TYPE_HEADLINE);
+    $this->statusMessage->print("Downloading all packages/modules/themes required by the starter-kit:", StatusMessage::TYPE_HEADLINE);
     $this->downloadModules->execute($this->starterKits[$bundle]);
-    $this->statusMessage->print("Installing Site", StatusMessage::TYPE_HEADLINE);
+    $this->statusMessage->print("Installing Site:", StatusMessage::TYPE_HEADLINE);
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
-    $this->statusMessage->print("Enabling modules for the bundle: `$bundle`.", StatusMessage::TYPE_HEADLINE);
-    $this->enableModules->execute($this->starterKits[$bundle]);
+    $this->statusMessage->print("Enabling modules for the starter-kit:", StatusMessage::TYPE_HEADLINE);
+    $this->enableModules->execute([
+      'type' => 'modules',
+      'packages' => $this->starterKits[$bundle]['modules'],
+    ]);
+    $this->statusMessage->print("Enabling themes for the starter-kit:", StatusMessage::TYPE_HEADLINE);
+    $this->enableModules->execute([
+      'type' => 'themes',
+      'packages' => $this->starterKits[$bundle]['themes'],
+    ]);
   }
 
   /**

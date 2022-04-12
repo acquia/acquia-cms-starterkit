@@ -18,13 +18,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AcmsInstallCommand extends Command {
 
   /**
-   * The AcquiaCMS Cli object.
-   *
-   * @var \AcquiaCMS\Cli\Cli
-   */
-  protected $acquiaCmsCli;
-
-  /**
    * The AcquiaCMS InstallTask object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Task\InstallTask

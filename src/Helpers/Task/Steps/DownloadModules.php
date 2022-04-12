@@ -3,6 +3,7 @@
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
 use AcquiaCMS\Cli\Cli;
+use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
 
 /**
@@ -61,10 +62,17 @@ class DownloadModules {
         "dev",
       ]);
     }
-    $modulesOrThemes = array_map(function ($moduleOrTheme) {
-      return "drupal/$moduleOrTheme";
-    }, $args['modules'], $args['themes']);
-    $inputArgument = array_merge(["composer", "require", "-W"], $modulesOrThemes);
+    if (!isset($composerContents->{'prefer-stable'}) || (isset($composerContents->{'prefer-stable'}) && $composerContents->{'prefer-stable'} != "true")) {
+      $this->processManager->add([
+        "composer",
+        "config",
+        "prefer-stable",
+        "true",
+      ]);
+    }
+    $packages = array_merge($args['modules']['install'], $args['themes']['install']);
+    $packages = JsonParser::downloadPackages($packages);
+    $inputArgument = array_merge(["composer", "require", "-W"], $packages);
     $this->processManager->add($inputArgument);
     return $this->processManager->runAll();
   }
