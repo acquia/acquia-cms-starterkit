@@ -163,7 +163,9 @@ class InstallTask {
     $this->statusMessage->print("Downloading all packages/modules/themes required by the starter-kit", StatusMessage::TYPE_HEADLINE);
     $this->downloadModules->execute($this->starterKits[$bundle]);
     $this->statusMessage->print("Installing Site", StatusMessage::TYPE_HEADLINE);
-    $this->siteInstall->execute();
+    $this->siteInstall->execute([
+      'no-interaction' => $this->input->getOption('no-interaction'),
+    ]);
     $this->statusMessage->print("Enabling modules for the bundle: `$bundle`.", StatusMessage::TYPE_HEADLINE);
     $this->enableModules->execute($this->starterKits[$bundle]);
   }

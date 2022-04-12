@@ -33,12 +33,11 @@ class SiteInstall {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $this->processManager->add([
-      "./vendor/bin/drush",
-      "site:install",
-      "minimal",
-      "--yes",
-    ]);
+    $siteInstallCommand = ["./vendor/bin/drush", "site:install", "minimal"];
+    if ($args['no-interaction']) {
+      $siteInstallCommand = array_merge($siteInstallCommand, ["--yes"]);
+    }
+    $this->processManager->add($siteInstallCommand);
     return $this->processManager->runAll();
   }
 

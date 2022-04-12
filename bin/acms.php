@@ -11,10 +11,10 @@ use Stecman\Component\Symfony\Console\BashCompletion\CompletionCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
 
 if (!file_exists(__DIR__ . '/../vendor/autoload.php') && !file_exists(__DIR__ . '/../../../autoload.php')) {
-  die("Could not find autoloader. Run `composer install` command first.\n");
+  echo "\033[31mCould not find autoloader. Run `composer install` command first.\033[0m" . PHP_EOL;
+  exit(1);
 }
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
 
@@ -35,17 +35,8 @@ if (in_array($input->getFirstArgument(), ['cache:clear', 'cc'])) {
   $filesystem->remove($cache_dir);
   $filesystem->mkdir($cache_dir);
   $filesystem->touch("{$cache_dir}/.gitkeep");
-  $process = new Process([
-    "printf",
-    '\033[1;32m[ok]\033[0m All caches have been cleared.\n',
-  ]);
-  $process->run();
-  // Executes after the command finishes.
-  if (!$process->isSuccessful()) {
-    throw new ProcessFailedException($process);
-  }
-  echo $process->getOutput();
-  exit;
+  echo "\033[1;32m[ok]\033[0m All caches have been cleared." . PHP_EOL;
+  exit(0);
 }
 
 $kernel->boot();
