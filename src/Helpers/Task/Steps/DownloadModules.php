@@ -49,14 +49,14 @@ class DownloadModules {
     $composerContents = json_decode($composerContents);
     if (!isset($composerContents->require->{'drush/drush'})) {
       $this->processManager->add([
-        "composer",
+        "./vendor/bin/composer",
         "require",
         "drush/drush:^10.3 || ^11",
       ]);
     }
     if (!isset($composerContents->{'minimum-stability'}) || (isset($composerContents->{'minimum-stability'}) && $composerContents->{'minimum-stability'} != "dev")) {
       $this->processManager->add([
-        "composer",
+        "./vendor/bin/composer",
         "config",
         "minimum-stability",
         "dev",
@@ -64,7 +64,7 @@ class DownloadModules {
     }
     if (!isset($composerContents->{'prefer-stable'}) || (isset($composerContents->{'prefer-stable'}) && $composerContents->{'prefer-stable'} != "true")) {
       $this->processManager->add([
-        "composer",
+        "./vendor/bin/composer",
         "config",
         "prefer-stable",
         "true",
@@ -72,7 +72,7 @@ class DownloadModules {
     }
     $packages = array_merge($args['modules']['install'], $args['themes']['install']);
     $packages = JsonParser::downloadPackages($packages);
-    $inputArgument = array_merge(["composer", "require", "-W"], $packages);
+    $inputArgument = array_merge(["./vendor/bin/composer", "require", "-W"], $packages);
     $this->processManager->add($inputArgument);
     return $this->processManager->runAll();
   }

@@ -47,7 +47,7 @@ class DownloadDrupal {
     $jsonArray = json_decode($this->acquiaMinimalClient->getFileContents("composer.json"));
     foreach ($jsonArray->repositories as $repoName => $data) {
       $this->processManager->add([
-        "composer",
+        "./vendor/bin/composer",
         "config",
         "--json",
         "repositories.$repoName",
@@ -56,7 +56,7 @@ class DownloadDrupal {
     }
     foreach ($jsonArray->extra as $key => $data) {
       $this->processManager->add([
-        "composer",
+        "./vendor/bin/composer",
         "config",
         "--json",
         "extra.$key",
@@ -65,7 +65,7 @@ class DownloadDrupal {
     }
     foreach ($jsonArray->config->{'allow-plugins'} as $plugin => $value) {
       $this->processManager->add([
-        "composer",
+        "./vendor/bin/composer",
         "config",
         "--no-plugins",
         "allow-plugins.$plugin",
@@ -76,7 +76,7 @@ class DownloadDrupal {
     $packages = array_map(function ($key, $value) {
       return $key . ":" . $value;
     }, array_keys($requirePackages), $requirePackages);
-    $requireCommand = array_merge(["composer", "require", "-W"], $packages);
+    $requireCommand = array_merge(["./vendor/bin/composer", "require", "-W"], $packages);
     $this->processManager->add($requireCommand);
     return $this->processManager->runAll();
   }
