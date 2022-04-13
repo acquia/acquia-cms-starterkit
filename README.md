@@ -38,5 +38,5 @@ composer require acquia/acquia-cms-starterkit:dev-develop
 
 Run the following command to print hello world:
 ```
-./vendor/bin/acms hello
+./vendor/bin/acms acms:install
 ```
