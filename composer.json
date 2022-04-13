@@ -1,6 +1,7 @@
 {
     "name": "acquia/acquia-cms-starterkit",
     "description": "Acquia CMS starterkit cli command.",
+    "license": "GPL-2.0-or-later",
     "type": "project",
     "keywords": [
         "cli",
@@ -9,7 +10,6 @@
         "acquia_cms",
         "starterkit"
     ],
-    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Acquia Engineering",
@@ -18,25 +18,53 @@
         },
         {
             "name": "Vishal Khode",
-            "role": "Maintainer",
-            "email": "vishal.khode@acquia.com"
+            "email": "vishal.khode@acquia.com",
+            "role": "Maintainer"
         }
     ],
     "require": {
-        "symfony/console": "^4.1",
-        "symfony/http-kernel": "^4.1",
-        "symfony/config": "^4.1",
-        "symfony/dependency-injection": "^4.1",
+        "acquia/coding-standards": "^0.8.0",
+        "composer/composer": "^2.2",
+        "ergebnis/composer-normalize": "^2.25",
         "stecman/symfony-console-completion": "^0.10.1",
+        "symfony/config": "^4.1",
+        "symfony/console": "^4.1",
+        "symfony/dependency-injection": "^4.1",
+        "symfony/http-client": "^4.1",
+        "symfony/http-kernel": "^4.1",
         "symfony/process": "^4.1",
         "symfony/yaml": "^4.1"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "phpro/grumphp-shim": "^1.5",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpstan/phpstan": "^1.5",
+        "phpunit/phpunit": "^9"
+    },
+    "repositories": {
+        "assets": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "AcquiaCMS\\Cli\\": "src/"
+        }
     },
     "bin": [
         "bin/acms"
     ],
-    "autoload": {
-        "psr-4": {
-            "AcquiaCMS\\Cli\\": "src/"
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "ergebnis/composer-normalize": true,
+            "phpro/grumphp-shim": true,
+            "webdriver-binary/binary-chromedriver": true
         }
     }
 }
