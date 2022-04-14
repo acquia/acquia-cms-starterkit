@@ -2,8 +2,12 @@ name: acquia-cms-starterkit CI
 on:
   push:
     branches: [ develop, main, ACMS* ]
+    paths-ignore:
+      - README.md
   pull_request:
     branches: [ develop ]
+    paths-ignore:
+      - README.md
 jobs:
   # @todo add tests to validate each starter-kit use case.
   STATIC_CODE_ANALYSIS:
@@ -11,11 +15,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
-      ORCA_SUT_BRANCH: dev-ACMS-1091-1
+      ORCA_SUT_BRANCH: develop
       ORCA_VERSION: ^3
       ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
       ORCA_ENABLE_NIGHTWATCH: "FALSE"
       ORCA_PHPCS_STANDARD: AcquiaPHP
+      COMPOSER_PROCESS_TIMEOUT: 1800
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
@@ -43,13 +48,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
-      ORCA_SUT_BRANCH: dev-ACMS-1091-1
+      ORCA_SUT_BRANCH: develop
       ORCA_VERSION: ^3
       ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
       ORCA_ENABLE_NIGHTWATCH: "FALSE"
       DB_DATABASE: drupal
       DB_USER: drupal
       DB_PASSWORD: drupal
+      COMPOSER_PROCESS_TIMEOUT: 1800
     strategy:
       matrix:
         core-version: ["CURRENT", "PREVIOUS_MINOR"]
@@ -92,13 +98,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
-      ORCA_SUT_BRANCH: dev-ACMS-1091-1
+      ORCA_SUT_BRANCH: develop
       ORCA_VERSION: ^3
       ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
       ORCA_ENABLE_NIGHTWATCH: "FALSE"
       DB_DATABASE: drupal
       DB_USER: drupal
       DB_PASSWORD: drupal
+      COMPOSER_PROCESS_TIMEOUT: 1800
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
