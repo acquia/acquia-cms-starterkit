@@ -11,6 +11,7 @@ starter_kits:
         - acquia_cms_video
         - acquia_cms_search
         - acquia_cms_page
+        - acquia_cms_starter
     themes:
       install:
         - acquia_claro
