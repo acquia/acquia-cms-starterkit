@@ -7,10 +7,11 @@ starter_kits:
         - acquia_cms_common
         - acquia_cms_event
         - acquia_cms_article
-        #- acquia_cms_tour
+        - acquia_cms_tour
         - acquia_cms_video
         - acquia_cms_search
         - acquia_cms_page
+        - acquia_cms_starter
     themes:
       install:
         - acquia_claro
@@ -23,11 +24,10 @@ starter_kits:
         - acquia_cms_common
         - acquia_cms_search
         - acquia_cms_page
-        #- acquia_cms_tour
+        - acquia_cms_tour
     themes:
       install:
         - acquia_claro
-        - cohesion_theme
       admin: acquia_claro
       default: cohesion_theme
   acquia_cms_standard:
@@ -38,7 +38,7 @@ starter_kits:
         - acquia_cms_common
         - acquia_cms_event
         - acquia_cms_article
-        #- acquia_cms_tour
+        - acquia_cms_tour
         - acquia_cms_video
         - acquia_cms_search
     themes:
@@ -51,7 +51,7 @@ starter_kits:
     modules:
       install:
         - acquia_cms_common
-        #- acquia_cms_tour
+        - acquia_cms_tour
         - acquia_cms_search
     themes:
       install:
