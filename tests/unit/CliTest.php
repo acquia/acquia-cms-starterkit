@@ -62,7 +62,7 @@ class CliTest extends TestCase {
           'name' => 'Acquia CMS Demo',
           'description' => 'Low-code demonstration of ACMS with default content.',
           'modules' => [
-            "install" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search", "acquia_cms_page", "acquia_cms_starter"],
+            "install" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_tour", "acquia_cms_video", "acquia_cms_search", "acquia_cms_page", "acquia_cms_starter"],
           ],
           'themes' => [
             "install" => ["acquia_claro"],
@@ -73,7 +73,7 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Low Code",
           "description" => "Acquia CMS with Site Studio but no content opinion.",
           "modules" => [
-            "install" => ["acquia_cms_common", "acquia_cms_search", "acquia_cms_page"],
+            "install" => ["acquia_cms_common", "acquia_cms_search", "acquia_cms_page", "acquia_cms_tour"],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -85,7 +85,7 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Standard",
           "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
           "modules" => [
-            "install" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_video", "acquia_cms_search"],
+            "install" => ["acquia_cms_common", "acquia_cms_event", "acquia_cms_article", "acquia_cms_tour", "acquia_cms_video", "acquia_cms_search"],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -96,7 +96,7 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Minimal",
           "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
           "modules" => [
-            "install" => ["acquia_cms_common", "acquia_cms_search"],
+            "install" => ["acquia_cms_common", "acquia_cms_tour", "acquia_cms_search"],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
