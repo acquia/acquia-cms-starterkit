@@ -76,7 +76,7 @@ class CliTest extends TestCase {
             "install" => ["acquia_cms_common", "acquia_cms_search", "acquia_cms_page"],
           ],
           "themes" => [
-            "install" => ["acquia_claro", "cohesion_theme"],
+            "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
           ],
