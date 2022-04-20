@@ -10,6 +10,7 @@ starter_kits:
       install:
         - acquia_claro
       admin: acquia_claro
+      default: cohesion_theme
   acquia_cms_low_code:
     name: "Acquia CMS Low Code"
     description: "Acquia CMS with Site Studio but no content opinion."
@@ -54,6 +55,7 @@ starter_kits:
     modules:
       install:
         - acquia_cms_headless
+        - acquia_cms_tour
     themes:
       install:
         - acquia_claro
