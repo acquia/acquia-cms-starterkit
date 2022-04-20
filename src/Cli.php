@@ -15,7 +15,7 @@ class Cli {
    *
    * @var string
    */
-  public $headline = "Welcome to Acquia CMS starterkit installer";
+  public $headline = "Welcome to Acquia CMS Starter Kit installer";
 
   /**
    * Holds the symfony console output object.

@@ -176,6 +176,7 @@ class InstallTask {
       'type' => 'themes',
       'packages' => $this->starterKits[$bundle]['themes'],
     ]);
+    $this->postSiteInstall($bundle);
   }
 
   /**
@@ -223,6 +224,21 @@ class InstallTask {
       throw new InvalidArgumentException("Invalid starter kit. If should be from one of the following: " . implode(", ", $starterKits) . ".");
     }
     return TRUE;
+  }
+
+  /**
+   * Show successful message post site installation.
+   *
+   * @param string $bundle
+   *   User selected starter-kit.
+   */
+  protected function postSiteInstall(string $bundle) :void {
+    $this->output->writeln("");
+    $formatter = $this->command->getHelper('formatter');
+    $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$bundle`.";
+    $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
+    $this->output->writeln($formattedInfoBlock);
+    $this->output->writeln("");
   }
 
 }

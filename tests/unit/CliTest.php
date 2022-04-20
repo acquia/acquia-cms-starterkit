@@ -47,7 +47,7 @@ class CliTest extends TestCase {
    * @test
    */
   public function testExecute() :void {
-    $this->assertEquals("Welcome to Acquia CMS starterkit installer", $this->acquiaCli->headline);
+    $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
     $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile());
   }
@@ -67,6 +67,7 @@ class CliTest extends TestCase {
           'themes' => [
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
+            "default" => "cohesion_theme",
           ],
         ],
         "acquia_cms_low_code" => [
@@ -107,7 +108,7 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Headless",
           "description" => "ACMS with headless functionality.",
           "modules" => [
-            "install" => ["acquia_cms_headless"],
+            "install" => ["acquia_cms_headless", "acquia_cms_tour"],
           ],
           "themes" => [
             "install" => ["acquia_claro"],

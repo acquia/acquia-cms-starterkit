@@ -39,8 +39,18 @@ class EnableModules {
     if ($args['type'] == "modules") {
       // Install modules.
       $command = array_merge(["./vendor/bin/drush", "en", "--yes"], $packages);
+
+      // Also install toolbar(core) module, allowing user for easily navigation.
+      $command[] = "toolbar";
     }
     else {
+
+      // Enable olivero theme (if not selected).
+      // @todo Provide this configurable.
+      if (!isset($args['packages']['default'])) {
+        $packages[] = 'olivero';
+      }
+
       // Enable themes.
       $command = array_merge(["./vendor/bin/drush", "theme:enable"], [implode(",", $packages)]);
     }
@@ -57,16 +67,21 @@ class EnableModules {
       ], [$args['packages']['admin']]);
       $this->processManager->add($command);
     }
-    if (isset($args['packages']['default'])) {
+
+    if ($args['type'] == "themes") {
+      // Set default theme as olivero (if not defined)
+      $theme = $args['packages']['default'] ?? "olivero";
+
       $command = array_merge([
         "./vendor/bin/drush",
         "config:set",
         "system.theme",
         "default",
         "--yes",
-      ], [$args['packages']['default']]);
+      ], [$theme]);
       $this->processManager->add($command);
     }
+
     return $this->processManager->runAll();
   }
 
