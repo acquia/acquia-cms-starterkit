@@ -125,6 +125,58 @@ class CliTest extends TestCase {
           ],
         ],
       ],
+      "acms_questions" => [
+        "CONNECTOR_ID" => [
+          "dependencies" => [
+            "starter_kits" => [
+              "acquia_cms_demo",
+            ],
+          ],
+          "question" => "Please provide the Acquia Connector ID : ",
+          "required" => TRUE,
+        ],
+        "GMAPS_KEY" => [
+          "dependencies" => [
+            "starter_kits" => [
+              "acquia_cms_demo",
+            ],
+          ],
+          "question" => "Please provide the Google Maps API Key : ",
+          "required" => TRUE,
+        ],
+        "SEARCH_UUID" => [
+          "dependencies" => [
+            "starter_kits" => [
+              "acquia_cms_demo",
+              "acquia_cms_low_code",
+              "acquia_cms_standard",
+              "acquia_cms_minimal",
+            ],
+          ],
+          "question" => "Please provide the Acquia CMS Search UUID : ",
+          "required" => TRUE,
+        ],
+        "SITESTUDIO_API_KEY" => [
+          "dependencies" => [
+            "starter_kits" => [
+              "acquia_cms_demo",
+              "acquia_cms_low_code",
+            ],
+          ],
+          "question" => "Please provide the Site Studio API Key : ",
+          "required" => TRUE,
+        ],
+        "SITESTUDIO_ORG_KEY" => [
+          "dependencies" => [
+            "starter_kits" => [
+              "acquia_cms_demo",
+              "acquia_cms_low_code",
+            ],
+          ],
+          "question" => "Please provide the Site Studio Organization Key : ",
+          "required" => TRUE,
+        ],
+      ],
     ];
   }
 
