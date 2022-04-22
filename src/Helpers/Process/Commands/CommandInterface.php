@@ -34,7 +34,7 @@ interface CommandInterface {
    * @return int
    *   Returns 0 (for success), 1 (for failure)
    */
-  public function run() :int;
+  public function run(array $env = []) :int;
 
   /**
    * Executes the command quietly (without printing command on terminal).
@@ -42,7 +42,7 @@ interface CommandInterface {
    * @return string
    *   Return the executed command output.
    */
-  public function runQuietly() :string;
+  public function runQuietly(array $env = []) :string;
 
   /**
    * Return the base command name.
@@ -51,21 +51,5 @@ interface CommandInterface {
    *   Returns the command.
    */
   public function getCommand(): string;
-
-  /**
-   * Adds the command arguments prefix.
-   *
-   * @return array
-   *   Return the commands to prepend.
-   */
-  public function prefix(): array;
-
-  /**
-   * Adds the command arguments suffix.
-   *
-   * @return array
-   *   Return the commands to append to the last.
-   */
-  public function suffix(): array;
 
 }

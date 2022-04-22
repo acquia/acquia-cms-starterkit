@@ -72,13 +72,11 @@ class CommandBase implements CommandInterface {
    * @return CommandInterface
    *   Returns the command object.
    */
-  public function prepare(array $commands) : CommandInterface {
+  public function prepare(array $commands = []) : CommandInterface {
     try {
       $commands = array_merge(
-        $this->prefix(),
         [$this->getCommand()],
         $commands,
-        $this->suffix(),
       );
       $this->process = new Process($commands);
       $this->process->setTimeout(NULL)
@@ -99,13 +97,13 @@ class CommandBase implements CommandInterface {
    * @return int
    *   Returns the command output status code.
    */
-  public function run() :int {
+  public function run(array $env = []) :int {
     $this->output->writeln(sprintf('> %s', $this->process->getCommandLine()));
     $status = $this->process->run(function ($type, $buffer) {
       if (Process::ERR != $type) {
         $this->output->writeln($buffer);
       }
-    });
+    }, $env);
     $this->verifyCommand();
     return $status;
   }
@@ -116,9 +114,9 @@ class CommandBase implements CommandInterface {
    * @return string
    *   Returns the executed command output.
    */
-  public function runQuietly() :string {
+  public function runQuietly(array $env = []) :string {
     $this->process->setTty(FALSE);
-    $this->process->run();
+    $this->process->run(NULL, $env);
     $this->verifyCommand();
     return $this->process->getOutput();
   }
@@ -147,26 +145,6 @@ class CommandBase implements CommandInterface {
       throw new \Exception("Command can not be empty. Provide command name. Ex: drush, php etc.");
     }
     return $this->command;
-  }
-
-  /**
-   * Placeholder function to prefix commands.
-   *
-   * @return array
-   *   Returns the array of command to prefix.
-   */
-  public function prefix(): array {
-    return [];
-  }
-
-  /**
-   * Placeholder function to suffix commands.
-   *
-   * @return array
-   *   Returns the array of command to suffix.
-   */
-  public function suffix(): array {
-    return [];
   }
 
 }
