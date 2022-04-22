@@ -71,23 +71,20 @@ class CommandBase implements CommandInterface {
    *
    * @return CommandInterface
    *   Returns the command object.
+   *
+   * @throws \RuntimeException
+   *   Throws RuntimeException if no base command.
    */
   public function prepare(array $commands = []) : CommandInterface {
-    try {
-      $commands = array_merge(
-        [$this->getCommand()],
-        $commands,
-      );
-      $this->process = new Process($commands);
-      $this->process->setTimeout(NULL)
-        ->setIdleTimeout(NULL)
-        ->setTty(Process::isTtySupported())
-        ->setWorkingDirectory($this->rootDir);
-    }
-    catch (\Exception $e) {
-      print $e->getMessage() . PHP_EOL;
-      die;
-    }
+    $commands = array_merge(
+      [$this->getCommand()],
+      $commands,
+    );
+    $this->process = new Process($commands);
+    $this->process->setTimeout(NULL)
+      ->setIdleTimeout(NULL)
+      ->setTty(Process::isTtySupported())
+      ->setWorkingDirectory($this->rootDir);
     return $this;
   }
 
@@ -137,12 +134,12 @@ class CommandBase implements CommandInterface {
    * @return string
    *   Returns the base command.
    *
-   * @throws \Exception
+   * @throws \RuntimeException
    *   Throws exception if command is empty.
    */
   public function getCommand(): string {
     if (empty($this->command)) {
-      throw new \Exception("Command can not be empty. Provide command name. Ex: drush, php etc.");
+      throw new \RuntimeException("Command can not be empty. Provide command name. Ex: drush, php etc.");
     }
     return $this->command;
   }
