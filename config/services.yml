@@ -4,6 +4,9 @@ services:
     autoconfigure: true
     autowire: true
     public: true
+    bind:
+      $project_dir: "%kernel.project_dir%"
+      $root_dir: "%app.base_dir%"
 
   AcquiaCMS\Cli\:
     exclude: ../src/Kernel.php
@@ -24,7 +27,3 @@ services:
 
   Symfony\Contracts\HttpClient\HttpClientInterface:
     factory: ['Symfony\Component\HttpClient\HttpClient', 'create']
-
-  AcquiaCMS\Cli\Cli:
-    arguments:
-      $project_dir: "%kernel.project_dir%"

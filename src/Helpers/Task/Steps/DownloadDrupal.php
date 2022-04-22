@@ -2,7 +2,7 @@
 
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
-use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
+use AcquiaCMS\Cli\Helpers\Process\Commands\Composer;
 use AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient;
 
 /**
@@ -11,11 +11,11 @@ use AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient;
 class DownloadDrupal {
 
   /**
-   * A process manager object.
+   * A composer command object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Composer
    */
-  protected $processManager;
+  protected $composerCommand;
 
   /**
    * An acquia minimal client object.
@@ -27,13 +27,13 @@ class DownloadDrupal {
   /**
    * Constructs an object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
-   *   Hold the process manager class object.
+   * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Composer $composer
+   *   Holds the composer command class object.
    * @param \AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient $acquiaMinimalClient
    *   Hold the Acquia Minimal http cliend object.
    */
-  public function __construct(ProcessManager $processManager, AcquiaMinimalClient $acquiaMinimalClient) {
-    $this->processManager = $processManager;
+  public function __construct(Composer $composer, AcquiaMinimalClient $acquiaMinimalClient) {
+    $this->composerCommand = $composer;
     $this->acquiaMinimalClient = $acquiaMinimalClient;
   }
 
@@ -46,39 +46,35 @@ class DownloadDrupal {
   public function execute(array $args = []) :int {
     $jsonArray = json_decode($this->acquiaMinimalClient->getFileContents("composer.json"));
     foreach ($jsonArray->repositories as $repoName => $data) {
-      $this->processManager->add([
-        "./vendor/bin/composer",
+      $this->composerCommand->prepare([
         "config",
         "--json",
         "repositories.$repoName",
         json_encode($data),
-      ]);
+      ])->run();
     }
     foreach ($jsonArray->extra as $key => $data) {
-      $this->processManager->add([
-        "./vendor/bin/composer",
+      $this->composerCommand->prepare([
         "config",
         "--json",
         "extra.$key",
         json_encode($data),
-      ]);
+      ])->run();
     }
     foreach ($jsonArray->config->{'allow-plugins'} as $plugin => $value) {
-      $this->processManager->add([
-        "./vendor/bin/composer",
+      $this->composerCommand->prepare([
         "config",
         "--no-plugins",
         "allow-plugins.$plugin",
         $value,
-      ]);
+      ])->run();
     }
     $requirePackages = (array) $jsonArray->require;
     $packages = array_map(function ($key, $value) {
       return $key . ":" . $value;
     }, array_keys($requirePackages), $requirePackages);
-    $requireCommand = array_merge(["./vendor/bin/composer", "require", "-W"], $packages);
-    $this->processManager->add($requireCommand);
-    return $this->processManager->runAll();
+    $requireCommand = array_merge(["require", "-W"], $packages);
+    return $this->composerCommand->prepare($requireCommand)->run();
   }
 
 }

@@ -24,6 +24,14 @@ class CliTest extends TestCase {
    */
   protected $projectDirectory;
 
+
+  /**
+   * An absolute directory to project.
+   *
+   * @var string
+   */
+  protected $rootDirectory;
+
   /**
    * An acquia minimal client object.
    *
@@ -38,7 +46,8 @@ class CliTest extends TestCase {
     $this->output = $this->prophesize(OutputInterface::class);
     $output = $this->output->reveal();
     $this->projectDirectory = getcwd();
-    $this->acquiaCli = new Cli($this->projectDirectory, $output);
+    $this->rootDirectory = $this->projectDirectory;
+    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output);
   }
 
   /**

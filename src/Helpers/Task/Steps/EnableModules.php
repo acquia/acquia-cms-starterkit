@@ -2,8 +2,9 @@
 
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
+use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
-use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
+use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 
 /**
  * Run the drush command to enable Drupal modules.
@@ -11,20 +12,20 @@ use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
 class EnableModules {
 
   /**
-   * An process manager object.
+   * A drush command object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
    */
-  protected $processManager;
+  protected $drushCommand;
 
   /**
    * Constructs an object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
-   *   Hold the process manager class object.
+   * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush
+   *   Holds the drush command class object.
    */
-  public function __construct(ProcessManager $processManager) {
-    $this->processManager = $processManager;
+  public function __construct(Drush $drush) {
+    $this->drushCommand = $drush;
   }
 
   /**
@@ -38,7 +39,7 @@ class EnableModules {
 
     if ($args['type'] == "modules") {
       // Install modules.
-      $command = array_merge(["./vendor/bin/drush", "en", "--yes"], $packages);
+      $command = array_merge(["en", "--yes"], $packages);
 
       // Also install toolbar(core) module, allowing user for easily navigation.
       $command[] = "toolbar";
@@ -52,20 +53,19 @@ class EnableModules {
       }
 
       // Enable themes.
-      $command = array_merge(["./vendor/bin/drush", "theme:enable"], [implode(",", $packages)]);
+      $command = array_merge(["theme:enable"], [implode(",", $packages)]);
     }
-    $this->processManager->add($command);
+    $this->drushCommand->prepare($command)->run();
 
     // Set default and/or admin theme.
     if (isset($args['packages']['admin'])) {
       $command = array_merge([
-        "./vendor/bin/drush",
         "config:set",
         "system.theme",
         "admin",
         "--yes",
       ], [$args['packages']['admin']]);
-      $this->processManager->add($command);
+      $this->drushCommand->prepare($command)->run();
     }
 
     if ($args['type'] == "themes") {
@@ -73,16 +73,15 @@ class EnableModules {
       $theme = $args['packages']['default'] ?? "olivero";
 
       $command = array_merge([
-        "./vendor/bin/drush",
         "config:set",
         "system.theme",
         "default",
         "--yes",
       ], [$theme]);
-      $this->processManager->add($command);
+      $this->drushCommand->prepare($command)->run();
     }
 
-    return $this->processManager->runAll();
+    return StatusCodes::OK;
   }
 
 }

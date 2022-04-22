@@ -7,19 +7,17 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
-use AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Helper\Table;
+use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Executes the task needed to run site:install command.
  */
 class InstallTask {
+
+  use StatusMessageTrait;
 
   /**
    * Holds the Acquia CMS cli object.
@@ -64,13 +62,6 @@ class InstallTask {
   protected $enableModules;
 
   /**
-   * Holds the status message object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage
-   */
-  protected $statusMessage;
-
-  /**
    * Holds the symfony console command object.
    *
    * @var \Symfony\Component\Console\Command\Command
@@ -99,6 +90,13 @@ class InstallTask {
   protected $downloadModules;
 
   /**
+   * User selected bundle.
+   *
+   * @var string
+   */
+  protected $bundle;
+
+  /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Cli $cli
@@ -113,15 +111,12 @@ class InstallTask {
    *   A Drupal Site Install class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules $enableModules
    *   Enable Drupal modules class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\StatusMessage $statusMessage
-   *   Status Message class object.
    */
-  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, StatusMessage $statusMessage) {
+  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules) {
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->validateDrupal = $validateDrupal;
     $this->downloadDrupal = $downloadDrupal;
-    $this->statusMessage = $statusMessage;
     $this->enableModules = $enableModules;
     $this->siteInstall = $siteInstall;
     $this->downloadModules = $downloadModules;
@@ -137,8 +132,8 @@ class InstallTask {
    * @poram Symfony\Component\Console\Command\Command $output
    *   The site:install Symfony console command object.
    */
-  public function configure(InputInterface $input, OutputInterface $output, Command $command) :void {
-    $this->command = $command;
+  public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
+    $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
   }
@@ -147,98 +142,42 @@ class InstallTask {
    * Executes all the steps needed for install task.
    */
   public function run() :void {
-    $this->validationOptions();
-    $this->acquiaCmsCli->printLogo();
-    $this->acquiaCmsCli->printHeadline();
-    $this->renderStarterKits();
-    $bundle = $this->askBundleQuestion();
     if (!$this->validateDrupal->execute()) {
-      $this->statusMessage->print("Looks like, current project is not a Drupal project:", StatusMessage::TYPE_WARNING);
-      $this->statusMessage->print("Converting the current project to Drupal project:", StatusMessage::TYPE_HEADLINE);
+      $this->print("Looks like, current project is not a Drupal project:", 'warning');
+      $this->print("Converting the current project to Drupal project:", 'headline');
       $this->downloadDrupal->execute();
     }
     else {
-      $this->statusMessage->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", StatusMessage::TYPE_SUCCESS);
+      $this->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", 'success');
     }
-    $this->statusMessage->print("Downloading all packages/modules/themes required by the starter-kit:", StatusMessage::TYPE_HEADLINE);
-    $this->downloadModules->execute($this->starterKits[$bundle]);
-    $this->statusMessage->print("Installing Site:", StatusMessage::TYPE_HEADLINE);
+    $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
+    $this->downloadModules->execute($this->starterKits[$this->bundle]);
+    $this->print("Installing Site:", 'headline');
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
-    $this->statusMessage->print("Enabling modules for the starter-kit:", StatusMessage::TYPE_HEADLINE);
+    $this->print("Enabling modules for the starter-kit:", 'headline');
     $this->enableModules->execute([
       'type' => 'modules',
-      'packages' => $this->starterKits[$bundle]['modules'],
+      'packages' => $this->starterKits[$this->bundle]['modules'],
     ]);
-    $this->statusMessage->print("Enabling themes for the starter-kit:", StatusMessage::TYPE_HEADLINE);
+    $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableModules->execute([
       'type' => 'themes',
-      'packages' => $this->starterKits[$bundle]['themes'],
+      'packages' => $this->starterKits[$this->bundle]['themes'],
     ]);
-    $this->postSiteInstall($bundle);
   }
 
   /**
-   * Renders the table showing list of all starter kits.
-   */
-  protected function renderStarterKits() :void {
-    $table = new Table($this->output);
-    $table->setHeaders(['ID', 'Name', 'Description']);
-    foreach ($this->starterKits as $id => $starter_kit) {
-      $useCases[$id] = $starter_kit;
-      $table->addRow([$id, $starter_kit['name'], $starter_kit['description']]);
-    }
-    $table->setStyle('box');
-    $table->render();
-  }
-
-  /**
-   * Providing input to user, asking to select the starter-kit.
-   */
-  protected function askBundleQuestion() :string {
-    $helper = $this->command->getHelper('question');
-    $bundles = array_keys($this->starterKits);
-    $defaultStarterKit = $this->input->getArgument('name');
-    $question = new Question("Please choose bundle from one of the above use case: <comment>[$defaultStarterKit]</comment>: ", $defaultStarterKit);
-    $question->setAutocompleterValues($bundles);
-    $question->setValidator(function ($answer) use ($bundles) {
-      if (!is_string($answer) || !in_array($answer, $bundles)) {
-        throw new \RuntimeException(
-          "Please choose from one of the use case defined above. Ex: acquia_cms_demo."
-        );
-      }
-      return $answer;
-    });
-    $question->setMaxAttempts(3);
-    return $helper->ask($this->input, $this->output, $question);
-  }
-
-  /**
-   * Validate all input options/arguments.
-   */
-  protected function validationOptions() :bool {
-    $name = $this->input->getArgument('name');
-    $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
-    if (!in_array($name, $starterKits)) {
-      throw new InvalidArgumentException("Invalid starter kit. If should be from one of the following: " . implode(", ", $starterKits) . ".");
-    }
-    return TRUE;
-  }
-
-  /**
-   * Show successful message post site installation.
+   * Function to print message on terminal.
    *
-   * @param string $bundle
-   *   User selected starter-kit.
+   * @param string $message
+   *   Message to style.
+   * @param string $type
+   *   Type of styling the message.
    */
-  protected function postSiteInstall(string $bundle) :void {
-    $this->output->writeln("");
-    $formatter = $this->command->getHelper('formatter');
-    $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$bundle`.";
-    $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
-    $this->output->writeln($formattedInfoBlock);
-    $this->output->writeln("");
+  protected function print(string $message, string $type) :void {
+    $this->output->writeln($this->style($message, $type));
   }
 
 }

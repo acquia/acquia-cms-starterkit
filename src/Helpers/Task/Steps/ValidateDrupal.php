@@ -3,19 +3,11 @@
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
 use AcquiaCMS\Cli\Cli;
-use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
 
 /**
  * Provides the class to validate if current project is Drupal project.
  */
 class ValidateDrupal {
-
-  /**
-   * An process manager object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
-   */
-  protected $processManager;
 
   /**
    * The AcquiaCMS Cli object.
@@ -27,13 +19,10 @@ class ValidateDrupal {
   /**
    * Constructs an object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
-   *   Hold the process manager class object.
    * @param \AcquiaCMS\Cli\Cli $acquiaCmsCli
    *   Hold an Acquia CMS Cli object.
    */
-  public function __construct(ProcessManager $processManager, Cli $acquiaCmsCli) {
-    $this->processManager = $processManager;
+  public function __construct(Cli $acquiaCmsCli) {
     $this->acquiaCmsCli = $acquiaCmsCli;
   }
 

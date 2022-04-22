@@ -2,7 +2,7 @@
 
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
-use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
+use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 
 /**
  * Run the drush command to install Drupal site.
@@ -10,20 +10,20 @@ use AcquiaCMS\Cli\Helpers\Process\ProcessManager;
 class SiteInstall {
 
   /**
-   * A process manager object.
+   * A drush command object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\Process\ProcessManager
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
    */
-  protected $processManager;
+  protected $drushCommand;
 
   /**
    * Constructs an object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\Process\ProcessManager $processManager
-   *   Hold the process manager class object.
+   * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush
+   *   Holds the drush command class object.
    */
-  public function __construct(ProcessManager $processManager) {
-    $this->processManager = $processManager;
+  public function __construct(Drush $drush) {
+    $this->drushCommand = $drush;
   }
 
   /**
@@ -33,12 +33,11 @@ class SiteInstall {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $siteInstallCommand = ["./vendor/bin/drush", "site:install", "minimal"];
+    $siteInstallCommand = ["site:install", "minimal"];
     if ($args['no-interaction']) {
       $siteInstallCommand = array_merge($siteInstallCommand, ["--yes"]);
     }
-    $this->processManager->add($siteInstallCommand);
-    return $this->processManager->runAll();
+    return $this->drushCommand->prepare($siteInstallCommand)->run();
   }
 
 }

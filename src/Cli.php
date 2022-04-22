@@ -25,22 +25,32 @@ class Cli {
   protected $output;
 
   /**
-   * An absolute directory to project.
+   * An absolute directory path to project.
    *
    * @var string
    */
   protected $projectDirectory;
 
   /**
+   * An absolute root directory path of the project.
+   *
+   * @var string
+   */
+  protected $rootDirectory;
+
+  /**
    * Constructs an object.
    *
    * @param string $project_dir
    *   Returns an absolute path to project.
+   * @param string $root_dir
+   *   Returns an absolute root path to project.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Holds the symfony console output object.
    */
-  public function __construct(string $project_dir, OutputInterface $output) {
+  public function __construct(string $project_dir, string $root_dir, OutputInterface $output) {
     $this->projectDirectory = $project_dir;
+    $this->rootDirectory = $root_dir;
     $this->output = $output;
   }
 
@@ -95,21 +105,11 @@ class Cli {
    *   Returns the contents of composer.json file exist at root directory.
    */
   public function getRootComposer() :string {
-    $rootComposerJson = $this->getRootDir() . "/composer.json";
+    $rootComposerJson = $this->rootDirectory . "/composer.json";
     if (!file_exists($rootComposerJson)) {
       return "";
     }
     return file_get_contents($rootComposerJson);
-  }
-
-  /**
-   * Returns the root directory of the project.
-   *
-   * @return string
-   *   Returns current working directory.
-   */
-  public function getRootDir(): string {
-    return getcwd();
   }
 
 }
