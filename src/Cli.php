@@ -99,6 +99,14 @@ class Cli {
   }
 
   /**
+   * Returns an array of questions for setting keys defined in acms.yml file.
+   */
+  public function getInstallerQuestions() :array {
+    $fileContent = $this->getAcquiaCmsFile();
+    return $fileContent['acms_questions'] ?? [];
+  }
+
+  /**
    * Returns the composer.json string.
    *
    * @return string

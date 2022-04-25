@@ -6,6 +6,7 @@ use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
+use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;
@@ -20,6 +21,8 @@ use Symfony\Component\Console\Question\Question;
  * @code ./vendor/bin/acms acms:install
  */
 class AcmsInstallCommand extends Command {
+
+  use StatusMessageTrait;
 
   /**
    * The AcquiaCMS InstallTask object.
@@ -36,16 +39,26 @@ class AcmsInstallCommand extends Command {
   protected $acquiaCmsCli;
 
   /**
+   * Holds the symfony console output object.
+   *
+   * @var \Symfony\Component\Console\Output\OutputInterface
+   */
+  protected $output;
+
+  /**
    * Constructs an instance.
    *
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   Output contains the string to be displayed.
    * @param \AcquiaCMS\Cli\Helpers\Task\InstallTask $installTask
    *   Provides the Acquia CMS Install task object.
    * @param \AcquiaCMS\Cli\Cli $cli
    *   Provides the AcquiaCMS Cli class object.
    */
-  public function __construct(InstallTask $installTask, Cli $cli) {
+  public function __construct(OutputInterface $output, InstallTask $installTask, Cli $cli) {
     $this->acquiaCmsCli = $cli;
     $this->installTask = $installTask;
+    $this->output = $output;
     parent::__construct();
   }
 
@@ -76,6 +89,7 @@ class AcmsInstallCommand extends Command {
         $this->acquiaCmsCli->printLogo();
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
+        $this->askKeysQuestions($input, $output, $name);
       }
       $this->installTask->configure($input, $output, $name);
       $this->installTask->run();
@@ -122,6 +136,44 @@ class AcmsInstallCommand extends Command {
     });
     $question->setMaxAttempts(3);
     return $helper->ask($input, $output, $question);
+  }
+
+  /**
+   * Providing input to user, asking to provide key.
+   */
+  protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :void {
+    $helper = $this->getHelper('question');
+    $this->output->writeln($this->style("Please provide the required API/Token keys for installation: ", 'headline'));
+    $this->output->writeln($this->style("Required Keys are denoted by a (*) ", 'warning'));
+    // Process the Starter Kit array to fetch questions.
+    foreach ($this->acquiaCmsCli->getInstallerQuestions() as $id => $starter_kit_key) {
+      if (empty(getenv($id))) {
+        if (array_key_exists('starter_kits', $starter_kit_key['dependencies'])) {
+          if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
+            $installerQuestion = $starter_kit_key['question'];
+            // Append the required key to denote the required question.
+            if ($starter_kit_key['required'] == TRUE) {
+              $installerQuestion = $installerQuestion . '<error>*</error>';
+            }
+            $installerQuestion = $installerQuestion . ' : ';
+            $question = new Question($installerQuestion);
+            // Validator for the question.
+            $question->setValidator(function ($answer) use ($id, $starter_kit_key) {
+              if (!is_string($answer) && ($starter_kit_key['required'] == TRUE)) {
+                throw new \RuntimeException(
+                  "Key cannot be empty."
+                );
+              }
+              putenv($id . '=' . $answer);
+              return $answer;
+            });
+            // Max attempts for getting keys.
+            $question->setMaxAttempts(3);
+            $helper->ask($input, $output, $question);
+          }
+        }
+      }
+    }
   }
 
   /**

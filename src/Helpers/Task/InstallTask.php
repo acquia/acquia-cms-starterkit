@@ -169,11 +169,13 @@ class InstallTask {
     ]);
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $this->enableModules->execute([
+      'starter_kit' => $this->bundle,
       'type' => 'modules',
       'packages' => $this->starterKits[$this->bundle]['modules'],
     ]);
     $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableModules->execute([
+      'starter_kit' => $this->bundle,
       'type' => 'themes',
       'packages' => $this->starterKits[$this->bundle]['themes'],
     ]);
