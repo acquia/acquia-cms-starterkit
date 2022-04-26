@@ -151,8 +151,11 @@ class InstallTask {
 
   /**
    * Executes all the steps needed for install task.
+   *
+   * @param array $args
+   *   An array of params argument to pass.
    */
-  public function run() :void {
+  public function run(array $args) :void {
     if (!$this->validateDrupal->execute()) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
       $this->print("Converting the current project to Drupal project:", 'headline');
@@ -169,15 +172,15 @@ class InstallTask {
     ]);
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $this->enableModules->execute([
-      'starter_kit' => $this->bundle,
       'type' => 'modules',
       'packages' => $this->starterKits[$this->bundle]['modules'],
+      'keys' => $args['keys'],
     ]);
     $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableModules->execute([
-      'starter_kit' => $this->bundle,
       'type' => 'themes',
       'packages' => $this->starterKits[$this->bundle]['themes'],
+      'keys' => $args['keys'],
     ]);
     // Trigger site studio import process if starter or
     // page module is there in active bundle.

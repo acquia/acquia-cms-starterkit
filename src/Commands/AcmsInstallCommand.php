@@ -80,6 +80,7 @@ class AcmsInstallCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
       $name = $input->getArgument('name');
+      $args = [];
       if ($name) {
         $this->validationOptions($name);
         $this->acquiaCmsCli->printLogo();
@@ -89,10 +90,10 @@ class AcmsInstallCommand extends Command {
         $this->acquiaCmsCli->printLogo();
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
-        $this->askKeysQuestions($input, $output, $name);
+        $args['keys'] = $this->askKeysQuestions($input, $output, $name);
       }
       $this->installTask->configure($input, $output, $name);
-      $this->installTask->run();
+      $this->installTask->run($args);
       $this->postSiteInstall($name, $output);
     }
     catch (AcmsCliException $e) {
@@ -141,39 +142,106 @@ class AcmsInstallCommand extends Command {
   /**
    * Providing input to user, asking to provide key.
    */
-  protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :void {
+  protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
+    $askKeys = [];
     $helper = $this->getHelper('question');
-    $this->output->writeln($this->style("Please provide the required API/Token keys for installation: ", 'headline'));
-    $this->output->writeln($this->style("Required Keys are denoted by a (*) ", 'warning'));
-    // Process the Starter Kit array to fetch questions.
+    $allQuestions = $this->getQuestionForBundle($bundle);
+    $filteredQuestions = $this->filterQuestionForBundle($allQuestions);
+    if ($filteredQuestions) {
+      $this->output->writeln($this->style("Please provide the required API/Token keys for installation: ", 'headline'));
+      $this->output->writeln($this->style("Required Keys are denoted by a (*) ", 'warning'));
+      foreach ($filteredQuestions as $key => $question) {
+        $askQuestion = new Question($question);
+        $askQuestion->setValidator(function ($answer) {
+          if (!is_string($answer)) {
+            throw new \RuntimeException(
+              "Key cannot be empty."
+            );
+          }
+          return $answer;
+        });
+        // Max attempts for getting keys.
+        $askQuestion->setMaxAttempts(3);
+        $askKeys[$key] = $helper->ask($input, $output, $askQuestion);
+      }
+    }
+    return $this->getKeyPair($bundle, $askKeys);
+  }
+
+  /**
+   * Validate all input options/arguments.
+   *
+   * @param string $bundle
+   *   A name of the user selected use-case.
+   *
+   * @return array
+   *   Returns the questions of the user selected use-case.
+   */
+  protected function getQuestionForBundle(string $bundle) :array {
+    $allQuestion = [];
     foreach ($this->acquiaCmsCli->getInstallerQuestions() as $id => $starter_kit_key) {
-      if (empty(getenv($id))) {
-        if (array_key_exists('starter_kits', $starter_kit_key['dependencies'])) {
-          if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
-            $installerQuestion = $starter_kit_key['question'];
-            // Append the required key to denote the required question.
-            if ($starter_kit_key['required'] == TRUE) {
-              $installerQuestion = $installerQuestion . '<error>*</error>';
-            }
-            $installerQuestion = $installerQuestion . ' : ';
-            $question = new Question($installerQuestion);
-            // Validator for the question.
-            $question->setValidator(function ($answer) use ($id, $starter_kit_key) {
-              if (!is_string($answer) && ($starter_kit_key['required'] == TRUE)) {
-                throw new \RuntimeException(
-                  "Key cannot be empty."
-                );
-              }
-              putenv($id . '=' . $answer);
-              return $answer;
-            });
-            // Max attempts for getting keys.
-            $question->setMaxAttempts(3);
-            $helper->ask($input, $output, $question);
+      if (array_key_exists('starter_kits', $starter_kit_key['dependencies'])) {
+        if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
+          // $allQuestion[] = $starter_kit_key['question'];
+          $allQuestion[$id] = [
+            'question' => $starter_kit_key['question'],
+            'required' => $starter_kit_key['required'],
+          ];
+        }
+      }
+    }
+    // Return all question from acms.yml file for requested starter kit.
+    return $allQuestion;
+  }
+
+  /**
+   * Validate all input options/arguments.
+   *
+   * @param array $questions
+   *   Questions of the user selected use-case.
+   *
+   * @return array
+   *   Returns the filteres questions of the user selected use-case.
+   */
+  protected function filterQuestionForBundle(array $questions) {
+    $filteredQuestions = [];
+    $installerQuestion = '';
+    foreach ($questions as $apiKey => $question) {
+      if (empty(getenv($apiKey))) {
+        if ($question['required']) {
+          $installerQuestion = $question['question'] . '<error>*</error>';
+        }
+        $installerQuestion = $installerQuestion . ' : ';
+        $filteredQuestions[$apiKey] = $installerQuestion;
+      }
+    }
+    return $filteredQuestions;
+  }
+
+  /**
+   * Validate all input options/arguments.
+   *
+   * @param string $bundle
+   *   A name of the user selected use-case.
+   * @param array $keys
+   *   API/Token keys for the user selected use-case.
+   *
+   * @return array
+   *   Returns the keys/tokens for the user selected use-case.
+   */
+  protected function getKeyPair(string $bundle, array $keys) :array {
+    $setKeys = [];
+    // Return Set of API/Token array.
+    foreach ($this->acquiaCmsCli->getInstallerQuestions() as $id => $starter_kit_key) {
+      if (array_key_exists('starter_kits', $starter_kit_key['dependencies'])) {
+        if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
+          if (getenv($id)) {
+            $setKeys[$id] = getenv($id);
           }
         }
       }
     }
+    return array_merge($setKeys, $keys);
   }
 
   /**

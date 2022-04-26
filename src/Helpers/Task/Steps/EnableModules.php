@@ -19,23 +19,13 @@ class EnableModules {
   protected $drushCommand;
 
   /**
-   * Set the API keys before module install.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\InstallerQuestions
-   */
-  protected $installerQuestions;
-
-  /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush
    *   Holds the drush command class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\InstallerQuestions $installer_questions
-   *   Holds the InstallerQuestion class object.
    */
-  public function __construct(Drush $drush, InstallerQuestions $installer_questions) {
+  public function __construct(Drush $drush) {
     $this->drushCommand = $drush;
-    $this->installerQuestions = $installer_questions;
   }
 
   /**
@@ -46,15 +36,12 @@ class EnableModules {
    */
   public function execute(array $args = []) :int {
     $packages = JsonParser::installPackages($args['packages']['install']);
-    $keys = [];
     if ($args['type'] == "modules") {
       // Install modules.
       $command = array_merge(["en", "--yes"], $packages);
 
       // Also install toolbar(core) module, allowing user for easily navigation.
       $command[] = "toolbar";
-
-      $keys = $this->installerQuestions->execute($args['starter_kit']);
     }
     else {
 
