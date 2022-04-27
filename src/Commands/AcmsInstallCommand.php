@@ -5,6 +5,7 @@ namespace AcquiaCMS\Cli\Commands;
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
+use AcquiaCMS\Cli\Helpers\InstallerQuestions;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Command\Command;
@@ -46,6 +47,13 @@ class AcmsInstallCommand extends Command {
   protected $output;
 
   /**
+   * The AcquiaCMS installer questions object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\InstallerQuestions
+   */
+  protected $installerQuestions;
+
+  /**
    * Constructs an instance.
    *
    * @param \Symfony\Component\Console\Output\OutputInterface $output
@@ -54,11 +62,18 @@ class AcmsInstallCommand extends Command {
    *   Provides the Acquia CMS Install task object.
    * @param \AcquiaCMS\Cli\Cli $cli
    *   Provides the AcquiaCMS Cli class object.
+   * @param \AcquiaCMS\Cli\Helpers\InstallerQuestions $installerQuestions
+   *   Provides the AcquiaCMS InstallerQuestions class object.
    */
-  public function __construct(OutputInterface $output, InstallTask $installTask, Cli $cli) {
+  public function __construct(
+    OutputInterface $output,
+    InstallTask $installTask,
+    Cli $cli,
+    InstallerQuestions $installerQuestions) {
     $this->acquiaCmsCli = $cli;
     $this->installTask = $installTask;
     $this->output = $output;
+    $this->installerQuestions = $installerQuestions;
     parent::__construct();
   }
 
@@ -112,7 +127,7 @@ class AcmsInstallCommand extends Command {
   protected function validationOptions(string $name) :bool {
     $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
     if (!in_array($name, $starterKits)) {
-      throw new InvalidArgumentException("Invalid starter kit. If should be from one of the following: " . implode(", ", $starterKits) . ".");
+      throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
     }
     return TRUE;
   }
@@ -145,15 +160,21 @@ class AcmsInstallCommand extends Command {
   protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
     $askKeys = [];
     $helper = $this->getHelper('question');
-    $allQuestions = $this->getQuestionForBundle($bundle);
-    $filteredQuestions = $this->filterQuestionForBundle($allQuestions);
-    if ($filteredQuestions) {
+    // The questions defined in acms.yml file.
+    $bundleQuestions = $this->acquiaCmsCli->getInstallerQuestions();
+    // Get all questions for user selected use-case.
+    $allQuestions = $this->installerQuestions->getQuestionForBundle($bundleQuestions, $bundle);
+    // Filter questions, only ask question if variable key is not available.
+    $filteredQuestions = $this->installerQuestions->filterQuestionForBundle($allQuestions);
+    // Style questions.
+    $questionsToAsk = $this->installerQuestions->styleQuestionForBundle($filteredQuestions);
+    if ($questionsToAsk) {
       $this->output->writeln($this->style("Please provide the required API/Token keys for installation: ", 'headline'));
       $this->output->writeln($this->style("Required Keys are denoted by a (*) ", 'warning'));
-      foreach ($filteredQuestions as $key => $question) {
-        $askQuestion = new Question($question);
-        $askQuestion->setValidator(function ($answer) {
-          if (!is_string($answer)) {
+      foreach ($questionsToAsk as $key => $question) {
+        $askQuestion = new Question($question['question'] . ' : ');
+        $askQuestion->setValidator(function ($answer) use ($question) {
+          if (!is_string($answer) && $question['required']) {
             throw new \RuntimeException(
               "Key cannot be empty."
             );
@@ -165,83 +186,8 @@ class AcmsInstallCommand extends Command {
         $askKeys[$key] = $helper->ask($input, $output, $askQuestion);
       }
     }
-    return $this->getKeyPair($bundle, $askKeys);
-  }
-
-  /**
-   * Validate all input options/arguments.
-   *
-   * @param string $bundle
-   *   A name of the user selected use-case.
-   *
-   * @return array
-   *   Returns the questions of the user selected use-case.
-   */
-  protected function getQuestionForBundle(string $bundle) :array {
-    $allQuestion = [];
-    foreach ($this->acquiaCmsCli->getInstallerQuestions() as $id => $starter_kit_key) {
-      if (array_key_exists('starter_kits', $starter_kit_key['dependencies'])) {
-        if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
-          // $allQuestion[] = $starter_kit_key['question'];
-          $allQuestion[$id] = [
-            'question' => $starter_kit_key['question'],
-            'required' => $starter_kit_key['required'],
-          ];
-        }
-      }
-    }
-    // Return all question from acms.yml file for requested starter kit.
-    return $allQuestion;
-  }
-
-  /**
-   * Validate all input options/arguments.
-   *
-   * @param array $questions
-   *   Questions of the user selected use-case.
-   *
-   * @return array
-   *   Returns the filteres questions of the user selected use-case.
-   */
-  protected function filterQuestionForBundle(array $questions) {
-    $filteredQuestions = [];
-    $installerQuestion = '';
-    foreach ($questions as $apiKey => $question) {
-      if (empty(getenv($apiKey))) {
-        if ($question['required']) {
-          $installerQuestion = $question['question'] . '<error>*</error>';
-        }
-        $installerQuestion = $installerQuestion . ' : ';
-        $filteredQuestions[$apiKey] = $installerQuestion;
-      }
-    }
-    return $filteredQuestions;
-  }
-
-  /**
-   * Validate all input options/arguments.
-   *
-   * @param string $bundle
-   *   A name of the user selected use-case.
-   * @param array $keys
-   *   API/Token keys for the user selected use-case.
-   *
-   * @return array
-   *   Returns the keys/tokens for the user selected use-case.
-   */
-  protected function getKeyPair(string $bundle, array $keys) :array {
-    $setKeys = [];
-    // Return Set of API/Token array.
-    foreach ($this->acquiaCmsCli->getInstallerQuestions() as $id => $starter_kit_key) {
-      if (array_key_exists('starter_kits', $starter_kit_key['dependencies'])) {
-        if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
-          if (getenv($id)) {
-            $setKeys[$id] = getenv($id);
-          }
-        }
-      }
-    }
-    return array_merge($setKeys, $keys);
+    // Return variable key-value pair.
+    return $this->installerQuestions->getKeyPair($bundleQuestions, $bundle, $askKeys);
   }
 
   /**
