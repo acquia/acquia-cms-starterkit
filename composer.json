@@ -1,8 +1,7 @@
 {
     "name": "acquia/acquia-cms-starterkit",
-    "description": "Acquia CMS starterkit cli command.",
-    "license": "GPL-2.0-or-later",
     "type": "project",
+    "description": "Acquia CMS starterkit cli command.",
     "keywords": [
         "cli",
         "console",
@@ -10,6 +9,7 @@
         "acquia_cms",
         "starterkit"
     ],
+    "license": "GPL-2.0-or-later",
     "authors": [
         {
             "name": "Acquia Engineering",
@@ -25,7 +25,7 @@
     "require": {
         "acquia/coding-standards": "^0.8.0",
         "composer/composer": "^2.2",
-        "ergebnis/composer-normalize": "^2.25",
+        "ergebnis/composer-normalize": "~2.15.0",
         "stecman/symfony-console-completion": "^0.10.1",
         "symfony/config": "^4.1",
         "symfony/console": "^4.1",
@@ -42,22 +42,6 @@
         "phpstan/phpstan": "^1.5",
         "phpunit/phpunit": "^9"
     },
-    "repositories": {
-        "assets": {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "AcquiaCMS\\Cli\\": "src/"
-        }
-    },
-    "bin": [
-        "bin/acms"
-    ],
     "config": {
         "allow-plugins": {
             "cweagans/composer-patches": true,
@@ -66,5 +50,21 @@
             "phpro/grumphp-shim": true,
             "webdriver-binary/binary-chromedriver": true
         }
-    }
+    },
+    "autoload": {
+        "psr-4": {
+            "AcquiaCMS\\Cli\\": "src/"
+        }
+    },
+    "repositories": {
+        "assets": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "bin": [
+        "bin/acms"
+    ]
 }
