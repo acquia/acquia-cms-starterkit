@@ -97,7 +97,7 @@ class Kernel extends BaseKernel {
       return Utility::normalizePath(__DIR__ . '/../');
     }
     elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
-      return Utility::normalizePath(dirname(__DIR__ . '/../../../'));
+      return Utility::normalizePath(__DIR__ . '/../../../../');
     }
     else {
       throw new \Exception("There's an error in identifying base directory.");
