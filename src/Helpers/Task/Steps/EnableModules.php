@@ -55,7 +55,7 @@ class EnableModules {
       // Enable themes.
       $command = array_merge(["theme:enable"], [implode(",", $packages)]);
     }
-    $this->drushCommand->prepare($command)->run();
+    $this->drushCommand->prepare($command)->run(['STARTER_KIT_PROGRESS' => 1]);
 
     // Set default and/or admin theme.
     if (isset($args['packages']['admin'])) {
