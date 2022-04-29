@@ -29,6 +29,10 @@ jobs:
           coverage: xdebug
       - name: Download ORCA
         run: composer create-project --no-dev --ignore-platform-req=php acquia/orca ../orca "$ORCA_VERSION"
+      - name: Run GrumpPHP tests
+        run: |
+          composer install
+          ./vendor/bin/grumphp run
       - name: Before Install
         run: ../orca/bin/ci/before_install.sh
       - name: Install
