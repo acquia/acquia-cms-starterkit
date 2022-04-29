@@ -125,57 +125,115 @@ class CliTest extends TestCase {
           ],
         ],
       ],
-      "acms_questions" => [
-        "CONNECTOR_ID" => [
-          "dependencies" => [
-            "starter_kits" => [
-              "acquia_cms_demo",
-            ],
+      "questions" => array_merge (
+        self::getConnectorId(),
+        self::getGmapsKey(),
+        self::getSearchUuid(),
+        self::getSiteStudioApiKey(),
+        self::getSiteStudioOrgKey(),
+      ),
+    ];
+  }
+
+  /**
+   * Returns the test data for SEARCH_UUID Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getSearchUuid(): array {
+    return [
+      'SEARCH_UUID' => [
+        'dependencies' => [
+          'starter_kits' => [
+            'acquia_cms_demo',
+            'acquia_cms_low_code',
+            'acquia_cms_standard',
+            'acquia_cms_minimal',
           ],
-          "question" => "Please provide the Acquia Connector ID",
-          "required" => TRUE,
         ],
-        "GMAPS_KEY" => [
-          "dependencies" => [
-            "starter_kits" => [
-              "acquia_cms_demo",
-            ],
+        'question' => "Please provide the Acquia CMS Search UUID",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for SITESTUDIO_API_KEY Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getSiteStudioApiKey(): array {
+    return [
+      'SITESTUDIO_API_KEY' => [
+        'dependencies' => [
+          'starter_kits' => [
+            'acquia_cms_demo',
+            'acquia_cms_low_code',
           ],
-          "question" => "Please provide the Google Maps API Key",
-          "required" => TRUE,
         ],
-        "SEARCH_UUID" => [
-          "dependencies" => [
-            "starter_kits" => [
-              "acquia_cms_demo",
-              "acquia_cms_low_code",
-              "acquia_cms_standard",
-              "acquia_cms_minimal",
-            ],
+        'question' => "Please provide the Site Studio API Key",
+        'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\n You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for SITESTUDIO_ORG_KEY Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getSiteStudioOrgKey(): array {
+    return [
+      'SITESTUDIO_ORG_KEY' => [
+        'dependencies' => [
+          'starter_kits' => [
+            'acquia_cms_demo',
+            'acquia_cms_low_code',
           ],
-          "question" => "Please provide the Acquia CMS Search UUID",
-          "required" => TRUE,
         ],
-        "SITESTUDIO_API_KEY" => [
-          "dependencies" => [
-            "starter_kits" => [
-              "acquia_cms_demo",
-              "acquia_cms_low_code",
-            ],
+        'question' => "Please provide the Site Studio Organization Key",
+        'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\n You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for CONNECTOR_ID Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getConnectorId(): array {
+    return [
+      'CONNECTOR_ID' => [
+        'dependencies' => [
+          'starter_kits' => [
+            'acquia_cms_demo',
           ],
-          "question" => "Please provide the Site Studio API Key",
-          "required" => TRUE,
         ],
-        "SITESTUDIO_ORG_KEY" => [
-          "dependencies" => [
-            "starter_kits" => [
-              "acquia_cms_demo",
-              "acquia_cms_low_code",
-            ],
+        'question' => "Please provide the Acquia Connector ID",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for GMAPS_KEY Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getGmapsKey(): array {
+    return [
+      'GMAPS_KEY' => [
+        'dependencies' => [
+          'starter_kits' => [
+            'acquia_cms_demo',
           ],
-          "question" => "Please provide the Site Studio Organization Key",
-          "required" => TRUE,
         ],
+        'question' => "Please provide the Google Maps API Key",
+        'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step.They are technically harmless, but the maps will not work.\n You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
       ],
     ];
   }

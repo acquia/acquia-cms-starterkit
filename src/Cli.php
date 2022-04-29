@@ -103,7 +103,7 @@ class Cli {
    */
   public function getInstallerQuestions() :array {
     $fileContent = $this->getAcquiaCmsFile();
-    return $fileContent['acms_questions'] ?? [];
+    return $fileContent['questions'] ?? [];
   }
 
   /**

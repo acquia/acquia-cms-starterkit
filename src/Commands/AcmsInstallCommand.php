@@ -8,6 +8,7 @@ use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\InstallerQuestions;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;
@@ -24,7 +25,7 @@ use Symfony\Component\Console\Question\Question;
 class AcmsInstallCommand extends Command {
 
   use StatusMessageTrait;
-
+  use UserInputTrait;
   /**
    * The AcquiaCMS InstallTask object.
    *
@@ -40,13 +41,6 @@ class AcmsInstallCommand extends Command {
   protected $acquiaCmsCli;
 
   /**
-   * Holds the symfony console output object.
-   *
-   * @var \Symfony\Component\Console\Output\OutputInterface
-   */
-  protected $output;
-
-  /**
    * The AcquiaCMS installer questions object.
    *
    * @var \AcquiaCMS\Cli\Helpers\InstallerQuestions
@@ -56,8 +50,6 @@ class AcmsInstallCommand extends Command {
   /**
    * Constructs an instance.
    *
-   * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   Output contains the string to be displayed.
    * @param \AcquiaCMS\Cli\Helpers\Task\InstallTask $installTask
    *   Provides the Acquia CMS Install task object.
    * @param \AcquiaCMS\Cli\Cli $cli
@@ -65,14 +57,9 @@ class AcmsInstallCommand extends Command {
    * @param \AcquiaCMS\Cli\Helpers\InstallerQuestions $installerQuestions
    *   Provides the AcquiaCMS InstallerQuestions class object.
    */
-  public function __construct(
-    OutputInterface $output,
-    InstallTask $installTask,
-    Cli $cli,
-    InstallerQuestions $installerQuestions) {
+  public function __construct(InstallTask $installTask, Cli $cli, InstallerQuestions $installerQuestions) {
     $this->acquiaCmsCli = $cli;
     $this->installTask = $installTask;
-    $this->output = $output;
     $this->installerQuestions = $installerQuestions;
     parent::__construct();
   }
@@ -105,8 +92,8 @@ class AcmsInstallCommand extends Command {
         $this->acquiaCmsCli->printLogo();
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
-        $args['keys'] = $this->askKeysQuestions($input, $output, $name);
       }
+      $args['keys'] = $this->askKeysQuestions($input, $output, $name);
       $this->installTask->configure($input, $output, $name);
       $this->installTask->run($args);
       $this->postSiteInstall($name, $output);
@@ -140,7 +127,7 @@ class AcmsInstallCommand extends Command {
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
     $starterKit = "acquia_cms_minimal";
-    $question = new Question("Please choose bundle from one of the above use case: <comment>[$starterKit]</comment>: ", $starterKit);
+    $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
@@ -158,36 +145,37 @@ class AcmsInstallCommand extends Command {
    * Providing input to user, asking to provide key.
    */
   protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
-    $askKeys = [];
     $helper = $this->getHelper('question');
     // The questions defined in acms.yml file.
-    $bundleQuestions = $this->acquiaCmsCli->getInstallerQuestions();
+    $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
     // Get all questions for user selected use-case.
-    $allQuestions = $this->installerQuestions->getQuestionForBundle($bundleQuestions, $bundle);
-    // Filter questions, only ask question if variable key is not available.
-    $filteredQuestions = $this->installerQuestions->filterQuestionForBundle($allQuestions);
-    // Style questions.
-    $questionsToAsk = $this->installerQuestions->styleQuestionForBundle($filteredQuestions);
-    if ($questionsToAsk) {
-      $this->output->writeln($this->style("Please provide the required API/Token keys for installation: ", 'headline'));
-      $this->output->writeln($this->style("Required Keys are denoted by a (*) ", 'warning'));
-      foreach ($questionsToAsk as $key => $question) {
-        $askQuestion = new Question($question['question'] . ' : ');
-        $askQuestion->setValidator(function ($answer) use ($question) {
-          if (!is_string($answer) && $question['required']) {
-            throw new \RuntimeException(
-              "Key cannot be empty."
-            );
+    $processedQuestions = $this->installerQuestions->process($questions);
+    $userInputValues = [];
+    if (isset($processedQuestions['questionToAsk'])) {
+      foreach ($processedQuestions['questionToAsk'] as $key => $question) {
+        $isRequired = $question['required'] ?? FALSE;
+        $askQuestion = new Question($this->styleQuestion($question['question'], '', $isRequired, TRUE));
+        $askQuestion->setValidator(function ($answer) use ($question, $key, $isRequired, $output) {
+          if (!is_string($answer)) {
+            if ($isRequired) {
+              throw new \RuntimeException(
+                "The `" . $key . "` cannot be left empty."
+              );
+            }
+            else {
+              if (isset($question['warning'])) {
+                $output->writeln($this->style(" " . $question['warning'], 'warning', FALSE));
+              }
+            }
           }
           return $answer;
         });
         // Max attempts for getting keys.
         $askQuestion->setMaxAttempts(3);
-        $askKeys[$key] = $helper->ask($input, $output, $askQuestion);
+        $userInputValues[$key] = $helper->ask($input, $output, $askQuestion);
       }
     }
-    // Return variable key-value pair.
-    return $this->installerQuestions->getKeyPair($bundleQuestions, $bundle, $askKeys);
+    return array_merge($processedQuestions['default'], $userInputValues);
   }
 
   /**

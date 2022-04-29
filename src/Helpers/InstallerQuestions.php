@@ -2,112 +2,80 @@
 
 namespace AcquiaCMS\Cli\Helpers;
 
+use AcquiaCMS\Cli\Helpers\Parsers\PHPParser;
+
 /**
  * A class for adding any utility functions.
  */
 class InstallerQuestions {
 
   /**
-   * Validate all input options/arguments.
+   * Gets All questions based on user selected user-case.
    *
-   * @param array $bundleQuestions
-   *   The questions defined in acms.yml file.
+   * @param array $questions
+   *   An array of all questions.
    * @param string $bundle
    *   A name of the user selected use-case.
    *
    * @return array
-   *   Returns the questions of the user selected use-case.
+   *   Returns the questions for the user selected use-case.
    */
-  public function getQuestionForBundle(array $bundleQuestions, string $bundle) :array {
+  public function getQuestions(array $questions, string $bundle) :array {
     $allQuestion = [];
-    foreach ($bundleQuestions as $id => $starter_kit_key) {
-      if (isset($starter_kit_key['dependencies']['starter_kits'])) {
-        if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
-          $allQuestion[$id] = [
-            'question' => $starter_kit_key['question'],
-            'required' => $starter_kit_key['required'],
-          ];
-        }
-      }
-      else {
-        $allQuestion[$id] = [
-          'question' => $starter_kit_key['question'],
-          'required' => $starter_kit_key['required'],
-        ];
+    foreach ($questions as $key => $question) {
+      if ($this->filter($question, $bundle)) {
+        $allQuestion[$key] = $question;
       }
     }
-    // Return all question from acms.yml file for requested starter kit.
     return $allQuestion;
   }
 
   /**
-   * Validate all input options/arguments.
+   * Filter the questions based on user selected use-case.
    *
-   * @param array $questions
-   *   Questions of the user selected use-case.
-   *
-   * @return array
-   *   Returns the filteres questions of the user selected use-case.
-   */
-  public function filterQuestionForBundle(array $questions) :array {
-    $filteredQuestions = [];
-    foreach ($questions as $apiKey => $question) {
-      if (empty(getenv($apiKey))) {
-        $filteredQuestions[$apiKey] = $question;
-      }
-    }
-    return $filteredQuestions;
-  }
-
-  /**
-   * Validate all input options/arguments.
-   *
-   * @param array $questions
-   *   Questions of the user selected use-case.
-   *
-   * @return array
-   *   Returns the filteres questions of the user selected use-case.
-   */
-  public function styleQuestionForBundle(array $questions) :array {
-    foreach ($questions as $apiKey => $question) {
-      if ($question['required']) {
-        $questions[$apiKey]['question'] = $questions[$apiKey]['question'] . '<error>*</error>';
-      }
-    }
-    return $questions;
-  }
-
-  /**
-   * Validate all input options/arguments.
-   *
-   * @param array $bundleQuestions
-   *   The os questions defined in acms.yml file.
+   * @param array $question
+   *   A Question array.
    * @param string $bundle
    *   A name of the user selected use-case.
-   * @param array $keys
-   *   API/Token keys for the user selected use-case.
    *
-   * @return array
-   *   Returns the keys/tokens for the user selected use-case.
+   * @return bool
+   *   Returns true|false, if question needs to ask.
    */
-  public function getKeyPair(array $bundleQuestions, string $bundle, array $keys) :array {
-    $setKeys = [];
-    // Return Set of API/Token array.
-    foreach ($bundleQuestions as $id => $starter_kit_key) {
-      if (isset($starter_kit_key['dependencies']['starter_kits'])) {
-        if (in_array($bundle, $starter_kit_key['dependencies']['starter_kits'])) {
-          if (getenv($id)) {
-            $setKeys[$id] = getenv($id);
-          }
-        }
-      }
-      else {
-        if (getenv($id)) {
-          $setKeys[$id] = getenv($id);
-        }
+  public function filter(array $question, string $bundle) :bool {
+    $isValid = TRUE;
+    if (isset($question['dependencies']['starter_kits'])) {
+      if (!in_array($bundle, $question['dependencies']['starter_kits'])) {
+        $isValid = FALSE;
       }
     }
-    return array_merge($setKeys, $keys);
+    return $isValid;
+  }
+
+  /**
+   * Process all the questions.
+   *
+   * @param array $questions
+   *   An array of filtered questions.
+   *
+   * @return array
+   *   Returns an array of default values for questions and questions to ask.
+   */
+  public function process(array $questions) :array {
+    $defaultValues = $questionToAsk = [];
+    foreach ($questions as $key => $question) {
+      $defaultValue = $question['default_value'] ?? getenv($key);
+      $defaultValue = trim(PHPParser::parseEnvVars($defaultValue));
+      if (!$defaultValue) {
+        $questionToAsk[$key] = $question;
+      }
+      else {
+        $defaultValues[$key] = $defaultValue;
+      }
+    }
+    return [
+      'default' => $defaultValues,
+      'questionToAsk' => $questionToAsk,
+    ];
   }
 
 }
