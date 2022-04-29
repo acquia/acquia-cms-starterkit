@@ -35,7 +35,7 @@ class SiteStudioPackageImport {
   public function execute(array $args = []) :int {
     $siteStudioPackageImportCommand = ["acms:import-site-studio-packages"];
     if ($args['no-interaction']) {
-      $siteStudioPackageImportCommand = array_merge($siteInstallCommand, ["--yes"]);
+      $siteStudioPackageImportCommand = array_merge($siteStudioPackageImportCommand, ["--yes"]);
     }
     return $this->drushCommand->prepare($siteStudioPackageImportCommand)->run();
   }

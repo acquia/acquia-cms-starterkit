@@ -10,7 +10,7 @@ trait UserInputTrait {
   /**
    * Style the question to print on cli.
    */
-  public function styleQuestion(string $question, ?string $default_value, ?bool $required = FALSE, ?bool $new_line = FALSE) :string {
+  public function styleQuestion(string $question, string $default_value = '', bool $required = FALSE, bool $new_line = FALSE) :string {
     $message = " <info>$question</info>";
     if (!$default_value && $required) {
       $message .= "<fg=red;options=bold> *</>";
