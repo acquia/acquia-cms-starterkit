@@ -7,11 +7,11 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
+use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
 
 /**
  * Executes the task needed to run site:install command.
@@ -151,8 +151,11 @@ class InstallTask {
 
   /**
    * Executes all the steps needed for install task.
+   *
+   * @param array $args
+   *   An array of params argument to pass.
    */
-  public function run() :void {
+  public function run(array $args) :void {
     if (!$this->validateDrupal->execute()) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
       $this->print("Converting the current project to Drupal project:", 'headline');
@@ -171,17 +174,23 @@ class InstallTask {
     $this->enableModules->execute([
       'type' => 'modules',
       'packages' => $this->starterKits[$this->bundle]['modules'],
+      'keys' => $args['keys'],
     ]);
     $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableModules->execute([
       'type' => 'themes',
       'packages' => $this->starterKits[$this->bundle]['themes'],
+      'keys' => $args['keys'],
     ]);
     // Trigger site studio import process if starter or
     // page module is there in active bundle.
-    $modules_ss_import = ['acquia_cms_starter', 'acquia_cms_page', 'acquia_cms_site_studio'];
+    $modules_ss_import = [
+      'acquia_cms_starter',
+      'acquia_cms_page',
+      'acquia_cms_site_studio',
+    ];
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
-    if (array_intersect($modules_ss_import, $bundle_modules)){
+    if (array_intersect($modules_ss_import, $bundle_modules)) {
       $this->print("Running site studio package import for starter-kit:", 'headline');
       $this->siteStudioPackageImport->execute([
         'no-interaction' => $this->input->getOption('no-interaction'),

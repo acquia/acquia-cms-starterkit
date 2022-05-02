@@ -24,7 +24,7 @@ class StatusMessageTraitTest extends TestCase {
    * @dataProvider styleDataProvider
    */
   public function testStyle(array $actual, array $expected) :void {
-    $this->assertEquals($this->style($actual[0], $actual[1]), $expected);
+    $this->assertEquals($this->style(...$actual), $expected);
   }
 
   /**
@@ -58,8 +58,12 @@ class StatusMessageTraitTest extends TestCase {
         ],
       ],
       [
-        ['This is default message.', ''],
-        ["This is default message."],
+        ['This is default message.'],
+        ['', 'This is default message.'],
+      ],
+      [
+        ['This is default message without line-break.', '', FALSE],
+        ['This is default message without line-break.'],
       ],
     ];
   }

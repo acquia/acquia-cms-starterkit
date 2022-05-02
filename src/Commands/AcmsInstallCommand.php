@@ -5,7 +5,10 @@ namespace AcquiaCMS\Cli\Commands;
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
+use AcquiaCMS\Cli\Helpers\InstallerQuestions;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
+use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;
@@ -21,6 +24,8 @@ use Symfony\Component\Console\Question\Question;
  */
 class AcmsInstallCommand extends Command {
 
+  use StatusMessageTrait;
+  use UserInputTrait;
   /**
    * The AcquiaCMS InstallTask object.
    *
@@ -36,16 +41,26 @@ class AcmsInstallCommand extends Command {
   protected $acquiaCmsCli;
 
   /**
+   * The AcquiaCMS installer questions object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\InstallerQuestions
+   */
+  protected $installerQuestions;
+
+  /**
    * Constructs an instance.
    *
    * @param \AcquiaCMS\Cli\Helpers\Task\InstallTask $installTask
    *   Provides the Acquia CMS Install task object.
    * @param \AcquiaCMS\Cli\Cli $cli
    *   Provides the AcquiaCMS Cli class object.
+   * @param \AcquiaCMS\Cli\Helpers\InstallerQuestions $installerQuestions
+   *   Provides the AcquiaCMS InstallerQuestions class object.
    */
-  public function __construct(InstallTask $installTask, Cli $cli) {
+  public function __construct(InstallTask $installTask, Cli $cli, InstallerQuestions $installerQuestions) {
     $this->acquiaCmsCli = $cli;
     $this->installTask = $installTask;
+    $this->installerQuestions = $installerQuestions;
     parent::__construct();
   }
 
@@ -67,6 +82,7 @@ class AcmsInstallCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
       $name = $input->getArgument('name');
+      $args = [];
       if ($name) {
         $this->validationOptions($name);
         $this->acquiaCmsCli->printLogo();
@@ -77,8 +93,9 @@ class AcmsInstallCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
+      $args['keys'] = $this->askKeysQuestions($input, $output, $name);
       $this->installTask->configure($input, $output, $name);
-      $this->installTask->run();
+      $this->installTask->run($args);
       $this->postSiteInstall($name, $output);
     }
     catch (AcmsCliException $e) {
@@ -97,7 +114,7 @@ class AcmsInstallCommand extends Command {
   protected function validationOptions(string $name) :bool {
     $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
     if (!in_array($name, $starterKits)) {
-      throw new InvalidArgumentException("Invalid starter kit. If should be from one of the following: " . implode(", ", $starterKits) . ".");
+      throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
     }
     return TRUE;
   }
@@ -110,7 +127,7 @@ class AcmsInstallCommand extends Command {
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
     $starterKit = "acquia_cms_minimal";
-    $question = new Question("Please choose bundle from one of the above use case: <comment>[$starterKit]</comment>: ", $starterKit);
+    $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
@@ -122,6 +139,43 @@ class AcmsInstallCommand extends Command {
     });
     $question->setMaxAttempts(3);
     return $helper->ask($input, $output, $question);
+  }
+
+  /**
+   * Providing input to user, asking to provide key.
+   */
+  protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
+    $helper = $this->getHelper('question');
+    // The questions defined in acms.yml file.
+    $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
+    // Get all questions for user selected use-case.
+    $processedQuestions = $this->installerQuestions->process($questions);
+    $userInputValues = [];
+    if (isset($processedQuestions['questionToAsk'])) {
+      foreach ($processedQuestions['questionToAsk'] as $key => $question) {
+        $isRequired = $question['required'] ?? FALSE;
+        $askQuestion = new Question($this->styleQuestion($question['question'], '', $isRequired, TRUE));
+        $askQuestion->setValidator(function ($answer) use ($question, $key, $isRequired, $output) {
+          if (!is_string($answer)) {
+            if ($isRequired) {
+              throw new \RuntimeException(
+                "The `" . $key . "` cannot be left empty."
+              );
+            }
+            else {
+              if (isset($question['warning'])) {
+                $output->writeln($this->style(" " . $question['warning'], 'warning', FALSE));
+              }
+            }
+          }
+          return $answer;
+        });
+        // Max attempts for getting keys.
+        $askQuestion->setMaxAttempts(3);
+        $userInputValues[$key] = $helper->ask($input, $output, $askQuestion);
+      }
+    }
+    return array_merge($processedQuestions['default'], $userInputValues);
   }
 
   /**

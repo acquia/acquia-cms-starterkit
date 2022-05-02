@@ -10,12 +10,11 @@ trait StatusMessageTrait {
   /**
    * Print the message to cli.
    */
-  public function style(string $message, ?string $type) :array {
+  public function style(string $message, string $type = '', bool $new_line = TRUE) :array {
     $messages = [];
     switch ($type) {
       case "headline":
         $messages = [
-          '',
           "<fg=green;>" . $message . "</>",
           str_repeat("-", strlen($message)),
         ];
@@ -23,14 +22,12 @@ trait StatusMessageTrait {
 
       case "warning":
         $messages = [
-          '',
           "<comment>" . $message . "</comment>",
         ];
         break;
 
       case "success":
         $messages = [
-          '',
           "<info>" . $message . "</info>",
         ];
         break;
@@ -38,7 +35,7 @@ trait StatusMessageTrait {
       default:
         $messages[] = $message;
     }
-    return $messages;
+    return ($new_line) ? array_merge([''], $messages) : $messages;
   }
 
 }

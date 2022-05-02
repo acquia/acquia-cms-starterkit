@@ -36,7 +36,6 @@ class EnableModules {
    */
   public function execute(array $args = []) :int {
     $packages = JsonParser::installPackages($args['packages']['install']);
-
     if ($args['type'] == "modules") {
       // Install modules.
       $command = array_merge(["en", "--yes"], $packages);
@@ -55,7 +54,8 @@ class EnableModules {
       // Enable themes.
       $command = array_merge(["theme:enable"], [implode(",", $packages)]);
     }
-    $this->drushCommand->prepare($command)->run(['STARTER_KIT_PROGRESS' => 1]);
+    $args['keys']['STARTER_KIT_PROGRESS'] = 1;
+    $this->drushCommand->prepare($command)->run($args['keys']);
 
     // Set default and/or admin theme.
     if (isset($args['packages']['admin'])) {
