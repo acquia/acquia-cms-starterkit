@@ -3,6 +3,7 @@
 namespace AcquiaCMS\Cli\Helpers\Task;
 
 use AcquiaCMS\Cli\Cli;
+use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
@@ -185,12 +186,13 @@ class InstallTask {
     // Trigger site studio import process if starter or
     // page module is there in active bundle.
     $modules_ss_import = [
-      'acquia_cms_starter',
       'acquia_cms_page',
+      'acquia_cms_starter',
       'acquia_cms_site_studio',
     ];
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
-    if (array_intersect($modules_ss_import, $bundle_modules)) {
+    $modules_list = JsonParser::installPackages($bundle_modules);
+    if (array_intersect($modules_ss_import, $modules_list)) {
       $this->print("Running site studio package import for starter-kit:", 'headline');
       $this->siteStudioPackageImport->execute([
         'no-interaction' => $this->input->getOption('no-interaction'),
