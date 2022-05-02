@@ -3,6 +3,7 @@
 namespace AcquiaCMS\Cli\Helpers\Task;
 
 use AcquiaCMS\Cli\Cli;
+use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
@@ -190,32 +191,13 @@ class InstallTask {
       'acquia_cms_site_studio',
     ];
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
-    $modules_list = $this->getModulesWithoutVersionString($bundle_modules);
+    $modules_list = JsonParser::installPackages($bundle_modules);
     if (array_intersect($modules_ss_import, $modules_list)) {
       $this->print("Running site studio package import for starter-kit:", 'headline');
       $this->siteStudioPackageImport->execute([
         'no-interaction' => $this->input->getOption('no-interaction'),
       ]);
     }
-  }
-
-  /**
-   * Get lists of modules name without version string.
-   *
-   * Ex: acquia_cms_page:1.3.x-dev give acquia_cms_page.
-   *
-   * @param array $modules
-   *   The modules array.
-   *
-   * @return array
-   *   The list of module without version string.
-   */
-  protected function getModulesWithoutVersionString(array $modules): array {
-    $modulesList = [];
-    foreach ($modules as $module) {
-      $modulesList[] = explode(':', $module)[0];
-    }
-    return $modulesList;
   }
 
   /**
