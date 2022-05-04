@@ -66,6 +66,15 @@ class EnableModules {
         "--yes",
       ], [$args['packages']['admin']]);
       $this->drushCommand->prepare($command)->run();
+
+      // Use admin theme as acquia_claro.
+      $command = array_merge([
+        "config:set",
+        "node.settings",
+        "use_admin_theme",
+        "--yes",
+      ], [TRUE]);
+      $this->drushCommand->prepare($command)->run();
     }
 
     if ($args['type'] == "themes") {
