@@ -91,6 +91,17 @@ class CliTest extends TestCase {
             "default" => "cohesion_theme",
           ],
         ],
+        "acquia_cms_standard_site_studio" => [
+          "name" => "Acquia CMS Standard Site Studio",
+          "description" => "Acquia CMS with a starter content model + site studio, but no demo content, classic custom themes.",
+          "modules" => [
+            "install" => ["acquia_cms_article:1.3.x-dev", "acquia_cms_event:1.3.x-dev", "acquia_cms_search:1.3.x-dev", "acquia_cms_tour", "acquia_cms_video:1.3.x-dev", "acquia_cms_page:1.3.x-dev"],
+          ],
+          "themes" => [
+            "install" => ["acquia_claro"],
+            "admin" => 'acquia_claro',
+          ],
+        ],
         "acquia_cms_standard" => [
           "name" => "Acquia CMS Standard",
           "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
@@ -149,6 +160,7 @@ class CliTest extends TestCase {
             'acquia_cms_demo',
             'acquia_cms_low_code',
             'acquia_cms_standard',
+            'acquia_cms_standard_site_studio',
             'acquia_cms_minimal',
           ],
         ],

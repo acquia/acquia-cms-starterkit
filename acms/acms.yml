@@ -101,6 +101,7 @@ questions:
       starter_kits:
         - acquia_cms_demo
         - acquia_cms_low_code
+        - acquia_cms_standard_site_studio
     question: "Please provide the Site Studio API Key"
     warning: "The Site Studio API key is not set. The Site Studio packages won't get imported.\n You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages."
   SITESTUDIO_ORG_KEY:
@@ -108,5 +109,6 @@ questions:
       starter_kits:
         - acquia_cms_demo
         - acquia_cms_low_code
+        - acquia_cms_standard_site_studio
     question: "Please provide the Site Studio Organization Key"
     warning: "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\n You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages."

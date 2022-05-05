@@ -112,6 +112,12 @@ class InstallerQuestionsTest extends TestCase {
         ),
       ],
       [
+        'acquia_cms_standard_site_studio',
+        CliTest::getSearchUUID(),
+        CliTest::getSiteStudioApiKey(),
+        CliTest::getSiteStudioOrgKey()
+      ],
+      [
         'acquia_cms_standard',
         CliTest::getSearchUUID(),
       ],
