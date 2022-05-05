@@ -24,7 +24,7 @@ starter_kits:
         - acquia_claro
       admin: acquia_claro
       default: cohesion_theme
-acquia_cms_standard_site_studio:
+  acquia_cms_standard_site_studio:
     name: "Acquia CMS Standard Site Studio"
     description: "Acquia CMS with a starter content model + site studio, but no demo content, classic custom themes."
     modules:
