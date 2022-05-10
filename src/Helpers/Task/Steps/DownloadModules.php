@@ -67,6 +67,13 @@ class DownloadModules {
         "true",
       ])->run();
     }
+    if (!isset($composerContents->{'extra.enable-patching'}) || (isset($composerContents->{'extra.enable-patching'}) && $composerContents->{'extra.enable-patching'} != "true")) {
+      $this->composerCommand->prepare([
+        "config",
+        "extra.enable-patching",
+        "true",
+      ])->run();
+    }
     $packages = array_merge($args['modules']['install'], $args['themes']['install']);
     $packages = JsonParser::downloadPackages($packages);
     $installModules = JsonParser::installPackages($args['modules']['install']);
