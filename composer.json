@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "acquia/coding-standards": "^0.8.0",
+        "acquia/coding-standards": "^1.0",
         "composer/composer": "^2.2",
         "ergebnis/composer-normalize": "~2.15.0",
         "stecman/symfony-console-completion": "^0.10.1",
