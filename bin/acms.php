@@ -22,7 +22,7 @@ set_time_limit(0);
 ini_set('memory_limit', -1);
 
 $input = new ArgvInput();
-$env = $input->getParameterOption(['--env', '-e'], $_SERVER['APP_ENV'] ?? 'prod', TRUE);
+$env = $input->getParameterOption(['--env', '-e'], "prod", TRUE);
 $kernel = new Kernel($env, FALSE);
 
 // Handle the cache:clear command. This isn't implemented as a console
