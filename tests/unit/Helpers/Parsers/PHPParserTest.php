@@ -34,6 +34,57 @@ class PHPParserTest extends TestCase {
   }
 
   /**
+   * @dataProvider parseValidQuestionExpression
+   */
+  public function testParseValidQuestion(string $actual, array $expected, string $exception = NULL) :void {
+    if ($exception) {
+      $this->expectException($exception);
+    }
+    $this->assertEquals($expected, PHPParser::parseQuestionExpression($actual));
+  }
+
+  /**
+   * Provides the data to test: testParseQuestionExpression().
+   */
+  public function parseValidQuestionExpression(): array {
+    return [
+      [
+        '${site_studio} == "yes"',
+        [
+          '${site_studio} == "yes"',
+          'site_studio',
+          ' ',
+          '==',
+          ' ',
+          '"yes"',
+        ],
+      ],
+      [
+        '${some_integer_value} == 10',
+        [
+          '${some_integer_value} == 10',
+          'some_integer_value',
+          ' ',
+          '==',
+          ' ',
+          '10',
+          '10',
+        ],
+      ],
+      [
+        '${some_value} == no',
+        [],
+        'RuntimeException',
+      ],
+      [
+        '${some_value} === yes',
+        [],
+        'RuntimeException',
+      ],
+    ];
+  }
+
+  /**
    * Provides the data to test: testInstallPackages().
    */
   public function parseEnvVariablesDataProvider(): array {

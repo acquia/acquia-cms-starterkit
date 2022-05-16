@@ -145,34 +145,19 @@ class AcmsInstallCommand extends Command {
    * Providing input to user, asking to provide key.
    */
   protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
-    $helper = $this->getHelper('question');
     // The questions defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
     // Get all questions for user selected use-case.
-    $processedQuestions = $this->installerQuestions->process($questions);
+    $processedQuestions = $this->installerQuestions->process($questions['questionMustAsk']);
     $userInputValues = [];
     if (isset($processedQuestions['questionToAsk'])) {
       foreach ($processedQuestions['questionToAsk'] as $key => $question) {
-        $isRequired = $question['required'] ?? FALSE;
-        $askQuestion = new Question($this->styleQuestion($question['question'], '', $isRequired, TRUE));
-        $askQuestion->setValidator(function ($answer) use ($question, $key, $isRequired, $output) {
-          if (!is_string($answer)) {
-            if ($isRequired) {
-              throw new \RuntimeException(
-                "The `" . $key . "` cannot be left empty."
-              );
-            }
-            else {
-              if (isset($question['warning'])) {
-                $output->writeln($this->style(" " . $question['warning'], 'warning', FALSE));
-              }
-            }
-          }
-          return $answer;
-        });
-        // Max attempts for getting keys.
-        $askQuestion->setMaxAttempts(3);
-        $userInputValues[$key] = $helper->ask($input, $output, $askQuestion);
+        $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output);
+      }
+      foreach ($questions['questionCanAsk'] as $key => $question) {
+        if ($this->installerQuestions->shouldAskQuestion($question, $userInputValues)) {
+          $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output);
+        }
       }
     }
     return array_merge($processedQuestions['default'], $userInputValues);
@@ -207,6 +192,53 @@ class AcmsInstallCommand extends Command {
     $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
     $output->writeln($formattedInfoBlock);
     $output->writeln("");
+  }
+
+  /**
+   * Function to ask question to user.
+   *
+   * @param array $question
+   *   An array of question.
+   * @param string $key
+   *   A unique key for question.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   A Console input interface object.
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   *   A Console output interface object.
+   */
+  public function askQuestion(array $question, string $key, InputInterface $input, OutputInterface $output) : string {
+    $helper = $this->getHelper('question');
+    $isRequired = $question['required'] ?? FALSE;
+    $defaultValue = $this->installerQuestions->getDefaultValue($question, $key);
+    $skipOnValue = $question['skip_on_value'] ?? TRUE;
+    if ($skipOnValue && $defaultValue) {
+      return $defaultValue;
+    }
+    $askQuestion = new Question($this->styleQuestion($question['question'], $defaultValue, $isRequired, TRUE));
+    $askQuestion->setValidator(function ($answer) use ($question, $key, $isRequired, $output, $defaultValue) {
+      if (!is_string($answer) && !$defaultValue) {
+        if ($isRequired) {
+          throw new \RuntimeException(
+            "The `" . $key . "` cannot be left empty."
+          );
+        }
+        else {
+          if (isset($question['warning'])) {
+            $warning = str_replace(PHP_EOL, PHP_EOL . " ", $question['warning']);
+            $output->writeln($this->style(" " . $warning, 'warning', FALSE));
+          }
+        }
+      }
+      if ($answer && isset($question['allowed_values']['options']) && !in_array($answer, $question['allowed_values']['options'])) {
+        throw new \RuntimeException(
+          "Invalid value. It should be from one of the following: " . implode(", ", $question['allowed_values']['options'])
+        );
+      }
+      return $answer ?: $defaultValue;
+    });
+    $askQuestion->setMaxAttempts(3);
+    $response = $helper->ask($input, $output, $askQuestion);
+    return ($response === NULL) ? $defaultValue : $response;
   }
 
 }

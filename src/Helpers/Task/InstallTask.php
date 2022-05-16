@@ -166,6 +166,13 @@ class InstallTask {
       $this->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", 'success');
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
+
+    // @todo Think if we can configure to download/install modules using yaml configuration.
+    $addModules = $this->getAdditionalModules($args['keys']);
+    $this->starterKits[$this->bundle]['modules']['install'] = array_merge(
+      $this->starterKits[$this->bundle]['modules']['install'],
+      $addModules,
+    );
     $this->downloadModules->execute($this->starterKits[$this->bundle]);
     $this->print("Installing Site:", 'headline');
     $this->siteInstall->execute([
@@ -210,6 +217,35 @@ class InstallTask {
    */
   protected function print(string $message, string $type) :void {
     $this->output->writeln($this->style($message, $type));
+  }
+
+  /**
+   * Returns an array of additional modules to download/install.
+   *
+   * @param array $userInputValues
+   *   A user input values for questions.
+   *
+   * @return array
+   *   Returns an array of modules to downlaod/install.
+   */
+  public function getAdditionalModules(array $userInputValues) :array {
+    $isContentModel = $userInputValues['content_model'] ?? '';
+    $isDemoContent = $userInputValues['demo_content'] ?? '';
+    $isSiteStudio = $userInputValues['site_studio'] ?? '';
+    $modules = [];
+    if ($isContentModel == "yes") {
+      $modules = array_merge($modules, [
+        'acquia_cms_article',
+        'acquia_cms_event',
+      ]);
+    }
+    if ($isDemoContent == "yes") {
+      $modules = array_merge($modules, ['acquia_cms_starter']);
+    }
+    if ($isSiteStudio == "yes") {
+      $modules = array_merge($modules, ['acquia_cms_site_studio']);
+    }
+    return array_unique($modules);
   }
 
 }
