@@ -71,7 +71,11 @@ class CliTest extends TestCase {
           'name' => 'Acquia CMS Demo',
           'description' => 'Low-code demonstration of ACMS with default content.',
           'modules' => [
-            "install" => ["acquia_cms_starter", "acquia_cms_tour", "acquia_cms_toolbar"],
+            "install" => [
+              "acquia_cms_starter:^1.3.0",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           'themes' => [
             "install" => ["acquia_claro"],
@@ -83,7 +87,12 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Low Code",
           "description" => "Acquia CMS with Site Studio but no content opinion.",
           "modules" => [
-            "install" => ["acquia_cms_page:1.3.x-dev", "acquia_cms_search:1.3.x-dev", "acquia_cms_tour", "acquia_cms_toolbar"],
+            "install" => [
+              "acquia_cms_page:^1.3.3",
+              "acquia_cms_search:^1.3.5",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -95,7 +104,14 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Standard",
           "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
           "modules" => [
-            "install" => ["acquia_cms_article:1.3.x-dev", "acquia_cms_event:1.3.x-dev", "acquia_cms_search:1.3.x-dev", "acquia_cms_tour", "acquia_cms_video:1.3.x-dev", "acquia_cms_toolbar"],
+            "install" => [
+              "acquia_cms_article:^1.3.4",
+              "acquia_cms_event:^1.3.4",
+              "acquia_cms_search:^1.3.5",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_video:^1.3.3",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -106,7 +122,11 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Minimal",
           "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
           "modules" => [
-            "install" => ["acquia_cms_search:1.3.x-dev", "acquia_cms_tour", "acquia_cms_toolbar"],
+            "install" => [
+              "acquia_cms_search:^1.3.5",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -117,7 +137,11 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Headless",
           "description" => "ACMS with headless functionality.",
           "modules" => [
-            "install" => ["acquia_cms_headless", "acquia_cms_tour", "acquia_cms_toolbar"],
+            "install" => [
+              "acquia_cms_headless",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
