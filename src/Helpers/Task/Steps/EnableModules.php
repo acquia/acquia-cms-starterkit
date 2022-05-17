@@ -39,9 +39,6 @@ class EnableModules {
     if ($args['type'] == "modules") {
       // Install modules.
       $command = array_merge(["en", "--yes"], $packages);
-
-      // Also install toolbar(core) module, allowing user for easily navigation.
-      $command[] = "toolbar";
     }
     else {
 
