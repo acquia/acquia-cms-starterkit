@@ -7,6 +7,7 @@ use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
+use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
@@ -62,6 +63,13 @@ class InstallTask {
    * @var \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules
    */
   protected $enableModules;
+
+  /**
+   * Holds the enable drupal modules step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes
+   */
+  protected $enableThemes;
 
   /**
    * Holds the symfony console command object.
@@ -120,15 +128,18 @@ class InstallTask {
    *   A Drupal Site Install class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules $enableModules
    *   Enable Drupal modules class object.
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes $enableThemes
+   *   Enable Drupal modules class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport $siteStudioPackageImport
    *   The site studio package import step object.
    */
-  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, SiteStudioPackageImport $siteStudioPackageImport) {
+  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, EnableThemes $enableThemes, SiteStudioPackageImport $siteStudioPackageImport) {
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->validateDrupal = $validateDrupal;
     $this->downloadDrupal = $downloadDrupal;
     $this->enableModules = $enableModules;
+    $this->enableThemes = $enableThemes;
     $this->siteInstall = $siteInstall;
     $this->downloadModules = $downloadModules;
     $this->siteStudioPackageImport = $siteStudioPackageImport;
@@ -167,12 +178,9 @@ class InstallTask {
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
 
-    // @todo Think if we can configure to download/install modules using yaml configuration.
-    $addModules = $this->getAdditionalModules($args['keys']);
-    $this->starterKits[$this->bundle]['modules']['install'] = array_merge(
-      $this->starterKits[$this->bundle]['modules']['install'],
-      $addModules,
-    );
+    // @todo Think if we can configure to download/install modules/themes using yaml configuration.
+    $this->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
+
     $this->downloadModules->execute($this->starterKits[$this->bundle]);
     $this->print("Installing Site:", 'headline');
     $this->siteInstall->execute([
@@ -180,15 +188,13 @@ class InstallTask {
     ]);
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $this->enableModules->execute([
-      'type' => 'modules',
-      'packages' => $this->starterKits[$this->bundle]['modules'],
+      'modules' => $this->starterKits[$this->bundle]['modules'],
       'keys' => $args['keys'],
     ]);
     $this->print("Enabling themes for the starter-kit:", 'headline');
-    $this->enableModules->execute([
-      'type' => 'themes',
-      'packages' => $this->starterKits[$this->bundle]['themes'],
-      'keys' => $args['keys'],
+    $this->enableThemes->execute([
+      'themes' => $this->starterKits[$this->bundle]['themes'],
+      'starter_kit' => $this->bundle,
     ]);
     // Trigger site studio import process if starter or
     // page module is there in active bundle.
@@ -220,32 +226,49 @@ class InstallTask {
   }
 
   /**
-   * Returns an array of additional modules to download/install.
+   * Function to alter modules & themes based on user response.
    *
+   * @param array $starterKit
+   *   An array of starter-kit.
    * @param array $userInputValues
    *   A user input values for questions.
    *
    * @return array
-   *   Returns an array of modules to downlaod/install.
+   *   Returns an array of altered starter-kit.
    */
-  public function getAdditionalModules(array $userInputValues) :array {
+  public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $isSiteStudio = $userInputValues['site_studio'] ?? '';
-    $modules = [];
+
+    // Set default theme as olivero (if not defined)
+    $starterKit['themes']['default'] = $starterKit['themes']['default'] ?? "olivero";
+
     if ($isContentModel == "yes") {
-      $modules = array_merge($modules, [
-        'acquia_cms_article',
-        'acquia_cms_event',
-      ]);
+      $starterKit['modules']['install'] = array_merge(
+        $starterKit['modules']['install'], [
+          'acquia_cms_article:^1.3.4',
+          'acquia_cms_event:^1.3.4',
+        ],
+      );
     }
     if ($isDemoContent == "yes") {
-      $modules = array_merge($modules, ['acquia_cms_starter']);
+      $starterKit['modules']['install'] = array_merge(
+        $starterKit['modules']['install'], [
+          'acquia_cms_starter:^1.3.0',
+        ],
+      );
     }
     if ($isSiteStudio == "yes") {
-      $modules = array_merge($modules, ['acquia_cms_site_studio']);
+      $starterKit['modules']['install'] = array_merge(
+        $starterKit['modules']['install'], [
+          'acquia_cms_site_studio:^1.3.5',
+        ],
+      );
+      $starterKit['themes']['default'] = "cohesion_theme";
     }
-    return array_unique($modules);
+    $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
+    return $starterKit;
   }
 
 }
