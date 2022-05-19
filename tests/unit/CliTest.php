@@ -71,7 +71,11 @@ class CliTest extends TestCase {
           'name' => 'Acquia CMS Demo',
           'description' => 'Low-code demonstration of ACMS with default content.',
           'modules' => [
-            "install" => ["acquia_cms_starter", "acquia_cms_tour"],
+            "install" => [
+              "acquia_cms_starter:^1.3.0",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           'themes' => [
             "install" => ["acquia_claro"],
@@ -83,7 +87,12 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Low Code",
           "description" => "Acquia CMS with Site Studio but no content opinion.",
           "modules" => [
-            "install" => ["acquia_cms_page:1.3.x-dev", "acquia_cms_search:1.3.x-dev", "acquia_cms_tour"],
+            "install" => [
+              "acquia_cms_page:^1.3.3",
+              "acquia_cms_search:^1.3.5",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -95,7 +104,14 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Standard",
           "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
           "modules" => [
-            "install" => ["acquia_cms_article:1.3.x-dev", "acquia_cms_event:1.3.x-dev", "acquia_cms_search:1.3.x-dev", "acquia_cms_tour", "acquia_cms_video:1.3.x-dev"],
+            "install" => [
+              "acquia_cms_article:^1.3.4",
+              "acquia_cms_event:^1.3.4",
+              "acquia_cms_search:^1.3.5",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_video:^1.3.3",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -106,7 +122,11 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Minimal",
           "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
           "modules" => [
-            "install" => ["acquia_cms_search:1.3.x-dev", "acquia_cms_tour"],
+            "install" => [
+              "acquia_cms_search:^1.3.5",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -117,7 +137,11 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Headless",
           "description" => "ACMS with headless functionality.",
           "modules" => [
-            "install" => ["acquia_cms_headless", "acquia_cms_tour"],
+            "install" => [
+              "acquia_cms_headless",
+              "acquia_cms_tour:^1.3.0",
+              "acquia_cms_toolbar:^1.3.3",
+            ],
           ],
           "themes" => [
             "install" => ["acquia_claro"],
@@ -126,12 +150,81 @@ class CliTest extends TestCase {
         ],
       ],
       "questions" => array_merge (
+        self::getContentModel(),
+        self::getDemoContent(),
+        self::getSiteStudio(),
         self::getConnectorId(),
         self::getGmapsKey(),
         self::getSearchUuid(),
         self::getSiteStudioApiKey(),
         self::getSiteStudioOrgKey(),
       ),
+    ];
+  }
+
+  /**
+   * Returns the test data for content_model Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getContentModel(): array {
+    return [
+      'content_model' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+        ],
+        'question' => "Do you want to include Content Model (yes/no) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getDemoContent(): array {
+    return [
+      'demo_content' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+        ],
+        'question' => "Do you want to include Demo Content (yes/no) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for site_studio Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getSiteStudio(): array {
+    return [
+      'site_studio' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+        ],
+        'question' => "Do you want to include Site Studio (yes/no) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
     ];
   }
 
@@ -145,12 +238,7 @@ class CliTest extends TestCase {
     return [
       'SEARCH_UUID' => [
         'dependencies' => [
-          'starter_kits' => [
-            'acquia_cms_demo',
-            'acquia_cms_low_code',
-            'acquia_cms_standard',
-            'acquia_cms_minimal',
-          ],
+          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code || acquia_cms_standard || acquia_cms_minimal',
         ],
         'question' => "Please provide the Acquia CMS Search UUID",
       ],
@@ -167,13 +255,11 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
-          'starter_kits' => [
-            'acquia_cms_demo',
-            'acquia_cms_low_code',
-          ],
+          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
+          'questions' => ['${site_studio} == "yes" || ${demo_content} == "yes"'],
         ],
         'question' => "Please provide the Site Studio API Key",
-        'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\n You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
+        'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
     ];
   }
@@ -188,13 +274,11 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
-          'starter_kits' => [
-            'acquia_cms_demo',
-            'acquia_cms_low_code',
-          ],
+          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
+          'questions' => ['${site_studio} == "yes" || ${demo_content} == "yes"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
-        'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\n You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
+        'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
     ];
   }
@@ -209,9 +293,7 @@ class CliTest extends TestCase {
     return [
       'CONNECTOR_ID' => [
         'dependencies' => [
-          'starter_kits' => [
-            'acquia_cms_demo',
-          ],
+          'starter_kits' => 'acquia_cms_demo',
         ],
         'question' => "Please provide the Acquia Connector ID",
       ],
@@ -228,12 +310,10 @@ class CliTest extends TestCase {
     return [
       'GMAPS_KEY' => [
         'dependencies' => [
-          'starter_kits' => [
-            'acquia_cms_demo',
-          ],
+          'starter_kits' => 'acquia_cms_demo',
         ],
         'question' => "Please provide the Google Maps API Key",
-        'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step.They are technically harmless, but the maps will not work.\n You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
+        'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
       ],
     ];
   }
