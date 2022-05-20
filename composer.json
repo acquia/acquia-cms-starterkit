@@ -23,9 +23,7 @@
         }
     ],
     "require": {
-        "acquia/coding-standards": "^1.0",
         "composer/composer": "^2.2",
-        "ergebnis/composer-normalize": "~2.15.0",
         "stecman/symfony-console-completion": "^0.10.1",
         "symfony/config": "^4.1",
         "symfony/console": "^4.1",
@@ -36,7 +34,9 @@
         "symfony/yaml": "^4.1"
     },
     "require-dev": {
+        "acquia/coding-standards": "^1.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "ergebnis/composer-normalize": "~2.15.0",
         "phpro/grumphp-shim": "^1.5",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^1.5",
