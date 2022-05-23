@@ -37,7 +37,7 @@ class EnableModules {
   public function execute(array $args = []) :int {
     $packages = JsonParser::installPackages($args['modules']['install']);
     $command = array_merge(["en", "--yes"], $packages);
-    $args['keys']['STARTER_KIT_PROGRESS'] = 1;
+    $args['keys']['UNSET_COHESION_SYNC'] = 1;
     $this->drushCommand->prepare($command)->run($args['keys']);
     return StatusCodes::OK;
   }
