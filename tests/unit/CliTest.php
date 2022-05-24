@@ -72,6 +72,7 @@ class CliTest extends TestCase {
           'description' => 'Low-code demonstration of ACMS with default content.',
           'modules' => [
             "install" => [
+              'acquia_cms_site_studio:^1.3.5',
               "acquia_cms_starter:^1.3.0",
               "acquia_cms_tour:^1.3.0",
               "acquia_cms_toolbar:^1.3.3",
@@ -88,6 +89,7 @@ class CliTest extends TestCase {
           "description" => "Acquia CMS with Site Studio but no content opinion.",
           "modules" => [
             "install" => [
+              'acquia_cms_site_studio:^1.3.5',
               "acquia_cms_page:^1.3.3",
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
