@@ -2,7 +2,7 @@
 
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
-use AcquiaCMS\Cli\Cli;
+use AcquiaCMS\Cli\Helpers\Process\Commands\Composer;
 
 /**
  * Provides the class to validate if current project is Drupal project.
@@ -10,20 +10,20 @@ use AcquiaCMS\Cli\Cli;
 class ValidateDrupal {
 
   /**
-   * The AcquiaCMS Cli object.
+   * A composer command object.
    *
-   * @var \AcquiaCMS\Cli\Cli
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Composer
    */
-  protected $acquiaCmsCli;
+  protected $composerCommand;
 
   /**
    * Constructs an object.
    *
-   * @param \AcquiaCMS\Cli\Cli $acquiaCmsCli
-   *   Hold an Acquia CMS Cli object.
+   * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Composer $composer
+   *   Holds the composer command class object.
    */
-  public function __construct(Cli $acquiaCmsCli) {
-    $this->acquiaCmsCli = $acquiaCmsCli;
+  public function __construct(Composer $composer) {
+    $this->composerCommand = $composer;
   }
 
   /**
@@ -32,13 +32,18 @@ class ValidateDrupal {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :bool {
-    $jsonContents = $this->acquiaCmsCli->getRootComposer();
-    $jsonContents = json_decode($jsonContents);
-    if (isset($jsonContents->extra) && isset($jsonContents->extra->{'drupal-scaffold'})) {
-      return TRUE;
+  public function execute(array $args = []) :string {
+    $output = $this->composerCommand->prepare([
+      'show',
+      'drupal/core',
+      '--format=json',
+    ])->runQuietly([], FALSE);
+    $version = '';
+    $json_output = json_decode($output);
+    if (json_last_error() === JSON_ERROR_NONE) {
+      $version = implode(', ', $json_output->versions);
     }
-    return FALSE;
+    return $version;
   }
 
 }
