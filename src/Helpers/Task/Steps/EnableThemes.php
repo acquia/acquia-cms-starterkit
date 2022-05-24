@@ -37,9 +37,9 @@ class EnableThemes {
   public function execute(array $args = []) :int {
     $packages = JsonParser::installPackages($args['themes']['install']);
 
-    // Enable olivero theme (if it's not under theme install).
-    if (!in_array('olivero', $packages)) {
-      $packages[] = 'olivero';
+    // Enable default theme (if it's not under theme install).
+    if (!in_array($args['themes']['default'], $packages)) {
+      $packages[] = $args['themes']['default'];
     }
     // Enable themes.
     $command = array_merge(["theme:enable"], [implode(",", $packages)]);
