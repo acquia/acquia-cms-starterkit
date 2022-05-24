@@ -60,6 +60,7 @@ jobs:
       DB_USER: drupal
       DB_PASSWORD: drupal
       COMPOSER_PROCESS_TIMEOUT: 1800
+      CI: TRUE
     strategy:
       matrix:
         core-version: ["CURRENT", "PREVIOUS_MINOR"]
@@ -85,7 +86,9 @@ jobs:
       - name: Before Install
         run: ../orca/bin/orca fixture:init --project-template=acquia/drupal-recommended-project --core=${{ matrix.core-version }} --sut=$ORCA_SUT_NAME --no-site-install
       - name: Install
-        run: ./bin/acms acms:install --no-interaction
+        run: |
+          cd ../orca-build
+          ./vendor/bin/acms acms:install --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script
