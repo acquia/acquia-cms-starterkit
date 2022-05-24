@@ -2,7 +2,6 @@
 
 namespace AcquiaCMS\Cli;
 
-use AcquiaCMS\Cli\Helpers\Utility;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -87,21 +86,17 @@ class Kernel extends BaseKernel {
    *
    * @return string
    *   Returns the base directory of the project.
-   *
-   * @throws \Exception
-   *   Throws exception, if not able to determine base directory.
    */
   public function getBaseDirectory() :string {
-    $autoloadDirectory = __DIR__ . '/../vendor/autoload.php';
-    if (file_exists($autoloadDirectory)) {
-      return Utility::normalizePath(__DIR__ . '/../');
+    $dirName = dirname(dirname(__FILE__));
+
+    // If the command is added on acquia or drupal recommended-project,
+    // it returns vendor path, so remove that from path.
+    $dirName = preg_replace('/\/vendor\/.*/', '', $dirName);
+    if (getenv('CI')) {
+      return getcwd();
     }
-    elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
-      return Utility::normalizePath(__DIR__ . '/../../../../');
-    }
-    else {
-      throw new \Exception("There's an error in identifying base directory.");
-    }
+    return $dirName;
   }
 
 }

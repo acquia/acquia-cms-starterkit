@@ -111,10 +111,12 @@ class CommandBase implements CommandInterface {
    * @return string
    *   Returns the executed command output.
    */
-  public function runQuietly(array $env = []) :string {
+  public function runQuietly(array $env = [], bool $validate_command = TRUE) :string {
     $this->process->setTty(FALSE);
     $this->process->run(NULL, $env);
-    $this->verifyCommand();
+    if ($validate_command) {
+      $this->verifyCommand();
+    }
     return $this->process->getOutput();
   }
 

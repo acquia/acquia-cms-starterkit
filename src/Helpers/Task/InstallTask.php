@@ -168,13 +168,17 @@ class InstallTask {
    *   An array of params argument to pass.
    */
   public function run(array $args) :void {
-    if (!$this->validateDrupal->execute()) {
+    $installedDrupalVersion = $this->validateDrupal->execute();
+    if (!$installedDrupalVersion) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
       $this->print("Converting the current project to Drupal project:", 'headline');
       $this->downloadDrupal->execute();
     }
     else {
-      $this->print("Seems Drupal is already downloaded. Skipping downloading Drupal.", 'success');
+      $this->print("Seems Drupal is already downloaded. " .
+        "The downloaded Drupal core version is: $installedDrupalVersion. " .
+        "Skipping downloading Drupal.", 'success'
+      );
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
 

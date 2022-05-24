@@ -42,7 +42,7 @@ interface CommandInterface {
    * @return string
    *   Return the executed command output.
    */
-  public function runQuietly(array $env = []) :string;
+  public function runQuietly(array $env = [], bool $validate_command = TRUE) :string;
 
   /**
    * Return the base command name.
