@@ -108,6 +108,7 @@ class CliTest extends TestCase {
           "modules" => [
             "install" => [
               "acquia_cms_article:^1.3.4",
+              "acquia_cms_page:^1.3.3",
               "acquia_cms_event:^1.3.4",
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
@@ -153,8 +154,8 @@ class CliTest extends TestCase {
       ],
       "questions" => array_merge (
         self::getContentModel(),
-        self::getDemoContent(),
         self::getSiteStudio(),
+        self::getDemoContent(),
         self::getConnectorId(),
         self::getGmapsKey(),
         self::getSearchUuid(),
@@ -174,7 +175,7 @@ class CliTest extends TestCase {
     return [
       'content_model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+          'starter_kits' => 'acquia_cms_minimal || acquia_cms_headless',
         ],
         'question' => "Do you want to include Content Model (yes/no) ?",
         'allowed_values' => [

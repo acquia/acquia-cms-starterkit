@@ -256,7 +256,6 @@ class InstallerQuestionsTest extends TestCase {
         'acquia_cms_standard',
         array_merge(
           CliTest::getSearchUUID(),
-          CliTest::getContentModel(),
           CliTest::getDemoContent(),
           CliTest::getSiteStudio(),
         ),
