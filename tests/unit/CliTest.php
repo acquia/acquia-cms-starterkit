@@ -258,7 +258,7 @@ class CliTest extends TestCase {
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
-          'questions' => ['${site_studio} == "yes" || ${demo_content} == "yes"'],
+          'questions' => ['${site_studio} == "yes"'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -277,7 +277,7 @@ class CliTest extends TestCase {
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
-          'questions' => ['${site_studio} == "yes" || ${demo_content} == "yes"'],
+          'questions' => ['${site_studio} == "yes"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -296,6 +296,7 @@ class CliTest extends TestCase {
       'CONNECTOR_ID' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo',
+          'questions' => ['${demo_content} == "yes"'],
         ],
         'question' => "Please provide the Acquia Connector ID",
       ],
@@ -313,6 +314,7 @@ class CliTest extends TestCase {
       'GMAPS_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo',
+          'questions' => ['${demo_content} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
