@@ -156,9 +156,7 @@ class CliTest extends TestCase {
         self::getContentModel(),
         self::getSiteStudio(),
         self::getDemoContent(),
-        self::getConnectorId(),
         self::getGmapsKey(),
-        self::getSearchUuid(),
         self::getSiteStudioApiKey(),
         self::getSiteStudioOrgKey(),
       ),
@@ -232,23 +230,6 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for SEARCH_UUID Question.
-   *
-   * @return array[]
-   *   Returns an array of question.
-   */
-  public static function getSearchUuid(): array {
-    return [
-      'SEARCH_UUID' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code || acquia_cms_standard || acquia_cms_minimal',
-        ],
-        'question' => "Please provide the Acquia CMS Search UUID",
-      ],
-    ];
-  }
-
-  /**
    * Returns the test data for SITESTUDIO_API_KEY Question.
    *
    * @return array[]
@@ -282,24 +263,6 @@ class CliTest extends TestCase {
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
-      ],
-    ];
-  }
-
-  /**
-   * Returns the test data for CONNECTOR_ID Question.
-   *
-   * @return array[]
-   *   Returns an array of question.
-   */
-  public static function getConnectorId(): array {
-    return [
-      'CONNECTOR_ID' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo',
-          'questions' => ['${demo_content} == "yes"'],
-        ],
-        'question' => "Please provide the Acquia Connector ID",
       ],
     ];
   }

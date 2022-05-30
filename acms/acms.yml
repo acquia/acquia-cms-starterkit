@@ -99,12 +99,6 @@ questions:
         - no
     skip_on_value: false
     default_value: "no"
-  CONNECTOR_ID:
-    dependencies:
-      starter_kits: acquia_cms_demo
-      questions:
-        - ${demo_content} == "yes"
-    question: "Please provide the Acquia Connector ID"
   GMAPS_KEY:
     dependencies:
       starter_kits: acquia_cms_demo
@@ -114,10 +108,6 @@ questions:
     warning: |-
       The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
       You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
-  SEARCH_UUID:
-    dependencies:
-      starter_kits: acquia_cms_demo || acquia_cms_low_code || acquia_cms_standard || acquia_cms_minimal
-    question: "Please provide the Acquia CMS Search UUID"
   SITESTUDIO_API_KEY:
     dependencies:
       starter_kits: acquia_cms_demo || acquia_cms_low_code
