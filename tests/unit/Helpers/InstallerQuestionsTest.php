@@ -245,6 +245,7 @@ class InstallerQuestionsTest extends TestCase {
       [
         'acquia_cms_low_code',
         array_merge(
+          CliTest::getDemoContent(),
           CliTest::getSiteStudioApiKey(),
           CliTest::getSiteStudioOrgKey(),
         ),

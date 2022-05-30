@@ -183,7 +183,7 @@ class InstallTask {
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
 
     // @todo Think if we can configure to download/install modules/themes using yaml configuration.
-    $this->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
+    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
 
     $this->downloadModules->execute($this->starterKits[$this->bundle]);
     $this->print("Installing Site:", 'headline');
@@ -227,52 +227,6 @@ class InstallTask {
    */
   protected function print(string $message, string $type) :void {
     $this->output->writeln($this->style($message, $type));
-  }
-
-  /**
-   * Function to alter modules & themes based on user response.
-   *
-   * @param array $starterKit
-   *   An array of starter-kit.
-   * @param array $userInputValues
-   *   A user input values for questions.
-   *
-   * @return array
-   *   Returns an array of altered starter-kit.
-   */
-  public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
-    $isContentModel = $userInputValues['content_model'] ?? '';
-    $isDemoContent = $userInputValues['demo_content'] ?? '';
-    $isSiteStudio = $userInputValues['site_studio'] ?? '';
-
-    // Set default theme as olivero (if not defined)
-    $starterKit['themes']['default'] = $starterKit['themes']['default'] ?? "olivero";
-
-    if ($isContentModel == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
-          'acquia_cms_article:^1.3.4',
-          'acquia_cms_event:^1.3.4',
-        ],
-      );
-    }
-    if ($isDemoContent == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
-          'acquia_cms_starter:^1.3.0',
-        ],
-      );
-    }
-    if ($isSiteStudio == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
-          'acquia_cms_site_studio:^1.3.5',
-        ],
-      );
-      $starterKit['themes']['default'] = "cohesion_theme";
-    }
-    $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
-    return $starterKit;
   }
 
 }
