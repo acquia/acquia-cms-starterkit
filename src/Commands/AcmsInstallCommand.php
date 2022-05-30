@@ -243,6 +243,9 @@ class AcmsInstallCommand extends Command {
       return $answer ?: $defaultValue;
     });
     $askQuestion->setMaxAttempts(3);
+    if (isset($question['allowed_values']['options'])) {
+      $askQuestion->setAutocompleterValues($question['allowed_values']['options']);
+    }
     $response = $helper->ask($input, $output, $askQuestion);
     return ($response === NULL) ? $defaultValue : $response;
   }

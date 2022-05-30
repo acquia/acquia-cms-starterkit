@@ -190,9 +190,17 @@ class InstallTask {
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
+    $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
+    $modules_list = JsonParser::installPackages($bundle_modules);
     $this->print("Enabling modules for the starter-kit:", 'headline');
+    $isDemoContent = $args['keys']['demo_content'] ?? '';
+    if ($isDemoContent == "yes" && ($key = array_search('acquia_cms_starter', $modules_list)) !== FALSE) {
+      // Remove acquia_cms_starter module in the list of modules to install.
+      // Because we install this module separately in the last.
+      unset($modules_list[$key]);
+    }
     $this->enableModules->execute([
-      'modules' => $this->starterKits[$this->bundle]['modules'],
+      'modules' => $modules_list,
       'keys' => $args['keys'],
     ]);
     $this->print("Enabling themes for the starter-kit:", 'headline');
@@ -200,19 +208,41 @@ class InstallTask {
       'themes' => $this->starterKits[$this->bundle]['themes'],
       'starter_kit' => $this->bundle,
     ]);
-    // Trigger site studio import process if starter or
-    // page module is there in active bundle.
-    $modules_ss_import = [
-      'acquia_cms_page',
-      'acquia_cms_starter',
-      'acquia_cms_site_studio',
-    ];
-    $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
-    $modules_list = JsonParser::installPackages($bundle_modules);
-    if (array_intersect($modules_ss_import, $modules_list)) {
-      $this->print("Running site studio package import for starter-kit:", 'headline');
-      $this->siteStudioPackageImport->execute([
-        'no-interaction' => $this->input->getOption('no-interaction'),
+
+    $siteStudioApiKey = $args['keys']['SITESTUDIO_API_KEY'] ?? '';
+    $siteStudioOrgKey = $args['keys']['SITESTUDIO_ORG_KEY'] ?? '';
+    // Trigger Site Studio Package import, if acquia_cms_site_studio module
+    // is there in active bundle.
+    if (in_array('acquia_cms_site_studio', $modules_list)) {
+      if ($siteStudioApiKey && $siteStudioOrgKey) {
+        $this->print("Running Site Studio package import:", 'headline');
+        $this->siteStudioPackageImport->execute([
+          'no-interaction' => $this->input->getOption('no-interaction'),
+        ]);
+      }
+      else {
+        $this->print("Skipped importing Site Studio Packages." .
+          PHP_EOL .
+          "You can set the key later from: /admin/cohesion/configuration/account-settings & import Site Studio packages.",
+          "warning",
+              );
+      }
+    }
+
+    // Enable: acquia_cms_site_studio_content (instead acquia_cms_starter), if
+    // acquia_cms_starter module is in the list of module installation and any
+    // content model module is not available in the list of module installation
+    // like acquia_cms_article, acquia_cms_page etc.
+    if ($isDemoContent == "yes") {
+      $starter_module = (
+        !in_array('acquia_cms_article', $modules_list) &&
+        in_array('acquia_cms_site_studio', $modules_list) &&
+        $siteStudioApiKey && $siteStudioOrgKey
+      ) ? 'acquia_cms_site_studio_content' : 'acquia_cms_starter';
+      $this->print("Enabling Starter module for the starter-kit:", 'headline');
+      $this->enableModules->execute([
+        'modules' => [$starter_module],
+        'keys' => $args['keys'],
       ]);
     }
   }
