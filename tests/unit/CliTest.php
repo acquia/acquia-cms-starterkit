@@ -89,7 +89,7 @@ class CliTest extends TestCase {
             ],
           ],
           'themes' => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
           ],
@@ -107,7 +107,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
           ],
@@ -127,7 +127,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
           ],
         ],
@@ -142,7 +142,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
           ],
         ],
@@ -158,7 +158,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
           ],
         ],

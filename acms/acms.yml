@@ -10,7 +10,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
       default: cohesion_theme
   acquia_cms_low_code:
@@ -25,7 +25,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
       default: cohesion_theme
   acquia_cms_standard:
@@ -42,7 +42,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
   acquia_cms_minimal:
     name: "Acquia CMS Minimal"
@@ -54,7 +54,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
   acquia_cms_headless:
     name: "Acquia CMS Headless"
@@ -67,7 +67,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
 questions:
   content_model:
