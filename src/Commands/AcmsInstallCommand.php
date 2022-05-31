@@ -148,8 +148,14 @@ class AcmsInstallCommand extends Command {
     // The questions defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
     // Get all questions for user selected use-case.
-    $processedQuestions = $this->installerQuestions->process($questions['questionMustAsk']);
-    $userInputValues = [];
+    $processedQuestions = $this->installerQuestions->process(array_merge($questions['questionMustAsk'], $questions['questionSkipped']));
+
+    // Initialize the value with default answer for question, so that
+    // if any question is dependent on other question which is skipped,
+    // we can use the value for that question to make sure the cli
+    // doesn't throw following RunTime exception:"Not able to resolve variable".
+    // @see AcquiaCMS\Cli\Helpers::shouldAskQuestion().
+    $userInputValues = $processedQuestions['default'];
     if (isset($processedQuestions['questionToAsk'])) {
       foreach ($processedQuestions['questionToAsk'] as $key => $question) {
         $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output);
@@ -237,6 +243,9 @@ class AcmsInstallCommand extends Command {
       return $answer ?: $defaultValue;
     });
     $askQuestion->setMaxAttempts(3);
+    if (isset($question['allowed_values']['options'])) {
+      $askQuestion->setAutocompleterValues($question['allowed_values']['options']);
+    }
     $response = $helper->ask($input, $output, $askQuestion);
     return ($response === NULL) ? $defaultValue : $response;
   }

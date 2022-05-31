@@ -208,11 +208,11 @@ class InstallerQuestionsTest extends TestCase {
         'no',
       ],
       [
-        CliTest::getSearchUuid()['SEARCH_UUID'],
+        CliTest::getSiteStudioApiKey()['SITESTUDIO_API_KEY'],
         'some_value',
-        'SEARCH_UUID',
+        'SITESTUDIO_API_KEY',
         [
-          'SEARCH_UUID' => 'some_value',
+          'SITESTUDIO_API_KEY' => 'some_value',
         ],
       ],
       [
@@ -237,9 +237,7 @@ class InstallerQuestionsTest extends TestCase {
       [
         'acquia_cms_demo',
         array_merge(
-          CliTest::getConnectorId(),
           CliTest::getGmapsKey(),
-          CliTest::getSearchUuid(),
           CliTest::getSiteStudioApiKey(),
           CliTest::getSiteStudioOrgKey(),
         ),
@@ -247,7 +245,7 @@ class InstallerQuestionsTest extends TestCase {
       [
         'acquia_cms_low_code',
         array_merge(
-          CliTest::getSearchUUID(),
+          CliTest::getDemoContent(),
           CliTest::getSiteStudioApiKey(),
           CliTest::getSiteStudioOrgKey(),
         ),
@@ -255,8 +253,6 @@ class InstallerQuestionsTest extends TestCase {
       [
         'acquia_cms_standard',
         array_merge(
-          CliTest::getSearchUUID(),
-          CliTest::getContentModel(),
           CliTest::getDemoContent(),
           CliTest::getSiteStudio(),
         ),
@@ -264,7 +260,6 @@ class InstallerQuestionsTest extends TestCase {
       [
         'acquia_cms_minimal',
         array_merge(
-          CliTest::getSearchUUID(),
           CliTest::getContentModel(),
           CliTest::getDemoContent(),
           CliTest::getSiteStudio(),

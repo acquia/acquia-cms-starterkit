@@ -62,6 +62,16 @@ class CliTest extends TestCase {
   }
 
   /**
+   * @dataProvider alterModuleThemesDataProvider
+   */
+  public function testAlterModuleThemes(string $bundle, array $userValues, array $expected, string $message = ''): void {
+    $starter_kit = $this->getAcmsFileContents()['starter_kits'][$bundle];
+    $expected = array_replace_recursive($starter_kit, ...$expected);
+    $this->acquiaCli->alterModulesAndThemes($starter_kit, $userValues);
+    $this->assertEquals($starter_kit, $expected, $message);
+  }
+
+  /**
    * An array of default contents for acms/acms.yml file.
    */
   protected function getAcmsFileContents() :array {
@@ -79,7 +89,7 @@ class CliTest extends TestCase {
             ],
           ],
           'themes' => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
           ],
@@ -97,17 +107,18 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
           ],
         ],
         "acquia_cms_standard" => [
           "name" => "Acquia CMS Standard",
-          "description" => "Acquia CMS with a starter content model, but no demo content, classic custom themes.",
+          "description" => "Acquia CMS with a starter content model, classic custom themes.",
           "modules" => [
             "install" => [
               "acquia_cms_article:^1.3.4",
+              "acquia_cms_page:^1.3.3",
               "acquia_cms_event:^1.3.4",
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
@@ -116,7 +127,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
           ],
         ],
@@ -131,7 +142,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
           ],
         ],
@@ -141,23 +152,22 @@ class CliTest extends TestCase {
           "modules" => [
             "install" => [
               "acquia_cms_headless",
+              "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
               "acquia_cms_toolbar:^1.3.3",
             ],
           ],
           "themes" => [
-            "install" => ["acquia_claro"],
+            "install" => ["acquia_claro:^1.3.2"],
             "admin" => "acquia_claro",
           ],
         ],
       ],
       "questions" => array_merge (
         self::getContentModel(),
-        self::getDemoContent(),
         self::getSiteStudio(),
-        self::getConnectorId(),
+        self::getDemoContent(),
         self::getGmapsKey(),
-        self::getSearchUuid(),
         self::getSiteStudioApiKey(),
         self::getSiteStudioOrgKey(),
       ),
@@ -174,7 +184,7 @@ class CliTest extends TestCase {
     return [
       'content_model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+          'starter_kits' => 'acquia_cms_minimal || acquia_cms_headless',
         ],
         'question' => "Do you want to include Content Model (yes/no) ?",
         'allowed_values' => [
@@ -196,7 +206,7 @@ class CliTest extends TestCase {
     return [
       'demo_content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code',
         ],
         'question' => "Do you want to include Demo Content (yes/no) ?",
         'allowed_values' => [
@@ -231,23 +241,6 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for SEARCH_UUID Question.
-   *
-   * @return array[]
-   *   Returns an array of question.
-   */
-  public static function getSearchUuid(): array {
-    return [
-      'SEARCH_UUID' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code || acquia_cms_standard || acquia_cms_minimal',
-        ],
-        'question' => "Please provide the Acquia CMS Search UUID",
-      ],
-    ];
-  }
-
-  /**
    * Returns the test data for SITESTUDIO_API_KEY Question.
    *
    * @return array[]
@@ -258,7 +251,7 @@ class CliTest extends TestCase {
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
-          'questions' => ['${site_studio} == "yes" || ${demo_content} == "yes"'],
+          'questions' => ['${site_studio} == "yes"'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -277,27 +270,10 @@ class CliTest extends TestCase {
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
-          'questions' => ['${site_studio} == "yes" || ${demo_content} == "yes"'],
+          'questions' => ['${site_studio} == "yes"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
-      ],
-    ];
-  }
-
-  /**
-   * Returns the test data for CONNECTOR_ID Question.
-   *
-   * @return array[]
-   *   Returns an array of question.
-   */
-  public static function getConnectorId(): array {
-    return [
-      'CONNECTOR_ID' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo',
-        ],
-        'question' => "Please provide the Acquia Connector ID",
       ],
     ];
   }
@@ -313,11 +289,153 @@ class CliTest extends TestCase {
       'GMAPS_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_demo',
+          'questions' => ['${demo_content} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
       ],
     ];
+  }
+
+  /**
+   * Function to return data provider for method: alterModulesAndThemes().
+   */
+  public function alterModuleThemesDataProvider() :array {
+    foreach (['acquia_cms_demo', 'acquia_cms_low_code', 'acquia_cms_standard', 'acquia_cms_minimal', 'acquia_cms_headless'] as $bundle) {
+      $returnArray = [
+        [
+          $bundle,
+          [
+            'content_model' => 'yes',
+            'demo_content' => 'yes',
+            'site_studio' => 'yes',
+          ],
+          [
+            [
+              "modules" => [
+                "install" => array_merge(
+                  $this->getUpdatedModulesThemesArray($bundle),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'site_studio'),
+                ),
+              ],
+            ],
+            [
+              'themes' => ['default' => 'cohesion_theme'],
+            ],
+          ],
+          "$bundle with Content Model, Site Studio & Demo Content",
+        ],
+        [
+          $bundle,
+          [
+            'content_model' => 'yes',
+            'site_studio' => 'yes',
+          ],
+          [
+            [
+              "modules" => [
+                "install" => array_merge(
+                  $this->getUpdatedModulesThemesArray($bundle),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'site_studio'),
+                ),
+              ],
+            ],
+            [
+              'themes' => ['default' => 'cohesion_theme'],
+            ],
+          ],
+          "$bundle with Content Model & Site Studio",
+        ],
+        [
+          $bundle,
+          [
+            'content_model' => 'yes',
+            'demo_content' => 'yes',
+            'site_studio' => 'no',
+          ],
+          [
+            [
+              "modules" => [
+                "install" => array_merge(
+                  $this->getUpdatedModulesThemesArray($bundle),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                ),
+              ],
+            ],
+            [
+              'themes' => ['default' => 'olivero'],
+            ],
+          ],
+          "$bundle with Content Model & Demo Content",
+        ],
+        [
+          $bundle,
+          [
+            'content_model' => 'no',
+            'demo_content' => 'no',
+            'site_studio' => 'no',
+          ],
+          [
+            [
+              "modules" => [
+                "install" => array_merge(
+                  $this->getUpdatedModulesThemesArray($bundle),
+                ),
+              ],
+            ],
+            [
+              'themes' => ['default' => 'olivero'],
+            ],
+          ],
+          "$bundle with No Content Model & No Demo Content",
+        ],
+      ];
+    }
+    return $returnArray;
+  }
+
+  /**
+   * Function to return modules/themes needed for different starter-kits.
+   *
+   * @param string $bundle
+   *   A starter-kit machine name.
+   * @param string $question_type
+   *   A question machine_name.
+   */
+  public function getUpdatedModulesThemesArray(string $bundle, string $question_type = ''): array {
+    switch ($question_type) :
+      case 'content_model':
+        $packages = [
+          "acquia_cms_article:^1.3.4",
+          "acquia_cms_page:^1.3.3",
+          "acquia_cms_event:^1.3.4",
+        ];
+        break;
+
+      case 'demo_content':
+        $packages = ["acquia_cms_starter:^1.3.0"];
+        break;
+
+      case 'site_studio':
+        $packages = ["acquia_cms_site_studio:^1.3.5"];
+        break;
+
+      default:
+        $packages = [
+          "acquia_cms_search:^1.3.5",
+          "acquia_cms_tour:^1.3.0",
+          "acquia_cms_toolbar:^1.3.3",
+        ];
+        if ($bundle == 'acquia_cms_headless') {
+          array_unshift($packages, 'acquia_cms_headless');
+        }
+        break;
+    endswitch;
+    return $packages;
   }
 
 }

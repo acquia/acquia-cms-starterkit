@@ -10,7 +10,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
       default: cohesion_theme
   acquia_cms_low_code:
@@ -25,15 +25,16 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
       default: cohesion_theme
   acquia_cms_standard:
     name: "Acquia CMS Standard"
-    description: "Acquia CMS with a starter content model, but no demo content, classic custom themes."
+    description: "Acquia CMS with a starter content model, classic custom themes."
     modules:
       install:
         - acquia_cms_article:^1.3.4
+        - acquia_cms_page:^1.3.3
         - acquia_cms_event:^1.3.4
         - acquia_cms_search:^1.3.5
         - acquia_cms_tour:^1.3.0
@@ -41,7 +42,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
   acquia_cms_minimal:
     name: "Acquia CMS Minimal"
@@ -53,7 +54,7 @@ starter_kits:
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
   acquia_cms_headless:
     name: "Acquia CMS Headless"
@@ -61,27 +62,18 @@ starter_kits:
     modules:
       install:
         - acquia_cms_headless
+        - acquia_cms_search:^1.3.5
         - acquia_cms_tour:^1.3.0
         - acquia_cms_toolbar:^1.3.3
     themes:
       install:
-        - acquia_claro
+        - acquia_claro:^1.3.2
       admin: acquia_claro
 questions:
   content_model:
     dependencies:
-      starter_kits: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless
+      starter_kits: acquia_cms_minimal || acquia_cms_headless
     question: "Do you want to include Content Model (yes/no) ?"
-    allowed_values:
-      options:
-        - yes
-        - no
-    skip_on_value: false
-    default_value: "no"
-  demo_content:
-    dependencies:
-      starter_kits: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless
-    question: "Do you want to include Demo Content (yes/no) ?"
     allowed_values:
       options:
         - yes
@@ -98,26 +90,30 @@ questions:
         - no
     skip_on_value: false
     default_value: "no"
-  CONNECTOR_ID:
+  demo_content:
     dependencies:
-      starter_kits: acquia_cms_demo
-    question: "Please provide the Acquia Connector ID"
+      starter_kits: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code
+    question: "Do you want to include Demo Content (yes/no) ?"
+    allowed_values:
+      options:
+        - yes
+        - no
+    skip_on_value: false
+    default_value: "no"
   GMAPS_KEY:
     dependencies:
       starter_kits: acquia_cms_demo
+      questions:
+        - ${demo_content} == "yes"
     question: "Please provide the Google Maps API Key"
     warning: |-
       The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
       You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
-  SEARCH_UUID:
-    dependencies:
-      starter_kits: acquia_cms_demo || acquia_cms_low_code || acquia_cms_standard || acquia_cms_minimal
-    question: "Please provide the Acquia CMS Search UUID"
   SITESTUDIO_API_KEY:
     dependencies:
       starter_kits: acquia_cms_demo || acquia_cms_low_code
       questions:
-       - ${site_studio} == "yes" || ${demo_content} == "yes"
+       - ${site_studio} == "yes"
     question: "Please provide the Site Studio API Key"
     warning: |-
       The Site Studio API key is not set. The Site Studio packages won't get imported.
@@ -126,7 +122,7 @@ questions:
     dependencies:
       starter_kits: acquia_cms_demo || acquia_cms_low_code
       questions:
-        - ${site_studio} == "yes" || ${demo_content} == "yes"
+        - ${site_studio} == "yes"
     question: "Please provide the Site Studio Organization Key"
     warning: |-
       The Site Studio Organization key is not set. The Site Studio packages won't get imported.

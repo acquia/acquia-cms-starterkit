@@ -3,7 +3,6 @@
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCodes;
-use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 
 /**
@@ -35,8 +34,8 @@ class EnableModules {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $packages = JsonParser::installPackages($args['modules']['install']);
-    $command = array_merge(["en", "--yes"], $packages);
+    $modules = $args['modules'];
+    $command = array_merge(["en", "--yes"], $modules);
     $args['keys']['UNSET_COHESION_SYNC'] = 1;
     $this->drushCommand->prepare($command)->run($args['keys']);
     return StatusCodes::OK;

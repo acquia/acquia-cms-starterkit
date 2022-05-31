@@ -21,7 +21,7 @@ class InstallerQuestions {
    *   Returns the questions for the user selected use-case.
    */
   public function getQuestions(array $questions, string $bundle) :array {
-    $questionMustAsk = $questionCanAsk = [];
+    $questionMustAsk = $questionCanAsk = $questionSkipped = [];
     foreach ($questions as $key => $question) {
       if ($this->filterByStarterKit($question, $bundle)) {
         $questionMustAsk[$key] = $question;
@@ -29,10 +29,19 @@ class InstallerQuestions {
       elseif ($this->filterByQuestion($question)) {
         $questionCanAsk[$key] = $question;
       }
+      else {
+        // As we are not asking this question, so set `skip_on_value` to TRUE.
+        // This is done, because when function process() is called,
+        // it'll add this question in default value question and
+        // this question won't be asked to the user.
+        $question['skip_on_value'] = TRUE;
+        $questionSkipped[$key] = $question;
+      }
     }
     return [
       'questionMustAsk' => $questionMustAsk,
       'questionCanAsk' => $questionCanAsk,
+      'questionSkipped' => $questionSkipped,
     ];
   }
 
