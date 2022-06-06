@@ -73,12 +73,12 @@ class EnableThemes {
     ], [$args['themes']['default']]);
     $this->drushCommand->prepare($command)->run();
 
-    // Add user selected starter-kit to state.
+    // Add user selected site-template to state.
     // @todo Move code to somewhere else.
     $command = array_merge([
       "state:set",
-      "acquia_cms.starter_kit",
-    ], [$args['starter_kit']]);
+      "acquia_cms.site_template",
+    ], [$args['site_template']]);
     $this->drushCommand->prepare($command)->run();
 
     return StatusCodes::OK;

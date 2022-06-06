@@ -71,7 +71,7 @@ class AcmsInstallCommand extends Command {
     $this->setName("acms:install")
       ->setDescription("Use this command to setup & install site.")
       ->setDefinition([
-        new InputArgument('name', NULL, "Name of the starter kit"),
+        new InputArgument('name', NULL, "Name of the site template"),
       ])
       ->setHelp("The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.");
   }
@@ -112,22 +112,22 @@ class AcmsInstallCommand extends Command {
    *   A name of the user selected use-case.
    */
   protected function validationOptions(string $name) :bool {
-    $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
-    if (!in_array($name, $starterKits)) {
-      throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
+    $siteTemplates = array_keys($this->acquiaCmsCli->getSiteTemplates());
+    if (!in_array($name, $siteTemplates)) {
+      throw new InvalidArgumentException("Invalid site template. It should be from one of the following: " . implode(", ", $siteTemplates) . ".");
     }
     return TRUE;
   }
 
   /**
-   * Providing input to user, asking to select the starter-kit.
+   * Providing input to user, asking to select the site-template.
    */
   protected function askBundleQuestion(InputInterface $input, OutputInterface $output) :string {
     $helper = $this->getHelper('question');
-    $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
-    $this->renderStarterKits($output);
-    $starterKit = "acquia_cms_minimal";
-    $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
+    $bundles = array_keys($this->acquiaCmsCli->getSiteTemplates());
+    $this->renderSiteTemplates($output);
+    $siteTemplate = "acquia_cms_minimal";
+    $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $siteTemplate), $siteTemplate);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
@@ -170,14 +170,18 @@ class AcmsInstallCommand extends Command {
   }
 
   /**
-   * Renders the table showing list of all starter kits.
+   * Renders the table showing list of all site templates.
    */
-  protected function renderStarterKits(OutputInterface $output) :void {
+  protected function renderSiteTemplates(OutputInterface $output) :void {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
-    foreach ($this->acquiaCmsCli->getStarterKits() as $id => $starter_kit) {
-      $useCases[$id] = $starter_kit;
-      $table->addRow([$id, $starter_kit['name'], $starter_kit['description']]);
+    foreach ($this->acquiaCmsCli->getSiteTemplates() as $id => $site_template) {
+      $useCases[$id] = $site_template;
+      $table->addRow([
+        $id,
+        $site_template['name'],
+        $site_template['description'],
+      ]);
     }
     $table->setStyle('box');
     $table->render();
@@ -187,7 +191,7 @@ class AcmsInstallCommand extends Command {
    * Show successful message post site installation.
    *
    * @param string $bundle
-   *   User selected starter-kit.
+   *   User selected site-template.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony console output object.
    */

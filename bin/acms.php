@@ -42,7 +42,7 @@ if (in_array($input->getFirstArgument(), ['cache:clear', 'cc'])) {
 $kernel->boot();
 $container = $kernel->getContainer();
 $application = $container->get(Application::class);
-$application->setName('Acquia CMS starterkit cli tool.');
+$application->setName('Acquia CMS Site Template cli tool.');
 $application->setVersion('1.0');
 
 // Add command autocompletion.

@@ -56,7 +56,7 @@ class CliTest extends TestCase {
    * @test
    */
   public function testExecute() :void {
-    $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
+    $this->assertEquals("Welcome to Acquia CMS Site Template installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
     $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile());
   }
@@ -65,10 +65,10 @@ class CliTest extends TestCase {
    * @dataProvider alterModuleThemesDataProvider
    */
   public function testAlterModuleThemes(string $bundle, array $userValues, array $expected, string $message = ''): void {
-    $starter_kit = $this->getAcmsFileContents()['starter_kits'][$bundle];
-    $expected = array_replace_recursive($starter_kit, ...$expected);
-    $this->acquiaCli->alterModulesAndThemes($starter_kit, $userValues);
-    $this->assertEquals($starter_kit, $expected, $message);
+    $site_templates = $this->getAcmsFileContents()['site_templates'][$bundle];
+    $expected = array_replace_recursive($site_templates, ...$expected);
+    $this->acquiaCli->alterModulesAndThemes($site_templates, $userValues);
+    $this->assertEquals($site_templates, $expected, $message);
   }
 
   /**
@@ -76,7 +76,7 @@ class CliTest extends TestCase {
    */
   protected function getAcmsFileContents() :array {
     return [
-      "starter_kits" => [
+      "site_templates" => [
         "acquia_cms_demo" => [
           'name' => 'Acquia CMS Demo',
           'description' => 'Low-code demonstration of ACMS with default content.',
@@ -184,7 +184,7 @@ class CliTest extends TestCase {
     return [
       'content_model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_headless',
+          'site_templates' => 'acquia_cms_minimal || acquia_cms_headless',
         ],
         'question' => "Do you want to include Content Model (yes/no) ?",
         'allowed_values' => [
@@ -206,7 +206,7 @@ class CliTest extends TestCase {
     return [
       'demo_content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code',
+          'site_templates' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code',
         ],
         'question' => "Do you want to include Demo Content (yes/no) ?",
         'allowed_values' => [
@@ -228,7 +228,7 @@ class CliTest extends TestCase {
     return [
       'site_studio' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
+          'site_templates' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
         ],
         'question' => "Do you want to include Site Studio (yes/no) ?",
         'allowed_values' => [
@@ -250,7 +250,7 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
+          'site_templates' => 'acquia_cms_demo || acquia_cms_low_code',
           'questions' => ['${site_studio} == "yes"'],
         ],
         'question' => "Please provide the Site Studio API Key",
@@ -269,7 +269,7 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
+          'site_templates' => 'acquia_cms_demo || acquia_cms_low_code',
           'questions' => ['${site_studio} == "yes"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
@@ -288,7 +288,7 @@ class CliTest extends TestCase {
     return [
       'GMAPS_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo',
+          'site_templates' => 'acquia_cms_demo',
           'questions' => ['${demo_content} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
@@ -399,10 +399,10 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Function to return modules/themes needed for different starter-kits.
+   * Function to return modules/themes needed for different site-templates.
    *
    * @param string $bundle
-   *   A starter-kit machine name.
+   *   A site-template machine name.
    * @param string $question_type
    *   A question machine_name.
    */

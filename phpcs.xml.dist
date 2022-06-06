@@ -5,7 +5,7 @@
          xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd"
 >
 
-  <description>PHP CodeSniffer configuration for analyzing Acquia CMS starterkit code.</description>
+  <description>PHP CodeSniffer configuration for analyzing Acquia CMS Site Template code.</description>
 
   <arg name="colors"/>
   <arg name="parallel" value="10"/>

@@ -23,7 +23,7 @@ class InstallerQuestions {
   public function getQuestions(array $questions, string $bundle) :array {
     $questionMustAsk = $questionCanAsk = $questionSkipped = [];
     foreach ($questions as $key => $question) {
-      if ($this->filterByStarterKit($question, $bundle)) {
+      if ($this->filterBySiteTemplate($question, $bundle)) {
         $questionMustAsk[$key] = $question;
       }
       elseif ($this->filterByQuestion($question)) {
@@ -56,11 +56,11 @@ class InstallerQuestions {
    * @return bool
    *   Returns true|false, if question needs to ask.
    */
-  public function filterByStarterKit(array $question, string $bundle) :bool {
+  public function filterBySiteTemplate(array $question, string $bundle) :bool {
     $isValid = TRUE;
-    if (isset($question['dependencies']['starter_kits'])) {
-      $starterKits = array_map('trim', explode('||', $question['dependencies']['starter_kits']));
-      if (!in_array($bundle, $starterKits)) {
+    if (isset($question['dependencies']['site_templates'])) {
+      $siteTemplates = array_map('trim', explode('||', $question['dependencies']['site_templates']));
+      if (!in_array($bundle, $siteTemplates)) {
         $isValid = FALSE;
       }
     }

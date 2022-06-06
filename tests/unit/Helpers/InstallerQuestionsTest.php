@@ -138,7 +138,7 @@ class InstallerQuestionsTest extends TestCase {
   protected function dummyQuestion(): array {
     return [
       'dependencies' => [
-        'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
+        'site_templates' => 'acquia_cms_demo || acquia_cms_low_code',
         'questions' => [
           '${site_studio} == "yes" || ${demo_content} == "yes"',
         ],

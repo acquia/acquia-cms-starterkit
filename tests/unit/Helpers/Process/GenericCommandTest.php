@@ -84,10 +84,10 @@ class GenericCommandTest extends TestCase {
         [
           'The Project: " . getenv("PROJECT") . " is awesome.',
           [
-            'PROJECT' => 'acquia/acquia-cms-starterkit',
+            'PROJECT' => 'acquia/acquia-cms-site-template',
           ],
         ],
-        'The Project: acquia/acquia-cms-starterkit is awesome.',
+        'The Project: acquia/acquia-cms-site-template is awesome.',
       ],
       [
         [

@@ -30,11 +30,11 @@ class InstallTask {
   protected $acquiaCmsCli;
 
   /**
-   * Holds an array of defined starter kits.
+   * Holds an array of defined site templates.
    *
    * @var mixed
    */
-  protected $starterKits;
+  protected $siteTemplates;
 
   /**
    * Holds the Validate Drupal step object.
@@ -135,7 +135,7 @@ class InstallTask {
    */
   public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, EnableThemes $enableThemes, SiteStudioPackageImport $siteStudioPackageImport) {
     $this->acquiaCmsCli = $cli;
-    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
+    $this->siteTemplates = $this->acquiaCmsCli->getSiteTemplates();
     $this->validateDrupal = $validateDrupal;
     $this->downloadDrupal = $downloadDrupal;
     $this->enableModules = $enableModules;
@@ -180,19 +180,19 @@ class InstallTask {
         "Skipping downloading Drupal.", 'success'
       );
     }
-    $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
+    $this->print("Downloading all packages/modules/themes required by the site-template:", 'headline');
 
     // @todo Think if we can configure to download/install modules/themes using yaml configuration.
-    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
+    $this->acquiaCmsCli->alterModulesAndThemes($this->siteTemplates[$this->bundle], $args['keys']);
 
-    $this->downloadModules->execute($this->starterKits[$this->bundle]);
+    $this->downloadModules->execute($this->siteTemplates[$this->bundle]);
     $this->print("Installing Site:", 'headline');
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
-    $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
+    $bundle_modules = $this->siteTemplates[$this->bundle]['modules']['install'] ?? [];
     $modules_list = JsonParser::installPackages($bundle_modules);
-    $this->print("Enabling modules for the starter-kit:", 'headline');
+    $this->print("Enabling modules for the site-template:", 'headline');
     $isDemoContent = $args['keys']['demo_content'] ?? '';
     if ($isDemoContent == "yes" && ($key = array_search('acquia_cms_starter', $modules_list)) !== FALSE) {
       // Remove acquia_cms_starter module in the list of modules to install.
@@ -203,10 +203,10 @@ class InstallTask {
       'modules' => $modules_list,
       'keys' => $args['keys'],
     ]);
-    $this->print("Enabling themes for the starter-kit:", 'headline');
+    $this->print("Enabling themes for the site-template:", 'headline');
     $this->enableThemes->execute([
-      'themes' => $this->starterKits[$this->bundle]['themes'],
-      'starter_kit' => $this->bundle,
+      'themes' => $this->siteTemplates[$this->bundle]['themes'],
+      'site_template' => $this->bundle,
     ]);
 
     $siteStudioApiKey = $args['keys']['SITESTUDIO_API_KEY'] ?? '';
@@ -239,7 +239,7 @@ class InstallTask {
         in_array('acquia_cms_site_studio', $modules_list) &&
         $siteStudioApiKey && $siteStudioOrgKey
       ) ? 'acquia_cms_site_studio_content' : 'acquia_cms_starter';
-      $this->print("Enabling Starter module for the starter-kit:", 'headline');
+      $this->print("Enabling Starter module for the site-template:", 'headline');
       $this->enableModules->execute([
         'modules' => [$starter_module],
         'keys' => $args['keys'],

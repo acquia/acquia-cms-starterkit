@@ -66,8 +66,8 @@ class JsonParserTest extends TestCase {
         ["acquia_cms_common", "cohesion", "acquia_cms_article", "cohesion_theme"],
       ],
       [
-        ["acquia_cms_common:^1.3", "acquia/cohesion:^6.8", "acquia/acquia-cms-starterkit:^1.5"],
-        ["acquia_cms_common", "cohesion", "acquia-cms-starterkit"],
+        ["acquia_cms_common:^1.3", "acquia/cohesion:^6.8", "acquia/acquia-cms-site-template:^1.5"],
+        ["acquia_cms_common", "cohesion", "acquia-cms-site-template"],
       ],
     ];
   }

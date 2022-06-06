@@ -1,4 +1,4 @@
-starter_kits:
+site_templates:
   acquia_cms_demo:
     name: "Acquia CMS Demo"
     description: "Low-code demonstration of ACMS with default content."
@@ -72,7 +72,7 @@ starter_kits:
 questions:
   content_model:
     dependencies:
-      starter_kits: acquia_cms_minimal || acquia_cms_headless
+      site_templates: acquia_cms_minimal || acquia_cms_headless
     question: "Do you want to include Content Model (yes/no) ?"
     allowed_values:
       options:
@@ -82,7 +82,7 @@ questions:
     default_value: "no"
   site_studio:
     dependencies:
-      starter_kits: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless
+      site_templates: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless
     question: "Do you want to include Site Studio (yes/no) ?"
     allowed_values:
       options:
@@ -92,7 +92,7 @@ questions:
     default_value: "no"
   demo_content:
     dependencies:
-      starter_kits: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code
+      site_templates: acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code
     question: "Do you want to include Demo Content (yes/no) ?"
     allowed_values:
       options:
@@ -102,7 +102,7 @@ questions:
     default_value: "no"
   GMAPS_KEY:
     dependencies:
-      starter_kits: acquia_cms_demo
+      site_templates: acquia_cms_demo
       questions:
         - ${demo_content} == "yes"
     question: "Please provide the Google Maps API Key"
@@ -111,7 +111,7 @@ questions:
       You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
   SITESTUDIO_API_KEY:
     dependencies:
-      starter_kits: acquia_cms_demo || acquia_cms_low_code
+      site_templates: acquia_cms_demo || acquia_cms_low_code
       questions:
        - ${site_studio} == "yes"
     question: "Please provide the Site Studio API Key"
@@ -120,7 +120,7 @@ questions:
       You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
   SITESTUDIO_ORG_KEY:
     dependencies:
-      starter_kits: acquia_cms_demo || acquia_cms_low_code
+      site_templates: acquia_cms_demo || acquia_cms_low_code
       questions:
         - ${site_studio} == "yes"
     question: "Please provide the Site Studio Organization Key"

@@ -1,4 +1,4 @@
-name: acquia-cms-starterkit CI
+name: acquia-cms-site-template CI
 on:
   push:
     branches: [ develop, main, ACMS* ]
@@ -9,7 +9,7 @@ on:
     paths-ignore:
       - README.md
 jobs:
-  # @todo add tests to validate each starter-kit use case.
+  # @todo add tests to validate each site-template use case.
   STATIC_CODE_ANALYSIS:
     name: "Static Code Analysis"
     runs-on: ubuntu-latest

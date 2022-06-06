@@ -6,16 +6,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Provides the object for an Acquia CMS starter-kit cli.
+ * Provides the object for an Acquia CMS site-template cli.
  */
 class Cli {
 
   /**
-   * A message that gets displayed when running any starter-kit cli command.
+   * A message that gets displayed when running any site-template cli command.
    *
    * @var string
    */
-  public $headline = "Welcome to Acquia CMS Starter Kit installer";
+  public $headline = "Welcome to Acquia CMS Site Template installer";
 
   /**
    * Holds the symfony console output object.
@@ -91,11 +91,11 @@ class Cli {
   }
 
   /**
-   * Returns an array of starter-kits defined in acms.yml file.
+   * Returns an array of site-templates defined in acms.yml file.
    */
-  public function getStarterKits() :array {
+  public function getSiteTemplates() :array {
     $fileContent = $this->getAcquiaCmsFile();
-    return $fileContent['starter_kits'] ?? [];
+    return $fileContent['site_templates'] ?? [];
   }
 
   /**
@@ -123,25 +123,25 @@ class Cli {
   /**
    * Function to alter modules & themes based on user response.
    *
-   * @param array $starterKit
-   *   An array of starter-kit.
+   * @param array $siteTemplate
+   *   An array of site-template.
    * @param array $userInputValues
    *   A user input values for questions.
    *
    * @return array
-   *   Returns an array of altered starter-kit.
+   *   Returns an array of altered site-template.
    */
-  public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
+  public function alterModulesAndThemes(array &$siteTemplate, array $userInputValues) :array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $isSiteStudio = $userInputValues['site_studio'] ?? '';
 
     // Set default theme as olivero (if not defined)
-    $starterKit['themes']['default'] = $starterKit['themes']['default'] ?? "olivero";
+    $siteTemplate['themes']['default'] = $siteTemplate['themes']['default'] ?? "olivero";
 
     if ($isContentModel == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
+      $siteTemplate['modules']['install'] = array_merge(
+        $siteTemplate['modules']['install'], [
           'acquia_cms_article:^1.3.4',
           'acquia_cms_page:^1.3.3',
           'acquia_cms_event:^1.3.4',
@@ -149,22 +149,22 @@ class Cli {
       );
     }
     if ($isDemoContent == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
+      $siteTemplate['modules']['install'] = array_merge(
+        $siteTemplate['modules']['install'], [
           'acquia_cms_starter:^1.3.0',
         ],
       );
     }
     if ($isSiteStudio == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
+      $siteTemplate['modules']['install'] = array_merge(
+        $siteTemplate['modules']['install'], [
           'acquia_cms_site_studio:^1.3.5',
         ],
       );
-      $starterKit['themes']['default'] = "cohesion_theme";
+      $siteTemplate['themes']['default'] = "cohesion_theme";
     }
-    $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
-    return $starterKit;
+    $siteTemplate['modules']['install'] = array_unique($siteTemplate['modules']['install']);
+    return $siteTemplate;
   }
 
 }

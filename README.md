@@ -1,8 +1,8 @@
-# Acquia CMS Starter toolkit
+# Acquia CMS Site Template CLI
 [![Build Status](https://github.com/acquia/acquia-cms-starterkit/actions/workflows/acms.yml/badge.svg)](https://github.com/acquia/acquia-cms-starterkit)
 
 The official command-line tool for downloading and building drupal site with acquia_cms modules for different use cases.
-Acquia CMS starterkit cli tool helps you to quickly setup the Drupal sites based on your needs. Currently, the cli tool
+Acquia CMS Site Template cli tool helps you to quickly setup the Drupal sites based on your needs. Currently, the cli tool
 will present you the following use cases:
 
 | Name  | Description |

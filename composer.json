@@ -1,13 +1,13 @@
 {
     "name": "acquia/acquia-cms-starterkit",
     "type": "project",
-    "description": "Acquia CMS starterkit cli command.",
+    "description": "Acquia CMS Site Template cli command.",
     "keywords": [
         "cli",
         "console",
         "drupal",
         "acquia_cms",
-        "starterkit"
+        "site-template"
     ],
     "license": "GPL-2.0-or-later",
     "authors": [

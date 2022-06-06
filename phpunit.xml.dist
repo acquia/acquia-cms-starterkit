@@ -9,7 +9,7 @@
   </php>
 
     <testsuites>
-        <testsuite name="Acquia CMS Starterkit">
+        <testsuite name="Acquia CMS Site Template">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
