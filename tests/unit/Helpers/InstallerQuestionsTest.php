@@ -138,9 +138,9 @@ class InstallerQuestionsTest extends TestCase {
   protected function dummyQuestion(): array {
     return [
       'dependencies' => [
-        'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
+        'starter_kits' => 'acquia_cms_enterprise_low_code',
         'questions' => [
-          '${site_studio} == "yes" || ${demo_content} == "yes"',
+          '${demo_content} == "yes"',
         ],
       ],
       'question' => "Please provide the Site Studio Organization Key",
@@ -156,13 +156,10 @@ class InstallerQuestionsTest extends TestCase {
    */
   public function dataShouldAskQuestion(): array {
     $dummyQuestion = $this->dummyQuestion();
-    $dummyQuestion1 = $this->dummyQuestion();
-    $dummyQuestion1['dependencies']['questions'] = ['${site_studio} >> "yes"'];
     return [
       [
         $dummyQuestion,
         [
-          'site_studio' => 'yes',
           'demo_content' => 'yes',
         ],
         TRUE,
@@ -170,27 +167,9 @@ class InstallerQuestionsTest extends TestCase {
       [
         $dummyQuestion,
         [
-          'site_studio' => 'no',
-        ],
-        TRUE,
-        '/^Not able to resolve variable:/',
-      ],
-      [
-        $dummyQuestion,
-        [
-          'site_studio' => 'no',
           'demo_content' => 'no',
         ],
         FALSE,
-      ],
-      [
-        $dummyQuestion1,
-        [
-          'site_studio' => 'no',
-          'demo_content' => 'no',
-        ],
-        FALSE,
-        '/^Invalid Question expression:/',
       ],
     ];
   }
@@ -235,42 +214,21 @@ class InstallerQuestionsTest extends TestCase {
   public function providerBundle() :array {
     return [
       [
-        'acquia_cms_demo',
+        'acquia_cms_enterprise_low_code',
         array_merge(
-          CliTest::getGmapsKey(),
-          CliTest::getSiteStudioApiKey(),
-          CliTest::getSiteStudioOrgKey(),
+          CliTest::getDemoContent(),
         ),
       ],
       [
-        'acquia_cms_low_code',
+        'acquia_cms_community',
         array_merge(
           CliTest::getDemoContent(),
-          CliTest::getSiteStudioApiKey(),
-          CliTest::getSiteStudioOrgKey(),
-        ),
-      ],
-      [
-        'acquia_cms_standard',
-        array_merge(
-          CliTest::getDemoContent(),
-          CliTest::getSiteStudio(),
-        ),
-      ],
-      [
-        'acquia_cms_minimal',
-        array_merge(
-          CliTest::getContentModel(),
-          CliTest::getDemoContent(),
-          CliTest::getSiteStudio(),
         ),
       ],
       [
         'acquia_cms_headless',
         array_merge(
-          CliTest::getContentModel(),
           CliTest::getDemoContent(),
-          CliTest::getSiteStudio(),
         ),
       ],
     ];

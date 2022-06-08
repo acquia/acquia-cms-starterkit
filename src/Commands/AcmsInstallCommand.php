@@ -126,13 +126,13 @@ class AcmsInstallCommand extends Command {
     $helper = $this->getHelper('question');
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
-    $starterKit = "acquia_cms_minimal";
+    $starterKit = "acquia_cms_community";
     $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
         throw new \RuntimeException(
-          "Please choose from one of the use case defined above. Ex: acquia_cms_demo."
+          "Please choose from one of the use case defined above. Ex: acquia_cms_enterprise_low_code."
         );
       }
       return $answer;

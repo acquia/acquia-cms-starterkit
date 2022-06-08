@@ -23,7 +23,7 @@ class InstallerQuestions {
   public function getQuestions(array $questions, string $bundle) :array {
     $questionMustAsk = $questionCanAsk = $questionSkipped = [];
     foreach ($questions as $key => $question) {
-      if ($this->filterByStarterKit($question, $bundle)) {
+      if ($this->filterByStarterKit($question, $bundle) && !$this->filterByQuestion($question)) {
         $questionMustAsk[$key] = $question;
       }
       elseif ($this->filterByQuestion($question)) {
