@@ -132,7 +132,7 @@ class AcmsInstallCommand extends Command {
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
         throw new \RuntimeException(
-          "Please choose from one of the use case defined above. Ex: acquia_cms_enterprise_low_code."
+          "Please choose from one of the use case defined above. Ex: acquia_cms_low_code."
         );
       }
       return $answer;

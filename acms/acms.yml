@@ -1,5 +1,5 @@
 starter_kits:
-  acquia_cms_enterprise_low_code:
+  acquia_cms_low_code:
     name: "Acquia CMS Enterprise Low Code"
     description: "Acquia CMS with Site Studio but no content opinion."
     modules:
@@ -28,7 +28,7 @@ starter_kits:
       admin: acquia_claro
   acquia_cms_headless:
     name: "Acquia CMS Headless"
-    description: "ACMS with headless functionality."
+    description: "Acquia CMS with headless functionality."
     modules:
       install:
         - acquia_cms_headless
@@ -42,7 +42,7 @@ starter_kits:
 questions:
   demo_content:
     dependencies:
-      starter_kits: acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community
+      starter_kits: acquia_cms_low_code || acquia_cms_headless || acquia_cms_community
     question: "Do you want a demo with demo content (yes/no) ?"
     allowed_values:
       options:
@@ -52,7 +52,7 @@ questions:
     default_value: "no"
   content_model:
     dependencies:
-      starter_kits: acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community
+      starter_kits: acquia_cms_low_code || acquia_cms_headless || acquia_cms_community
       questions:
         - ${demo_content} == "no"
     question: "Do you want to include the Content Model (yes/no) ?"
@@ -64,27 +64,28 @@ questions:
     default_value: "no"
   GMAPS_KEY:
     dependencies:
-      starter_kits: acquia_cms_enterprise_low_code
+      starter_kits: acquia_cms_low_code || acquia_cms_community || acquia_cms_headless
       questions:
         - ${demo_content} == "yes"
+        - ${content_model} == "yes"
     question: "Please provide the Google Maps API Key"
     warning: |-
       The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
       You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
   SITESTUDIO_API_KEY:
     dependencies:
-      starter_kits: acquia_cms_enterprise_low_code
+      starter_kits: acquia_cms_low_code
       questions:
-       - ${demo_content} == "yes"
+        - ${demo_content} == "ALL"
     question: "Please provide the Site Studio API Key"
     warning: |-
       The Site Studio API key is not set. The Site Studio packages won't get imported.
       You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
   SITESTUDIO_ORG_KEY:
     dependencies:
-      starter_kits: acquia_cms_enterprise_low_code
+      starter_kits: acquia_cms_low_code
       questions:
-        - ${demo_content} == "yes"
+        - ${demo_content} == "ALL"
     question: "Please provide the Site Studio Organization Key"
     warning: |-
       The Site Studio Organization key is not set. The Site Studio packages won't get imported.

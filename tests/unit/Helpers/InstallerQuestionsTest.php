@@ -138,9 +138,9 @@ class InstallerQuestionsTest extends TestCase {
   protected function dummyQuestion(): array {
     return [
       'dependencies' => [
-        'starter_kits' => 'acquia_cms_enterprise_low_code',
+        'starter_kits' => 'acquia_cms_low_code',
         'questions' => [
-          '${demo_content} == "yes"',
+          '${demo_content} == "ALL"',
         ],
       ],
       'question' => "Please provide the Site Studio Organization Key",
@@ -160,16 +160,9 @@ class InstallerQuestionsTest extends TestCase {
       [
         $dummyQuestion,
         [
-          'demo_content' => 'yes',
+          'demo_content' => 'ALL',
         ],
         TRUE,
-      ],
-      [
-        $dummyQuestion,
-        [
-          'demo_content' => 'no',
-        ],
-        FALSE,
       ],
     ];
   }
@@ -214,7 +207,7 @@ class InstallerQuestionsTest extends TestCase {
   public function providerBundle() :array {
     return [
       [
-        'acquia_cms_enterprise_low_code',
+        'acquia_cms_low_code',
         array_merge(
           CliTest::getDemoContent(),
         ),

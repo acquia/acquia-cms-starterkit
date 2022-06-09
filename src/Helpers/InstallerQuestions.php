@@ -23,10 +23,11 @@ class InstallerQuestions {
   public function getQuestions(array $questions, string $bundle) :array {
     $questionMustAsk = $questionCanAsk = $questionSkipped = [];
     foreach ($questions as $key => $question) {
-      if ($this->filterByStarterKit($question, $bundle) && !$this->filterByQuestion($question)) {
+      if ($this->filterByStarterKit($question, $bundle) && !$this->filterByQuestion($question, $bundle)) {
+        $question['skip_on_value'] = FALSE;
         $questionMustAsk[$key] = $question;
       }
-      elseif ($this->filterByQuestion($question)) {
+      elseif ($this->filterByQuestion($question, $bundle)) {
         $questionCanAsk[$key] = $question;
       }
       else {
@@ -72,17 +73,20 @@ class InstallerQuestions {
    *
    * @param array $question
    *   An Array of question.
+   * @param string $bundle
+   *   A name of the user selected use-case.
    *
    * @return bool
    *   Returns true|false, if question needs to ask.
    */
-  public function filterByQuestion(array $question) :bool {
+  public function filterByQuestion(array $question, string $bundle) :bool {
     $isValid = FALSE;
     // Here, we are just filtering to check if we should ask question or not.
     // At this point, we don't know what answer user would give.
     // Based on user answer, we'll decide, if we should ask question.
     // @see shouldAskQuestion().
-    if (isset($question['dependencies']['questions'])) {
+    $starterKit = $this->filterByStarterKit($question, $bundle);
+    if (isset($question['dependencies']['questions']) && $starterKit) {
       $isValid = TRUE;
     }
     return $isValid;
@@ -102,7 +106,7 @@ class InstallerQuestions {
     foreach ($questions as $key => $question) {
       $defaultValue = $this->getDefaultValue($question, $key);
       $isSkip = $question['skip_on_value'] ?? TRUE;
-      if (!$defaultValue || !$isSkip) {
+      if ((!$defaultValue && !$isSkip) || !$isSkip) {
         $questionToAsk[$key] = $question;
       }
       else {
@@ -157,6 +161,9 @@ class InstallerQuestions {
         $conditionKey = $questionMatches[1] ?? '';
         if ($conditionKey && isset($userInputValues[$conditionKey])) {
           $questionValue = trim($questionMatches[5], '"');
+          if ($questionValue == 'ALL') {
+            return TRUE;
+          }
           switch ($questionMatches[3]) {
             case "==":
               $isValid = $userInputValues[$conditionKey] == $questionValue;
@@ -189,12 +196,9 @@ class InstallerQuestions {
         else {
           throw new \RuntimeException('Not able to resolve variable: ${' . $conditionKey . '} for expression: ' . $questionExpression);
         }
-        if ($isValid) {
-          break;
+        if ($isValid == TRUE) {
+          return $isValid;
         }
-      }
-      if (!$isValid) {
-        break;
       }
     }
     return $isValid;

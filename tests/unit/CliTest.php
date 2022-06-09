@@ -77,7 +77,7 @@ class CliTest extends TestCase {
   protected function getAcmsFileContents() :array {
     return [
       "starter_kits" => [
-        "acquia_cms_enterprise_low_code" => [
+        "acquia_cms_low_code" => [
           "name" => "Acquia CMS Enterprise Low Code",
           "description" => "Acquia CMS with Site Studio but no content opinion.",
           "modules" => [
@@ -112,7 +112,7 @@ class CliTest extends TestCase {
         ],
         "acquia_cms_headless" => [
           "name" => "Acquia CMS Headless",
-          "description" => "ACMS with headless functionality.",
+          "description" => "Acquia CMS with headless functionality.",
           "modules" => [
             "install" => [
               "acquia_cms_headless",
@@ -147,7 +147,7 @@ class CliTest extends TestCase {
     return [
       'content_model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => 'acquia_cms_low_code || acquia_cms_headless || acquia_cms_community',
           'questions' => ['${demo_content} == "no"'],
         ],
         'question' => "Do you want to include the Content Model (yes/no) ?",
@@ -170,7 +170,7 @@ class CliTest extends TestCase {
     return [
       'demo_content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => 'acquia_cms_low_code || acquia_cms_headless || acquia_cms_community',
         ],
         'question' => "Do you want a demo with demo content (yes/no) ?",
         'allowed_values' => [
@@ -192,8 +192,8 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "yes"'],
+          'starter_kits' => 'acquia_cms_low_code',
+          'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -211,8 +211,8 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "yes"'],
+          'starter_kits' => 'acquia_cms_low_code',
+          'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -230,8 +230,8 @@ class CliTest extends TestCase {
     return [
       'GMAPS_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "yes"'],
+          'starter_kits' => 'acquia_cms_low_code || acquia_cms_community || acquia_cms_headless',
+          'questions' => ['${demo_content} == "yes"', '${content_model} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
@@ -243,7 +243,7 @@ class CliTest extends TestCase {
    * Function to return data provider for method: alterModulesAndThemes().
    */
   public function alterModuleThemesDataProvider() :array {
-    foreach (['acquia_cms_enterprise_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
+    foreach (['acquia_cms_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
       $returnArray = [
         [
           $bundle,
