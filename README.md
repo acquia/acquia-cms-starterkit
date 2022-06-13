@@ -7,9 +7,7 @@ will present you the following use cases:
 
 | Name  | Description |
 | ------------- | ------------- |
-| Acquia CMS Demo  | Low-code demonstration of ACMS with default content.  |
-| Acquia CMS Low Code  | Acquia CMS with Site Studio but no content opinion.  |
-| Acquia CMS Standard  | Acquia CMS with a starter content model, but no demo content, classic custom themes.  |
+| Acquia CMS Enterprise Low Code  | Acquia CMS with Site Studio but no content opinion.  |
 | Acquia CMS Minimal  | Acquia CMS in a blank slate, ideal for custom PS.  |
 | Acquia CMS Headless  | Acquia CMS with headless functionality.  |
 - You can add your own cases and define the modules/themes that needs to be installed & enabled.
