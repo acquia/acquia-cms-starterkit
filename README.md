@@ -7,9 +7,9 @@ will present you the following use cases:
 
 | Name  | Description |
 | ------------- | ------------- |
-| Acquia CMS Enterprise Low Code  | Acquia CMS with Site Studio but no content opinion.  |
-| Acquia CMS Minimal  | Acquia CMS in a blank slate, ideal for custom PS.  |
-| Acquia CMS Headless  | Acquia CMS with headless functionality.  |
+| Acquia CMS Low Code (Enterprise)  | The low-code starter kit will install Acquia CMS with Site Studio and a UIkit. It provides drag and drop content authoring and low-code site building. An optional content model can be added in the installation process.  |
+| Acquia CMS community  | The community starter kit will install Acquia CMS. An optional content model can be added in the installation process.  |
+| Acquia CMS Headless  | The headless starter kit preconfigures Drupal for serving structured, RESTful content to 3rd party content displays such as mobile apps, smart displays and frontend driven websites (e.g. React or Next.js).  |
 - You can add your own cases and define the modules/themes that needs to be installed & enabled.
 - You can edit/remove the default use cases provided by this cli tool.
 

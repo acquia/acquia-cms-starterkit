@@ -251,14 +251,9 @@ class InstallTask {
     // content model module is not available in the list of module installation
     // like acquia_cms_article, acquia_cms_page etc.
     if ($isDemoContent == "yes") {
-      $starter_module = (
-        !in_array('acquia_cms_article', $modules_list) &&
-        in_array('acquia_cms_site_studio', $modules_list) &&
-        $siteStudioApiKey && $siteStudioOrgKey
-      ) ? 'acquia_cms_site_studio_content' : 'acquia_cms_starter';
       $this->print("Enabling Starter module for the starter-kit:", 'headline');
       $this->enableModules->execute([
-        'modules' => [$starter_module],
+        'modules' => ['acquia_cms_starter'],
         'keys' => $args['keys'],
       ]);
     }

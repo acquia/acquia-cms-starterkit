@@ -77,9 +77,9 @@ class CliTest extends TestCase {
   protected function getAcmsFileContents() :array {
     return [
       "starter_kits" => [
-        "acquia_cms_low_code" => [
-          "name" => "Acquia CMS Enterprise Low Code",
-          "description" => "Acquia CMS with Site Studio but no content opinion.",
+        "acquia_cms_enterprise_low_code" => [
+          "name" => "Acquia CMS Low Code (Enterprise)",
+          "description" => "The low-code starter kit will install Acquia CMS with Site Studio and a UIkit. \nIt provides drag and drop content authoring and low-code site building. \nAn optional content model can be added in the installation process.",
           "modules" => [
             "install" => [
               'acquia_cms_site_studio:^1.3.5',
@@ -97,7 +97,7 @@ class CliTest extends TestCase {
         ],
         "acquia_cms_community" => [
           "name" => "Acquia CMS Community",
-          "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
+          "description" => "The community starter kit will install Acquia CMS. \nAn optional content model can be added in the installation process.",
           "modules" => [
             "install" => [
               "acquia_cms_search:^1.3.5",
@@ -112,7 +112,7 @@ class CliTest extends TestCase {
         ],
         "acquia_cms_headless" => [
           "name" => "Acquia CMS Headless",
-          "description" => "Acquia CMS with headless functionality.",
+          "description" => "The headless starter kit preconfigures Drupal for serving \nstructured, RESTful content to 3rd party content displays\n such as mobile apps, smart displays and frontend driven websites (e.g. React or Next.js).",
           "modules" => [
             "install" => [
               "acquia_cms_headless",
@@ -147,7 +147,7 @@ class CliTest extends TestCase {
     return [
       'content_model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
           'questions' => ['${demo_content} == "no"'],
         ],
         'question' => "Do you want to include the Content Model (yes/no) ?",
@@ -170,7 +170,7 @@ class CliTest extends TestCase {
     return [
       'demo_content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
         ],
         'question' => "Do you want a demo with demo content (yes/no) ?",
         'allowed_values' => [
@@ -192,7 +192,7 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_low_code',
+          'starter_kits' => 'acquia_cms_enterprise_low_code',
           'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio API Key",
@@ -211,7 +211,7 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_low_code',
+          'starter_kits' => 'acquia_cms_enterprise_low_code',
           'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
@@ -230,7 +230,7 @@ class CliTest extends TestCase {
     return [
       'GMAPS_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_low_code || acquia_cms_community || acquia_cms_headless',
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
           'questions' => ['${demo_content} == "yes"', '${content_model} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
@@ -243,7 +243,7 @@ class CliTest extends TestCase {
    * Function to return data provider for method: alterModulesAndThemes().
    */
   public function alterModuleThemesDataProvider() :array {
-    foreach (['acquia_cms_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
+    foreach (['acquia_cms_enterprise_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
       $returnArray = [
         [
           $bundle,

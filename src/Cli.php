@@ -153,7 +153,6 @@ class Cli {
           'acquia_cms_starter:^1.3.0',
         ],
       );
-      $starterKit['themes']['default'] = "olivero";
     }
     $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
     return $starterKit;
