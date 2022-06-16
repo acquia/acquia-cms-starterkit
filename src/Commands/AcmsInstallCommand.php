@@ -14,6 +14,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
@@ -72,6 +73,7 @@ class AcmsInstallCommand extends Command {
       ->setDescription("Use this command to setup & install site.")
       ->setDefinition([
         new InputArgument('name', NULL, "Name of the starter kit"),
+        new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site."),
       ])
       ->setHelp("The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.");
   }

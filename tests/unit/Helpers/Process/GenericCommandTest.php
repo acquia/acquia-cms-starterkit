@@ -5,6 +5,7 @@ namespace tests\Helpers\Process;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Generic;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class GenericCommandTest extends TestCase {
@@ -18,6 +19,13 @@ class GenericCommandTest extends TestCase {
   protected $output;
 
   /**
+   * Holds the symfony console output object.
+   *
+   * @var \Prophecy\Prophecy\ObjectProphecy
+   */
+  protected $input;
+
+  /**
    * A process manager object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Generic
@@ -29,8 +37,10 @@ class GenericCommandTest extends TestCase {
    */
   protected function setUp(): void {
     $output = $this->prophesize(OutputInterface::class);
+    $input = $this->prophesize(InputInterface::class);
     $this->output = $output->reveal();
-    $this->genericCommand = new Generic(getcwd(), $this->output);
+    $this->input = $input->reveal();
+    $this->genericCommand = new Generic(getcwd(), $this->output, $this->input);
   }
 
   /**
