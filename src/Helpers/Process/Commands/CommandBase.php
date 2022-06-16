@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Helpers\Process\Commands;
 
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -40,17 +41,27 @@ class CommandBase implements CommandInterface {
   protected $rootDir;
 
   /**
+   * A Symfony console output class opbject.
+   *
+   * @var \Symfony\Component\Console\Input\InputInterface
+   */
+  protected $input;
+
+  /**
    * A class constructor.
    *
    * @param string $root_dir
    *   Root directory path.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony output class object.
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   A Symfony output class object.
    */
-  public function __construct(string $root_dir, OutputInterface $output) {
+  public function __construct(string $root_dir, OutputInterface $output, InputInterface $input) {
     $this->command = '';
     $this->rootDir = $root_dir;
     $this->output = $output;
+    $this->input = $input;
   }
 
   /**
@@ -76,10 +87,7 @@ class CommandBase implements CommandInterface {
    *   Throws RuntimeException if no base command.
    */
   public function prepare(array $commands = []) : CommandInterface {
-    $commands = array_merge(
-      [$this->getCommand()],
-      $commands,
-    );
+    $commands = $this->getCommand($commands);
     $this->process = new Process($commands);
     $this->process->setTimeout(NULL)
       ->setIdleTimeout(NULL)
@@ -139,11 +147,27 @@ class CommandBase implements CommandInterface {
    * @throws \RuntimeException
    *   Throws exception if command is empty.
    */
-  public function getCommand(): string {
+  public function getBaseCommand(): string {
     if (empty($this->command)) {
       throw new \RuntimeException("Command can not be empty. Provide command name. Ex: drush, php etc.");
     }
     return $this->command;
+  }
+
+  /**
+   * Returns the complete command to execute.
+   *
+   * @param array $commands
+   *   An array of input commands.
+   *
+   * @return array
+   *   Returns an array of command to execute.
+   */
+  protected function getCommand(array $commands) : array {
+    return array_merge(
+      [$this->getBaseCommand()],
+      $commands,
+    );
   }
 
 }

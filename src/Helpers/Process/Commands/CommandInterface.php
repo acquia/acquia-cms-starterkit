@@ -50,6 +50,6 @@ interface CommandInterface {
    * @return string
    *   Returns the command.
    */
-  public function getCommand(): string;
+  public function getBaseCommand(): string;
 
 }
