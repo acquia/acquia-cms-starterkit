@@ -19,7 +19,10 @@ class Kernel extends BaseKernel {
    * {@inheritdoc}
    */
   public function getCacheDir(): string {
-    return "{$this->getProjectDir()}/var/caches";
+    // The cache directory has been changed to `/tmp/caches`
+    // because Acquia Cloud makes vendor directory as read-only, and we need
+    // some cache directory where Acquia Cloud can create caches.
+    return "/tmp/caches";
   }
 
   /**

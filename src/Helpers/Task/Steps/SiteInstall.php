@@ -14,7 +14,7 @@ class SiteInstall {
    *
    * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
    */
-  protected $drushCommand;
+  public $drushCommand;
 
   /**
    * Constructs an object.

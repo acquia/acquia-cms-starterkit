@@ -172,6 +172,12 @@ class CommandBase implements CommandInterface {
     );
   }
 
+  /**
+   * Sets the input object with given value.
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   *   An input interface object.
+   */
   public function setInput(InputInterface $input): void {
     $this->input = $input;
   }

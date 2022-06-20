@@ -3,19 +3,11 @@
 namespace AcquiaCMS\Cli\Helpers\Task;
 
 use AcquiaCMS\Cli\Cli;
-use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
-use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
-use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
-use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
-use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
-use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -46,9 +38,32 @@ class SiteInstallTask {
   protected $output;
 
   /**
-   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
+   * Holds the Site Install step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall
    */
-  protected $drushCommand;
+  protected $siteInstall;
+
+  /**
+   * Holds Enable modules step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules
+   */
+  protected $enableModules;
+
+  /**
+   * Holds Enable Themes step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes
+   */
+  protected $enableThemes;
+
+  /**
+   * Holds Site Studio packages import step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport
+   */
+  protected $siteStudioPackageImport;
 
   /**
    * Constructs an object.
@@ -60,7 +75,11 @@ class SiteInstallTask {
    */
   public function __construct(Cli $cli, ContainerInterface $container) {
     $this->acquiaCmsCli = $cli;
-    $this->drushCommand = $container->get(Drush::class);
+    $this->siteInstall = $container->get(SiteInstall::class);
+    $this->enableModules = $container->get(EnableModules::class);
+    $this->enableThemes = $container->get(EnableThemes::class);
+    $this->siteStudioPackageImport = $container->get(SiteStudioPackageImport::class);
+
   }
 
   /**
@@ -85,12 +104,56 @@ class SiteInstallTask {
   public function run(array $args = []) :void {
     $this->acquiaCmsCli->printLogo();
     if (!$this->input->getOption('display-command')) {
-      $this->input->setOption('hide-command', true);
-      $this->drushCommand->setInput($this->input);
+      $this->input->setOption('hide-command', TRUE);
+      $this->siteInstall->drushCommand->setInput($this->input);
     }
-    $this->drushCommand->prepare([
-      'site:install'
-    ])->run();
+    $options = $this->input->getOptions();
+    $profile = $this->input->getArgument('profile');
+    $commands = ["site:install"];
+    $commands = ($profile) ? array_merge($commands, $profile) : array_merge($commands, ['minimal']);
+    foreach ($options as $option => $value) {
+      if ($value && $option != "uri" && $option != "display-command" && $option != "hide-command") {
+        $commands[] = (is_bool($value)) ? "--$option" : "--$option=$value";
+      }
+    }
+    $this->siteInstall->execute([
+      'command' => $commands,
+    ]);
+    $this->enableModules->execute([
+      'modules' => $this->getModulesToInstall(),
+    ]);
+    $this->enableThemes->execute([
+      'themes' => [
+        'install' => [
+          'acquia_claro',
+          'cohesion_theme',
+        ],
+        'admin' => 'acquia_claro',
+        'default' => 'cohesion_theme',
+      ],
+      'starter_kit' => 'acquia_cms_existing_site',
+    ]);
+    $this->siteStudioPackageImport->execute([
+      'no-interaction' => $this->input->getOption('no-interaction'),
+    ]);
+    $this->acquiaCmsCli->printLogo();
+  }
+
+  /**
+   * Returns an array of Acquia CMS modules to install.
+   */
+  protected function getModulesToInstall(): array {
+    return [
+      'acquia_cms_article',
+      'acquia_cms_document',
+      'acquia_cms_event',
+      'acquia_cms_page',
+      'acquia_cms_search',
+      'acquia_cms_site_studio',
+      'acquia_cms_toolbar',
+      'acquia_cms_tour',
+      'acquia_cms_video',
+    ];
   }
 
 }
