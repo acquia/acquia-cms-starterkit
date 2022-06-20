@@ -10,6 +10,7 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
+use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Input\InputInterface;
@@ -107,6 +108,13 @@ class InstallTask {
   protected $siteStudioPackageImport;
 
   /**
+   * The toggle modules step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules
+   */
+  protected $toggleModules;
+
+  /**
    * User selected bundle.
    *
    * @var string
@@ -132,8 +140,10 @@ class InstallTask {
    *   Enable Drupal modules class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport $siteStudioPackageImport
    *   The site studio package import step object.
+   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules $toggleModules
+   *   The toggle modules step object.
    */
-  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, EnableThemes $enableThemes, SiteStudioPackageImport $siteStudioPackageImport) {
+  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, EnableThemes $enableThemes, SiteStudioPackageImport $siteStudioPackageImport, ToggleModules $toggleModules) {
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->validateDrupal = $validateDrupal;
@@ -143,6 +153,7 @@ class InstallTask {
     $this->siteInstall = $siteInstall;
     $this->downloadModules = $downloadModules;
     $this->siteStudioPackageImport = $siteStudioPackageImport;
+    $this->toggleModules = $toggleModules;
   }
 
   /**
@@ -207,6 +218,12 @@ class InstallTask {
     $this->enableThemes->execute([
       'themes' => $this->starterKits[$this->bundle]['themes'],
       'starter_kit' => $this->bundle,
+    ]);
+
+    // Toggle modules based on environments.
+    $this->print("Toggle modules for the starter-kit:", 'headline');
+    $this->toggleModules->execute([
+      'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
 
     $siteStudioApiKey = $args['keys']['SITESTUDIO_API_KEY'] ?? '';
