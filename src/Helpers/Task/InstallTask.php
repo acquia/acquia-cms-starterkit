@@ -200,6 +200,7 @@ class InstallTask {
     $this->print("Installing Site:", 'headline');
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
+      'name' => $this->starterKits[$this->bundle]['name'],
     ]);
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
     $modules_list = JsonParser::installPackages($bundle_modules);

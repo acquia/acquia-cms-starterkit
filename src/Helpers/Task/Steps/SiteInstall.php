@@ -33,7 +33,11 @@ class SiteInstall {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $siteInstallCommand = ["site:install", "minimal"];
+    $siteInstallCommand = [
+      "site:install",
+      "minimal",
+      "--site-name=" . $args['name'],
+    ];
     if ($args['no-interaction']) {
       $siteInstallCommand = array_merge($siteInstallCommand, ["--yes"]);
     }
