@@ -23,6 +23,7 @@ services:
   AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules: ~
 
   Symfony\Component\Console\Input\ArgvInput: ~
   Symfony\Component\Console\Input\InputInterface:
