@@ -140,6 +140,7 @@ class InstallTask {
     $this->siteInstall = $container->get(SiteInstall::class);
     $this->downloadModules = $container->get(DownloadModules::class);
     $this->siteStudioPackageImport = $container->get(SiteStudioPackageImport::class);
+    $this->toggleModules = $container->get(ToggleModules::class);
   }
 
   /**
