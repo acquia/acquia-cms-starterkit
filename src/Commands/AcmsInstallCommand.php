@@ -126,13 +126,13 @@ class AcmsInstallCommand extends Command {
     $helper = $this->getHelper('question');
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
-    $starterKit = "acquia_cms_minimal";
+    $starterKit = "acquia_cms_enterprise_low_code";
     $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {
       if (!is_string($answer) || !in_array($answer, $bundles)) {
         throw new \RuntimeException(
-          "Please choose from one of the use case defined above. Ex: acquia_cms_demo."
+          "Please choose from one of the use case defined above. Ex: acquia_cms_enterprise_low_code."
         );
       }
       return $answer;
@@ -175,10 +175,18 @@ class AcmsInstallCommand extends Command {
   protected function renderStarterKits(OutputInterface $output) :void {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
-    foreach ($this->acquiaCmsCli->getStarterKits() as $id => $starter_kit) {
+    $starter_kits = $this->acquiaCmsCli->getStarterKits();
+    $total = count($starter_kits);
+    $key = 0;
+    foreach ($starter_kits as $id => $starter_kit) {
       $useCases[$id] = $starter_kit;
       $table->addRow([$id, $starter_kit['name'], $starter_kit['description']]);
+      if ($key + 1 != $total) {
+        $table->addRow(["", "", ""]);
+      }
+      $key++;
     }
+    $table->setColumnMaxWidth(2, 81);
     $table->setStyle('box');
     $table->render();
   }

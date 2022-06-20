@@ -77,26 +77,9 @@ class CliTest extends TestCase {
   protected function getAcmsFileContents() :array {
     return [
       "starter_kits" => [
-        "acquia_cms_demo" => [
-          'name' => 'Acquia CMS Demo',
-          'description' => 'Low-code demonstration of ACMS with default content.',
-          'modules' => [
-            "install" => [
-              'acquia_cms_site_studio:^1.3.5',
-              "acquia_cms_starter:^1.3.0",
-              "acquia_cms_tour:^1.3.0",
-              "acquia_cms_toolbar:^1.3.3",
-            ],
-          ],
-          'themes' => [
-            "install" => ["acquia_claro:^1.3.2"],
-            "admin" => "acquia_claro",
-            "default" => "cohesion_theme",
-          ],
-        ],
-        "acquia_cms_low_code" => [
-          "name" => "Acquia CMS Low Code",
-          "description" => "Acquia CMS with Site Studio but no content opinion.",
+        "acquia_cms_enterprise_low_code" => [
+          "name" => "Acquia CMS Low Code (Enterprise)",
+          "description" => "The low-code starter kit will install Acquia CMS with Site Studio and a UIkit. It provides drag and drop content authoring and low-code site building. An optional content model can be added in the installation process.",
           "modules" => [
             "install" => [
               'acquia_cms_site_studio:^1.3.5',
@@ -112,28 +95,9 @@ class CliTest extends TestCase {
             "default" => "cohesion_theme",
           ],
         ],
-        "acquia_cms_standard" => [
-          "name" => "Acquia CMS Standard",
-          "description" => "Acquia CMS with a starter content model, classic custom themes.",
-          "modules" => [
-            "install" => [
-              "acquia_cms_article:^1.3.4",
-              "acquia_cms_page:^1.3.3",
-              "acquia_cms_event:^1.3.4",
-              "acquia_cms_search:^1.3.5",
-              "acquia_cms_tour:^1.3.0",
-              "acquia_cms_video:^1.3.3",
-              "acquia_cms_toolbar:^1.3.3",
-            ],
-          ],
-          "themes" => [
-            "install" => ["acquia_claro:^1.3.2"],
-            "admin" => "acquia_claro",
-          ],
-        ],
-        "acquia_cms_minimal" => [
-          "name" => "Acquia CMS Minimal",
-          "description" => "Acquia CMS in a blank slate, ideal for custom PS.",
+        "acquia_cms_community" => [
+          "name" => "Acquia CMS Community",
+          "description" => "The community starter kit will install Acquia CMS. An optional content model can be added in the installation process.",
           "modules" => [
             "install" => [
               "acquia_cms_search:^1.3.5",
@@ -148,7 +112,7 @@ class CliTest extends TestCase {
         ],
         "acquia_cms_headless" => [
           "name" => "Acquia CMS Headless",
-          "description" => "ACMS with headless functionality.",
+          "description" => "The headless starter kit preconfigures Drupal for serving structured, RESTful \ncontent to 3rd party content displays such as mobile apps, smart displays and \nfrontend driven websites (e.g. React or Next.js).",
           "modules" => [
             "install" => [
               "acquia_cms_headless",
@@ -165,7 +129,6 @@ class CliTest extends TestCase {
       ],
       "questions" => array_merge (
         self::getContentModel(),
-        self::getSiteStudio(),
         self::getDemoContent(),
         self::getGmapsKey(),
         self::getSiteStudioApiKey(),
@@ -184,9 +147,10 @@ class CliTest extends TestCase {
     return [
       'content_model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_headless',
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'questions' => ['${demo_content} == "no"'],
         ],
-        'question' => "Do you want to include Content Model (yes/no) ?",
+        'question' => "Do you want to include the Content Model (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -206,31 +170,9 @@ class CliTest extends TestCase {
     return [
       'demo_content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless || acquia_cms_low_code',
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
         ],
-        'question' => "Do you want to include Demo Content (yes/no) ?",
-        'allowed_values' => [
-          'options' => ['yes', 'no'],
-        ],
-        'skip_on_value' => FALSE,
-        'default_value' => 'no',
-      ],
-    ];
-  }
-
-  /**
-   * Returns the test data for site_studio Question.
-   *
-   * @return array[]
-   *   Returns an array of question.
-   */
-  public static function getSiteStudio(): array {
-    return [
-      'site_studio' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_minimal || acquia_cms_standard || acquia_cms_headless',
-        ],
-        'question' => "Do you want to include Site Studio (yes/no) ?",
+        'question' => "Do you want a demo with demo content (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -250,8 +192,8 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
-          'questions' => ['${site_studio} == "yes"'],
+          'starter_kits' => 'acquia_cms_enterprise_low_code',
+          'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -269,8 +211,8 @@ class CliTest extends TestCase {
     return [
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo || acquia_cms_low_code',
-          'questions' => ['${site_studio} == "yes"'],
+          'starter_kits' => 'acquia_cms_enterprise_low_code',
+          'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -288,8 +230,8 @@ class CliTest extends TestCase {
     return [
       'GMAPS_KEY' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_demo',
-          'questions' => ['${demo_content} == "yes"'],
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
+          'questions' => ['${demo_content} == "yes"', '${content_model} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
@@ -301,67 +243,18 @@ class CliTest extends TestCase {
    * Function to return data provider for method: alterModulesAndThemes().
    */
   public function alterModuleThemesDataProvider() :array {
-    foreach (['acquia_cms_demo', 'acquia_cms_low_code', 'acquia_cms_standard', 'acquia_cms_minimal', 'acquia_cms_headless'] as $bundle) {
+    foreach (['acquia_cms_enterprise_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
       $returnArray = [
         [
           $bundle,
           [
-            'content_model' => 'yes',
             'demo_content' => 'yes',
-            'site_studio' => 'yes',
           ],
           [
             [
               "modules" => [
                 "install" => array_merge(
                   $this->getUpdatedModulesThemesArray($bundle),
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
-                  $this->getUpdatedModulesThemesArray($bundle, 'site_studio'),
-                ),
-              ],
-            ],
-            [
-              'themes' => ['default' => 'cohesion_theme'],
-            ],
-          ],
-          "$bundle with Content Model, Site Studio & Demo Content",
-        ],
-        [
-          $bundle,
-          [
-            'content_model' => 'yes',
-            'site_studio' => 'yes',
-          ],
-          [
-            [
-              "modules" => [
-                "install" => array_merge(
-                  $this->getUpdatedModulesThemesArray($bundle),
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
-                  $this->getUpdatedModulesThemesArray($bundle, 'site_studio'),
-                ),
-              ],
-            ],
-            [
-              'themes' => ['default' => 'cohesion_theme'],
-            ],
-          ],
-          "$bundle with Content Model & Site Studio",
-        ],
-        [
-          $bundle,
-          [
-            'content_model' => 'yes',
-            'demo_content' => 'yes',
-            'site_studio' => 'no',
-          ],
-          [
-            [
-              "modules" => [
-                "install" => array_merge(
-                  $this->getUpdatedModulesThemesArray($bundle),
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
                   $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
                 ),
               ],
@@ -375,9 +268,29 @@ class CliTest extends TestCase {
         [
           $bundle,
           [
+            'content_model' => 'yes',
+            'demo_content' => 'no',
+          ],
+          [
+            [
+              "modules" => [
+                "install" => array_merge(
+                  $this->getUpdatedModulesThemesArray($bundle),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                ),
+              ],
+            ],
+            [
+              'themes' => ['default' => 'olivero'],
+            ],
+          ],
+          "$bundle with Content Model",
+        ],
+        [
+          $bundle,
+          [
             'content_model' => 'no',
             'demo_content' => 'no',
-            'site_studio' => 'no',
           ],
           [
             [
@@ -417,11 +330,9 @@ class CliTest extends TestCase {
         break;
 
       case 'demo_content':
-        $packages = ["acquia_cms_starter:^1.3.0"];
-        break;
-
-      case 'site_studio':
-        $packages = ["acquia_cms_site_studio:^1.3.5"];
+        $packages = [
+          "acquia_cms_starter:^1.3.0",
+        ];
         break;
 
       default:

@@ -134,7 +134,6 @@ class Cli {
   public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
-    $isSiteStudio = $userInputValues['site_studio'] ?? '';
 
     // Set default theme as olivero (if not defined)
     $starterKit['themes']['default'] = $starterKit['themes']['default'] ?? "olivero";
@@ -154,14 +153,6 @@ class Cli {
           'acquia_cms_starter:^1.3.0',
         ],
       );
-    }
-    if ($isSiteStudio == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
-          'acquia_cms_site_studio:^1.3.5',
-        ],
-      );
-      $starterKit['themes']['default'] = "cohesion_theme";
     }
     $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
     return $starterKit;
