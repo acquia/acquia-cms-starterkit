@@ -126,7 +126,7 @@ class AcmsInstallCommand extends Command {
     $helper = $this->getHelper('question');
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
-    $starterKit = "acquia_cms_community";
+    $starterKit = "acquia_cms_enterprise_low_code";
     $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
     $question->setAutocompleterValues($bundles);
     $question->setValidator(function ($answer) use ($bundles) {

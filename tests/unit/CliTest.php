@@ -112,7 +112,7 @@ class CliTest extends TestCase {
         ],
         "acquia_cms_headless" => [
           "name" => "Acquia CMS Headless",
-          "description" => "The headless starter kit preconfigures Drupal for serving \nstructured, RESTful content to 3rd party content displays\n such as mobile apps, smart displays and frontend driven websites (e.g. React or Next.js).",
+          "description" => "The headless starter kit preconfigures Drupal for serving \nstructured, RESTful content to 3rd party content displays\nsuch as mobile apps, smart displays and frontend driven websites (e.g. React or Next.js).",
           "modules" => [
             "install" => [
               "acquia_cms_headless",

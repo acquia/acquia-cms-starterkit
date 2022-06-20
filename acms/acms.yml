@@ -28,7 +28,7 @@ starter_kits:
       admin: acquia_claro
   acquia_cms_headless:
     name: "Acquia CMS Headless"
-    description: "The headless starter kit preconfigures Drupal for serving \nstructured, RESTful content to 3rd party content displays\n such as mobile apps, smart displays and frontend driven websites (e.g. React or Next.js)."
+    description: "The headless starter kit preconfigures Drupal for serving \nstructured, RESTful content to 3rd party content displays\nsuch as mobile apps, smart displays and frontend driven websites (e.g. React or Next.js)."
     modules:
       install:
         - acquia_cms_headless
@@ -76,7 +76,7 @@ questions:
     dependencies:
       starter_kits: acquia_cms_enterprise_low_code
       questions:
-        - ${demo_content} == "ALL"
+        - ${demo_content} == "ALL" # @todo make it better configurable.
     question: "Please provide the Site Studio API Key"
     warning: |-
       The Site Studio API key is not set. The Site Studio packages won't get imported.
@@ -85,7 +85,7 @@ questions:
     dependencies:
       starter_kits: acquia_cms_enterprise_low_code
       questions:
-        - ${demo_content} == "ALL"
+        - ${demo_content} == "ALL" # @todo make it better configurable.
     question: "Please provide the Site Studio Organization Key"
     warning: |-
       The Site Studio Organization key is not set. The Site Studio packages won't get imported.
