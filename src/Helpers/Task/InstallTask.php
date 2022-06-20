@@ -231,7 +231,7 @@ class InstallTask {
     // Trigger Site Studio Package import, if acquia_cms_site_studio module
     // is there in active bundle.
     if (in_array('acquia_cms_site_studio', $modules_list)) {
-      if ($siteStudioApiKey && $siteStudioOrgKey) {
+      if (($siteStudioApiKey && $siteStudioOrgKey) || (getenv('SITESTUDIO_API_KEY') && getenv('SITESTUDIO_ORG_KEY'))) {
         $this->print("Running Site Studio package import:", 'headline');
         $this->siteStudioPackageImport->execute([
           'no-interaction' => $this->input->getOption('no-interaction'),
