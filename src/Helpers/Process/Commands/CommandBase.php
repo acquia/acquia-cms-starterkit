@@ -103,7 +103,9 @@ class CommandBase implements CommandInterface {
    *   Returns the command output status code.
    */
   public function run(array $env = []) :int {
-    $this->output->writeln(sprintf('> %s', $this->process->getCommandLine()));
+    if (!$this->input->hasOption('hide-command')) {
+      $this->output->writeln(sprintf('> %s', $this->process->getCommandLine()));
+    }
     $status = $this->process->run(function ($type, $buffer) {
       if (Process::ERR != $type) {
         $this->output->writeln($buffer);
@@ -163,11 +165,15 @@ class CommandBase implements CommandInterface {
    * @return array
    *   Returns an array of command to execute.
    */
-  protected function getCommand(array $commands) : array {
+  protected function getCommand(array $commands): array {
     return array_merge(
       [$this->getBaseCommand()],
       $commands,
     );
+  }
+
+  public function setInput(InputInterface $input): void {
+    $this->input = $input;
   }
 
 }

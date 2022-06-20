@@ -33,7 +33,7 @@ class SiteInstall {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $siteInstallCommand = [
+    $siteInstallCommand = $args['command'] ?? [
       "site:install",
       "minimal",
       "--site-name=" . $args['name'],
