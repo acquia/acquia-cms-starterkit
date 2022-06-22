@@ -38,7 +38,7 @@ class SiteInstall {
       "minimal",
       "--site-name=" . $args['name'],
     ];
-    if ($args['no-interaction']) {
+    if (isset($args['no-interaction']) && $args['no-interaction']) {
       $siteInstallCommand = array_merge($siteInstallCommand, ["--yes"]);
     }
     return $this->drushCommand->prepare($siteInstallCommand)->run();

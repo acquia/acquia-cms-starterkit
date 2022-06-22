@@ -39,6 +39,17 @@ if (in_array($input->getFirstArgument(), ['cache:clear', 'cc'])) {
   exit(0);
 }
 
+// Clear cache everytime before running site:install command
+// Because user might not run this command everytime
+// specially on Acquia Cloud environment.
+if (in_array($input->getFirstArgument(), ['site:install', 'si', 'site-install'])) {
+  $filesystem = new Filesystem();
+  // Delete the cached directory.
+  $cache_dir = $kernel->getCacheDir();
+  $filesystem->remove($cache_dir);
+  $filesystem->mkdir($cache_dir);
+}
+
 $kernel->boot();
 $container = $kernel->getContainer();
 $application = $container->get(Application::class);
