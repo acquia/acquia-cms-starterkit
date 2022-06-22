@@ -34,7 +34,7 @@ class ToggleModules {
    */
   public function execute(array $args = []) :int {
     $toggleModulesCommand = ["acms:toggle:modules"];
-    if ($args['no-interaction']) {
+    if (isset($args['no-interaction']) && $args['no-interaction']) {
       $toggleModulesCommand = array_merge($toggleModulesCommand, ["--yes"]);
     }
     return $this->drushCommand->prepare($toggleModulesCommand)->run();
