@@ -14,6 +14,16 @@ services:
     resource: ../src
 
   Symfony\Component\Console\Application: ~
+  AcquiaCMS\Cli\Helpers\Process\Commands\Drush: ~
+  AcquiaCMS\Cli\Helpers\Process\Commands\Composer: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules: ~
 
   Symfony\Component\Console\Input\ArgvInput: ~
   Symfony\Component\Console\Input\InputInterface:

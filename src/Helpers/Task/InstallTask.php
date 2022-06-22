@@ -15,6 +15,7 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Executes the task needed to run site:install command.
@@ -126,34 +127,20 @@ class InstallTask {
    *
    * @param \AcquiaCMS\Cli\Cli $cli
    *   An Acquia CMS cli class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal $validateDrupal
-   *   A Validate Drupal class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal $downloadDrupal
-   *   Download Drupal class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules $downloadModules
-   *   Download Modules & themes class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall $siteInstall
-   *   A Drupal Site Install class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules $enableModules
-   *   Enable Drupal modules class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes $enableThemes
-   *   Enable Drupal modules class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport $siteStudioPackageImport
-   *   The site studio package import step object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules $toggleModules
-   *   The toggle modules step object.
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   A Symfony container class object.
    */
-  public function __construct(Cli $cli, ValidateDrupal $validateDrupal, DownloadDrupal $downloadDrupal, DownloadModules $downloadModules, SiteInstall $siteInstall, EnableModules $enableModules, EnableThemes $enableThemes, SiteStudioPackageImport $siteStudioPackageImport, ToggleModules $toggleModules) {
+  public function __construct(Cli $cli, ContainerInterface $container) {
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
-    $this->validateDrupal = $validateDrupal;
-    $this->downloadDrupal = $downloadDrupal;
-    $this->enableModules = $enableModules;
-    $this->enableThemes = $enableThemes;
-    $this->siteInstall = $siteInstall;
-    $this->downloadModules = $downloadModules;
-    $this->siteStudioPackageImport = $siteStudioPackageImport;
-    $this->toggleModules = $toggleModules;
+    $this->validateDrupal = $container->get(ValidateDrupal::class);
+    $this->downloadDrupal = $container->get(DownloadDrupal::class);
+    $this->enableModules = $container->get(EnableModules::class);
+    $this->enableThemes = $container->get(EnableThemes::class);
+    $this->siteInstall = $container->get(SiteInstall::class);
+    $this->downloadModules = $container->get(DownloadModules::class);
+    $this->siteStudioPackageImport = $container->get(SiteStudioPackageImport::class);
+    $this->toggleModules = $container->get(ToggleModules::class);
   }
 
   /**
