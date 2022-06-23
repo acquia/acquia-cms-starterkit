@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli;
 
+use Acquia\DrupalEnvironmentDetector\AcquiaDrupalEnvironmentDetector;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -22,13 +23,22 @@ class Kernel extends BaseKernel {
     // The cache directory has been changed to `/tmp/caches`
     // because Acquia Cloud makes vendor directory as read-only, and we need
     // some cache directory where Acquia Cloud can create caches.
-    return "/tmp/caches";
+    if (AcquiaDrupalEnvironmentDetector::isAhEnv()) {
+      return "/tmp/caches";
+    }
+    return "{$this->getProjectDir()}/var/caches";
   }
 
   /**
    * {@inheritdoc}
    */
   public function getLogDir(): string {
+    // The logs directory has been changed to `/tmp/logs`
+    // because Acquia Cloud makes vendor directory as read-only, and we need
+    // some log directory where Acquia Cloud can store logs.
+    if (AcquiaDrupalEnvironmentDetector::isAhEnv()) {
+      return "/tmp/logs";
+    }
     return "{$this->getProjectDir()}/var/logs";
   }
 
