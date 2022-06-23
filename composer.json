@@ -23,6 +23,7 @@
         }
     ],
     "require": {
+        "acquia/drupal-environment-detector": "^1.4",
         "composer/composer": "^2.2",
         "stecman/symfony-console-completion": "^0.10.1",
         "symfony/config": "^4.1",
