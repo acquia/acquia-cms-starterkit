@@ -124,6 +124,12 @@ class SiteInstallTask {
         $commands[] = (is_bool($value)) ? "--$option" : "--$option=$value";
       }
     }
+    // @todo Use some alternative approach for clearing Drupal caches
+    // instead of using below class.
+    // Clear cache command before running site:install
+    $this->siteInstall->execute([
+      'command' => ['cr'],
+    ]);
     $this->siteInstall->execute([
       'command' => $commands,
     ]);

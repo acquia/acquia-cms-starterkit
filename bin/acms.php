@@ -48,6 +48,7 @@ if (in_array($input->getFirstArgument(), ['site:install', 'si', 'site-install'])
   $cache_dir = $kernel->getCacheDir();
   $filesystem->remove($cache_dir);
   $filesystem->mkdir($cache_dir);
+  $filesystem->touch("{$cache_dir}/.gitkeep");
 }
 
 $kernel->boot();
