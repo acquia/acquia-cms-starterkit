@@ -76,17 +76,6 @@ class DownloadModules {
     }
     $packages = array_merge($args['modules']['install'], $args['themes']['install']);
     $packages = JsonParser::downloadPackages($packages);
-    $installModules = JsonParser::installPackages($args['modules']['install']);
-
-    if (in_array('acquia_cms_headless', $installModules)) {
-      // @todo provide this configurable to allow user to add any vcs/private repository.
-      $this->composerCommand->prepare([
-        "config",
-        "repositories.acquia_cms_headless",
-        "--json",
-        '{ "type": "vcs", "name": "drupal/acquia_cms_headless", "url": "git@github.com:acquia/acquia_cms_headless.git" }',
-      ])->run();
-    }
     $inputArgument = array_merge(["require", "-W"], $packages);
     return $this->composerCommand->prepare($inputArgument)->run();
   }
