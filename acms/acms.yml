@@ -86,7 +86,7 @@ questions:
       starter_kits: acquia_cms_enterprise_low_code
       questions:
         - ${demo_content} == "ALL" # @todo make it better configurable.
-    question: "Please provide the Site Studio Organization Key"
+    question: "Please provide the Site Studio Agency Key"
     warning: |-
-      The Site Studio Organization key is not set. The Site Studio packages won't get imported.
+      The Site Studio Agency key is not set. The Site Studio packages won't get imported.
       You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
