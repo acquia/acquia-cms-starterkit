@@ -202,14 +202,14 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for SITESTUDIO_AGENCY_KEY Question.
+   * Returns the test data for SITESTUDIO_ORG_KEY Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getSiteStudioAgencyKey(): array {
     return [
-      'SITESTUDIO_AGENCY_KEY' => [
+      'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code',
           'questions' => ['${demo_content} == "ALL"'],
