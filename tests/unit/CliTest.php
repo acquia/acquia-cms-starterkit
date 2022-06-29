@@ -331,6 +331,9 @@ class CliTest extends TestCase {
 
       case 'demo_content':
         $packages = [
+          "acquia_cms_article:^1.3.4",
+          "acquia_cms_page:^1.3.3",
+          "acquia_cms_event:^1.3.4",
           "acquia_cms_starter:^1.3.0",
         ];
         break;
