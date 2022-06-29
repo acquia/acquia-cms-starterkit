@@ -134,25 +134,21 @@ class Cli {
   public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
+    $contentModelModules = [
+      'acquia_cms_article:^1.3.4',
+      'acquia_cms_page:^1.3.3',
+      'acquia_cms_event:^1.3.4',
+    ];
 
     // Set default theme as olivero (if not defined)
     $starterKit['themes']['default'] = $starterKit['themes']['default'] ?? "olivero";
 
     if ($isContentModel == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
-          'acquia_cms_article:^1.3.4',
-          'acquia_cms_page:^1.3.3',
-          'acquia_cms_event:^1.3.4',
-        ],
-      );
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $contentModelModules);
     }
     if ($isDemoContent == "yes") {
-      $starterKit['modules']['install'] = array_merge(
-        $starterKit['modules']['install'], [
-          'acquia_cms_starter:^1.3.0',
-        ],
-      );
+      $demoContentModules = array_merge($contentModelModules, ['acquia_cms_starter:^1.3.0']);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $demoContentModules);
     }
     $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
     return $starterKit;
