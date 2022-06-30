@@ -108,7 +108,8 @@ class CommandBase implements CommandInterface {
     }
     $status = $this->process->run(function ($type, $buffer) {
       if (Process::ERR != $type) {
-        $this->output->writeln($buffer);
+        // $this->output->writeln($buffer);
+        echo $buffer;
       }
     }, $env);
     $this->verifyCommand();
