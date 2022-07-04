@@ -88,6 +88,11 @@ jobs:
       - name: Install
         run: |
           cd ../orca-build
+          IS_ACMS=$(composer show composer/composer > /dev/null 2>&1)
+          if [ "$?" -eq 0 ]; then
+            echo "Removing acquia/acquia_cms."
+            composer remove acquia/acquia_cms
+          fi
           ./vendor/bin/acms acms:install --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
