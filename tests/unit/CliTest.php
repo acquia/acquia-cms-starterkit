@@ -150,7 +150,7 @@ class CliTest extends TestCase {
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
           'questions' => ['${demo_content} == "no"'],
         ],
-        'question' => "Do you want to include the Content Model (yes/no) ?",
+        'question' => "Do you want to enable the content model (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -172,7 +172,7 @@ class CliTest extends TestCase {
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
         ],
-        'question' => "Do you want a demo with demo content (yes/no) ?",
+        'question' => "Do you want to enable demo content (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
