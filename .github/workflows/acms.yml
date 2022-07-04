@@ -130,6 +130,13 @@ jobs:
           mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
       - name: Download Composer Dependencies
         run: composer install
+      - name: Remove acquia/acquia_cms (if Present)
+        run: |
+          IS_ACMS=$(composer show composer/composer > /dev/null 2>&1)
+          if [ "$?" -eq 0 ]; then
+            echo "Removing acquia/acquia_cms."
+            composer remove acquia/acquia_cms
+          fi
       - name: Install
         run: ./bin/acms acms:install --no-interaction
       - name: Execute all PHPUnit tests
