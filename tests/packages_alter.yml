@@ -1,2 +1,5 @@
 acquia/acquia-cms-starterkit:
   type: project
+
+#Ignore.
+acquia/acquia_cms: ~
