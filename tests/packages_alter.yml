@@ -1,5 +1,12 @@
 acquia/acquia-cms-starterkit:
   type: project
 
-#Ignore.
+# Do not install acquia_cms and Lightning modules.
 acquia/acquia_cms: ~
+drupal/lightning_core: ~
+drupal/lightning_api: ~
+drupal/lightning_layout: ~
+drupal/lightning_page: ~
+drupal/lightning_search: ~
+drupal/lightning_media: ~
+drupal/lightning_workflow: ~
