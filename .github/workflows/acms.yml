@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
+      ORCA_JOB: STATIC_CODE_ANALYSIS
       ORCA_SUT_BRANCH: develop
       ORCA_VERSION: v3.18.0
       ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
@@ -91,11 +92,6 @@ jobs:
       - name: Install
         run: |
           cd ../orca-build
-          IS_ACMS=$(composer show composer/composer > /dev/null 2>&1)
-          if [ "$?" -eq 0 ]; then
-            echo "Removing acquia/acquia_cms."
-            composer remove acquia/acquia_cms
-          fi
           ./vendor/bin/acms acms:install --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
