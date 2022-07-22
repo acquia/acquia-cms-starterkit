@@ -81,16 +81,24 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Enterprise Low-code",
           "description" => "The low-code starter kit will install Acquia CMS with Site Studio and a UIkit. It provides drag and drop content authoring and low-code site building. An optional content model can be added in the installation process.",
           "modules" => [
-            "install" => [
-              'acquia_cms_site_studio:^1.3.5',
+            "require" => [
+              "acquia_cms_site_studio:^1.3.5",
               "acquia_cms_page:^1.3.3",
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
               "acquia_cms_toolbar:^1.3.3",
             ],
+            "install" => [
+              "acquia_cms_site_studio",
+              "acquia_cms_page",
+              "acquia_cms_search",
+              "acquia_cms_tour",
+              "acquia_cms_toolbar",
+            ],
           ],
           "themes" => [
-            "install" => ["acquia_claro:^1.3.2"],
+            "require" => ["acquia_claro:^1.3.2"],
+            "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
           ],
@@ -99,14 +107,20 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Community",
           "description" => "The community starter kit will install Acquia CMS. An optional content model can be added in the installation process.",
           "modules" => [
-            "install" => [
+            "require" => [
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
               "acquia_cms_toolbar:^1.3.3",
             ],
+            "install" => [
+              "acquia_cms_search",
+              "acquia_cms_tour",
+              "acquia_cms_toolbar",
+            ],
           ],
           "themes" => [
-            "install" => ["acquia_claro:^1.3.2"],
+            "require" => ["acquia_claro:^1.3.2"],
+            "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
           ],
         ],
@@ -114,15 +128,22 @@ class CliTest extends TestCase {
           "name" => "Acquia CMS Headless",
           "description" => "The headless starter kit preconfigures Drupal for serving structured, RESTful \ncontent to 3rd party content displays such as mobile apps, smart displays and \nfrontend driven websites (e.g. React or Next.js).",
           "modules" => [
-            "install" => [
+            "require" => [
               "acquia_cms_headless",
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
               "acquia_cms_toolbar:^1.3.3",
             ],
+            "install" => [
+              "acquia_cms_headless_ui",
+              "acquia_cms_search",
+              "acquia_cms_tour",
+              "acquia_cms_toolbar",
+            ],
           ],
           "themes" => [
-            "install" => ["acquia_claro:^1.3.2"],
+            "require" => ["acquia_claro:^1.3.2"],
+            "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
           ],
         ],
@@ -253,10 +274,14 @@ class CliTest extends TestCase {
           [
             [
               "modules" => [
-                "install" => array_merge(
-                  $this->getUpdatedModulesThemesArray($bundle),
+                "require" => array_unique(array_merge(
+                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
                   $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
-                ),
+                )),
+                "install" => array_unique(array_merge(
+                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                )),
               ],
             ],
             [
@@ -274,10 +299,14 @@ class CliTest extends TestCase {
           [
             [
               "modules" => [
-                "install" => array_merge(
-                  $this->getUpdatedModulesThemesArray($bundle),
+                "require" => array_unique(array_merge(
+                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
                   $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
-                ),
+                )),
+                "install" => array_unique(array_merge(
+                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
+                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                )),
               ],
             ],
             [
@@ -295,9 +324,8 @@ class CliTest extends TestCase {
           [
             [
               "modules" => [
-                "install" => array_merge(
-                  $this->getUpdatedModulesThemesArray($bundle),
-                ),
+                "require" => $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
+                "install" => $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
               ],
             ],
             [
@@ -339,14 +367,7 @@ class CliTest extends TestCase {
         break;
 
       default:
-        $packages = [
-          "acquia_cms_search:^1.3.5",
-          "acquia_cms_tour:^1.3.0",
-          "acquia_cms_toolbar:^1.3.3",
-        ];
-        if ($bundle == 'acquia_cms_headless') {
-          array_unshift($packages, 'acquia_cms_headless');
-        }
+        $packages = [];
         break;
     endswitch;
     return $packages;
