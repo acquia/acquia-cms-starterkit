@@ -144,12 +144,15 @@ class Cli {
     $starterKit['themes']['default'] = $starterKit['themes']['default'] ?? "olivero";
 
     if ($isContentModel == "yes") {
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $contentModelModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $contentModelModules);
     }
     if ($isDemoContent == "yes") {
       $demoContentModules = array_merge($contentModelModules, ['acquia_cms_starter:^1.3.0']);
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $demoContentModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $demoContentModules);
     }
+    $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
     return $starterKit;
   }

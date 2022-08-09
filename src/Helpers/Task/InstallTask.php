@@ -179,16 +179,15 @@ class InstallTask {
       );
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
-
-    // @todo Think if we can configure to download/install modules/themes using yaml configuration.
     $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
-
     $this->downloadModules->execute($this->starterKits[$this->bundle]);
+
     $this->print("Installing Site:", 'headline');
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
       'name' => $this->starterKits[$this->bundle]['name'],
     ]);
+
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
     $modules_list = JsonParser::installPackages($bundle_modules);
     $this->print("Enabling modules for the starter-kit:", 'headline');
@@ -202,6 +201,7 @@ class InstallTask {
       'modules' => $modules_list,
       'keys' => $args['keys'],
     ]);
+
     $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableThemes->execute([
       'themes' => $this->starterKits[$this->bundle]['themes'],
