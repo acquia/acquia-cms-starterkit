@@ -151,6 +151,9 @@ class CliTest extends TestCase {
       "questions" => array_merge (
         self::getContentModel(),
         self::getDemoContent(),
+        self::getNextjsApp(),
+        self::getNextjsAppSiteUrl(),
+        self::getNextjsAppEvnFile(),
         self::getGmapsKey(),
         self::getSiteStudioApiKey(),
         self::getSiteStudioOrgKey(),
@@ -199,6 +202,66 @@ class CliTest extends TestCase {
         ],
         'skip_on_value' => FALSE,
         'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsApp(): array {
+    return [
+      'nextjs_app' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+        ],
+        'question' => "Do you want to use Next.js (yes/no) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsAppSiteUrl(): array {
+    return [
+      'nextjs_app_site_url' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+          'questions' => ['${nextjs_app} == "yes"'],
+        ],
+        'question' => "Please provide the Site URL",
+        'warning' => "The Site URL is not set. Site URL is set to default.\nYou can set the site url later from: /admin/config/services/next.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsAppEvnFile(): array {
+    return [
+      'nextjs_app_env_file' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+          'questions' => ['${nextjs_app} == "yes"'],
+        ],
+        'question' => "Please provide the .env.local file path",
+        'warning' => "The .evn.locap file path is not set.\nPlease copy and paste the environment varibles to .env.local file later.",
       ],
     ];
   }

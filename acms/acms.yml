@@ -83,6 +83,34 @@ questions:
         - no
     skip_on_value: false
     default_value: "no"
+  nextjs_app:
+    dependencies:
+      starter_kits: acquia_cms_headless
+    question: "Do you want to use Next.js (yes/no) ?"
+    allowed_values:
+      options:
+        - yes
+        - no
+    skip_on_value: false
+    default_value: "no"
+  nextjs_app_site_url:
+    dependencies:
+      starter_kits: acquia_cms_headless
+      questions:
+        - ${nextjs_app} == "yes"
+    question: "Please provide the Site URL"
+    warning: |-
+      The Site URL is not set. Site URL is set to default.
+      You can set the site url later from: /admin/config/services/next.
+  nextjs_app_env_file:
+    dependencies:
+      starter_kits: acquia_cms_headless
+      questions:
+        - ${nextjs_app} == "yes"
+    question: "Please provide the .env.local file path"
+    warning: |-
+      The .evn.locap file path is not set.
+      Please copy and paste the environment varibles to .env.local file later.
   GMAPS_KEY:
     dependencies:
       starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless
