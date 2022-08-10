@@ -153,6 +153,7 @@ class CliTest extends TestCase {
         self::getDemoContent(),
         self::getNextjsApp(),
         self::getNextjsAppSiteUrl(),
+        self::getNextjsAppSiteName(),
         self::getNextjsAppEvnFile(),
         self::getGmapsKey(),
         self::getSiteStudioApiKey(),
@@ -218,7 +219,7 @@ class CliTest extends TestCase {
         'dependencies' => [
           'starter_kits' => 'acquia_cms_headless',
         ],
-        'question' => "Do you want to use Next.js (yes/no) ?",
+        'question' => "Would you like to preconfigure a next.js site (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -241,8 +242,31 @@ class CliTest extends TestCase {
           'starter_kits' => 'acquia_cms_headless',
           'questions' => ['${nextjs_app} == "yes"'],
         ],
-        'question' => "Please provide the Site URL",
-        'warning' => "The Site URL is not set. Site URL is set to default.\nYou can set the site url later from: /admin/config/services/next.",
+        'question' => "Please provide the Next.js site url",
+        'default_value' => 'http://localhost:3000',
+        'skip_on_value' => FALSE,
+        'warning' => "The site url is not set. Using default: 'http://localhost:3000'.\nYou can set the site url later from: /admin/config/services/next.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsAppSiteName(): array {
+    return [
+      'nextjs_app_site_name' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+          'questions' => ['${nextjs_app} == "yes"'],
+        ],
+        'question' => "Please provide the Site Name",
+        'default_value' => 'Headless Site',
+        'skip_on_value' => FALSE,
+        'warning' => "The Site Name is not set. Site Name is set to 'Headless Site'.\nYou can set the site url later from: /admin/config/services/next.",
       ],
     ];
   }
@@ -261,7 +285,6 @@ class CliTest extends TestCase {
           'questions' => ['${nextjs_app} == "yes"'],
         ],
         'question' => "Please provide the .env.local file path",
-        'warning' => "The .evn.locap file path is not set.\nPlease copy and paste the environment varibles to .env.local file later.",
       ],
     ];
   }

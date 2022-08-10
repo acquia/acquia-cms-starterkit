@@ -261,9 +261,11 @@ class InstallTask {
     if ($isNextjsApp == "yes") {
       $this->print("Initiating NextJs App for the starter-kit:", 'headline');
       $isNextjsAppSiteUrl = $args['keys']['nextjs_app_site_url'] ?? '';
+      $isNextjsAppSiteName = $args['keys']['nextjs_app_site_name'] ?? '';
       $isNextjsAppEnvFile = $args['keys']['nextjs_app_env_file'] ?? '';
       $this->initNextjsApp->execute([
         '--site-url' => $isNextjsAppSiteUrl,
+        '--site-name' => $isNextjsAppSiteName,
         '--env-file' => $isNextjsAppEnvFile,
       ]);
     }

@@ -159,10 +159,7 @@ class AcmsInstallCommand extends Command {
     // @see AcquiaCMS\Cli\Helpers::shouldAskQuestion().
     $userInputValues = $processedQuestions['default'];
     if (isset($processedQuestions['questionToAsk'])) {
-      foreach ($processedQuestions['questionToAsk'] as $key => $question) {
-        $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output);
-      }
-      foreach ($questions['questionCanAsk'] as $key => $question) {
+      foreach ($questions['questionOrder'] as $key => $question) {
         if ($this->installerQuestions->shouldAskQuestion($question, $userInputValues)) {
           $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output);
         }
