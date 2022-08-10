@@ -49,7 +49,7 @@ jobs:
           ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_INSTALL_ON_DRUPAL_PROJECT:
     if: ${{ github.event_name == 'push' }}
-    name: "Verify commands on acquia/drupal-recommended-project"
+    name: "Verify ${{ matrix.starter-kits }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
@@ -65,6 +65,7 @@ jobs:
     strategy:
       matrix:
         core-version: ["CURRENT", "PREVIOUS_MINOR"]
+        starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
@@ -92,7 +93,7 @@ jobs:
       - name: Install
         run: |
           cd ../orca-build
-          ./vendor/bin/acms acms:install --no-interaction
+          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script
