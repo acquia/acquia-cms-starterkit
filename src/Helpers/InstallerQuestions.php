@@ -24,7 +24,7 @@ class InstallerQuestions {
     $questionMustAsk = $questionCanAsk = $questionSkipped = $questionOrder = [];
     foreach ($questions as $key => $question) {
       if ($this->filterByStarterKit($question, $bundle) && !$this->filterByQuestion($question, $bundle)) {
-        $question['skip_on_value'] = FALSE;
+        // $question['skip_on_value'] = FALSE;
         $questionMustAsk[$key] = $question;
         $questionOrder[$key] = $question;
       }
@@ -134,11 +134,10 @@ class InstallerQuestions {
    *   Returns the default value for question.
    */
   public function getDefaultValue(array $question, string $key = ""): string {
-    $defaultValue = '';
-    if ($key) {
+    $defaultValue = $question['default_value'] ?? '';
+    if (getenv($key)) {
       $defaultValue = getenv($key);
     }
-    $defaultValue = $question['default_value'] ?? $defaultValue;
     return trim(PHPParser::parseEnvVars($defaultValue));
   }
 
