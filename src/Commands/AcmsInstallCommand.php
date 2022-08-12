@@ -150,7 +150,8 @@ class AcmsInstallCommand extends Command {
     // The questions defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
     // Get all questions for user selected use-case.
-    $processedQuestions = $this->installerQuestions->process(array_merge($questions['questionMustAsk'], $questions['questionSkipped']));
+    $allQuestions = array_merge(array_merge($questions['questionMustAsk'], $questions['questionSkipped']), $questions['questionCanAsk']);
+    $processedQuestions = $this->installerQuestions->process($allQuestions);
 
     // Initialize the value with default answer for question, so that
     // if any question is dependent on other question which is skipped,
