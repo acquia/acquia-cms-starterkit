@@ -133,12 +133,14 @@ class CliTest extends TestCase {
               "acquia_cms_search:^1.3.5",
               "acquia_cms_tour:^1.3.0",
               "acquia_cms_toolbar:^1.3.3",
+              "consumer_image_styles:^4.0.7",
             ],
             "install" => [
               "acquia_cms_headless_ui",
               "acquia_cms_search",
               "acquia_cms_tour",
               "acquia_cms_toolbar",
+              "consumer_image_styles",
             ],
           ],
           "themes" => [
