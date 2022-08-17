@@ -8,6 +8,7 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
 use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
+use AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
@@ -116,6 +117,13 @@ class InstallTask {
   protected $toggleModules;
 
   /**
+   * The site studio package import step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp
+   */
+  protected $initNextjsApp;
+
+  /**
    * User selected bundle.
    *
    * @var string
@@ -141,6 +149,7 @@ class InstallTask {
     $this->downloadModules = $container->get(DownloadModules::class);
     $this->siteStudioPackageImport = $container->get(SiteStudioPackageImport::class);
     $this->toggleModules = $container->get(ToggleModules::class);
+    $this->initNextjsApp = $container->get(InitNextjsApp::class);
   }
 
   /**
@@ -243,6 +252,21 @@ class InstallTask {
       $this->enableModules->execute([
         'modules' => ['acquia_cms_starter'],
         'keys' => $args['keys'],
+      ]);
+    }
+
+    $isNextjsApp = $args['keys']['nextjs_app'] ?? '';
+    // Initialize: NextJs application, create consumer, create nextjs site,
+    // write/display nextjs site environment variables.
+    if ($isNextjsApp == "yes") {
+      $this->print("Initiating NextJs App for the starter-kit:", 'headline');
+      $isNextjsAppSiteUrl = $args['keys']['nextjs_app_site_url'] ?? '';
+      $isNextjsAppSiteName = $args['keys']['nextjs_app_site_name'] ?? '';
+      $isNextjsAppEnvFile = $args['keys']['nextjs_app_env_file'] ?? '';
+      $this->initNextjsApp->execute([
+        '--site-url' => $isNextjsAppSiteUrl,
+        '--site-name' => $isNextjsAppSiteName,
+        '--env-file' => $isNextjsAppEnvFile,
       ]);
     }
   }

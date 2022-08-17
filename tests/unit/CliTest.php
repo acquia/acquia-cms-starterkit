@@ -153,6 +153,10 @@ class CliTest extends TestCase {
       "questions" => array_merge (
         self::getContentModel(),
         self::getDemoContent(),
+        self::getNextjsApp(),
+        self::getNextjsAppSiteUrl(),
+        self::getNextjsAppSiteName(),
+        self::getNextjsAppEvnFile(),
         self::getGmapsKey(),
         self::getSiteStudioApiKey(),
         self::getSiteStudioOrgKey(),
@@ -201,6 +205,88 @@ class CliTest extends TestCase {
         ],
         'skip_on_value' => FALSE,
         'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsApp(): array {
+    return [
+      'nextjs_app' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+        ],
+        'question' => "Would you like to preconfigure a next.js site (yes/no) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsAppSiteUrl(): array {
+    return [
+      'nextjs_app_site_url' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+          'questions' => ['${nextjs_app} == "yes"'],
+        ],
+        'question' => "Please provide the Next.js site url",
+        'default_value' => 'http://localhost:3000',
+        'skip_on_value' => FALSE,
+        'warning' => "The site url is not set. Using default: 'http://localhost:3000'.\nYou can set the site url later from: /admin/config/services/next.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsAppSiteName(): array {
+    return [
+      'nextjs_app_site_name' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+          'questions' => ['${nextjs_app} == "yes"'],
+        ],
+        'question' => "Please provide the Site Name",
+        'default_value' => 'Headless Site',
+        'skip_on_value' => FALSE,
+        'warning' => "The Site Name is not set. Site Name is set to 'Headless Site'.\nYou can set the site url later from: /admin/config/services/next.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for demo_content Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getNextjsAppEvnFile(): array {
+    return [
+      'nextjs_app_env_file' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_headless',
+          'questions' => ['${nextjs_app} == "yes"'],
+        ],
+        'question' => "Please provide the .env.local file path",
       ],
     ];
   }

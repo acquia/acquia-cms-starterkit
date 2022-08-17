@@ -21,14 +21,16 @@ class InstallerQuestions {
    *   Returns the questions for the user selected use-case.
    */
   public function getQuestions(array $questions, string $bundle) :array {
-    $questionMustAsk = $questionCanAsk = $questionSkipped = [];
+    $questionMustAsk = $questionCanAsk = $questionSkipped = $questionOrder = [];
     foreach ($questions as $key => $question) {
       if ($this->filterByStarterKit($question, $bundle) && !$this->filterByQuestion($question, $bundle)) {
         $question['skip_on_value'] = FALSE;
         $questionMustAsk[$key] = $question;
+        $questionOrder[$key] = $question;
       }
       elseif ($this->filterByQuestion($question, $bundle)) {
         $questionCanAsk[$key] = $question;
+        $questionOrder[$key] = $question;
       }
       else {
         // As we are not asking this question, so set `skip_on_value` to TRUE.
@@ -43,6 +45,7 @@ class InstallerQuestions {
       'questionMustAsk' => $questionMustAsk,
       'questionCanAsk' => $questionCanAsk,
       'questionSkipped' => $questionSkipped,
+      'questionOrder' => $questionOrder,
     ];
   }
 
@@ -151,7 +154,10 @@ class InstallerQuestions {
    *   Returns true|false, if question should be asked.
    */
   public function shouldAskQuestion(array $question, array $userInputValues): bool {
-    $questionsExpressionArray = $question['dependencies']['questions'];
+    $questionsExpressionArray = $question['dependencies']['questions'] ?? [];
+    if (!$questionsExpressionArray) {
+      return TRUE;
+    }
     $isValid = FALSE;
     foreach ($questionsExpressionArray as $questionsExpression) {
       $questionsExpression = array_map('trim', explode('||', $questionsExpression));

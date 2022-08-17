@@ -222,6 +222,7 @@ class InstallerQuestionsTest extends TestCase {
         'acquia_cms_headless',
         array_merge(
           CliTest::getDemoContent(),
+          CliTest::getNextjsApp(),
         ),
       ],
     ];
