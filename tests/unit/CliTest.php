@@ -82,11 +82,11 @@ class CliTest extends TestCase {
           "description" => "The low-code starter kit will install Acquia CMS with Site Studio and a UIkit. It provides drag and drop content authoring and low-code site building. An optional content model can be added in the installation process.",
           "modules" => [
             "require" => [
-              "acquia_cms_site_studio:^1.3.5",
-              "acquia_cms_page:^1.3.3",
-              "acquia_cms_search:^1.3.5",
-              "acquia_cms_tour:^1.3.0",
-              "acquia_cms_toolbar:^1.3.3",
+              "acquia_cms_site_studio",
+              "acquia_cms_page",
+              "acquia_cms_search",
+              "acquia_cms_tour",
+              "acquia_cms_toolbar",
             ],
             "install" => [
               "acquia_cms_site_studio",
@@ -97,7 +97,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "require" => ["acquia_claro:^1.3.2"],
+            "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
             "default" => "cohesion_theme",
@@ -108,9 +108,9 @@ class CliTest extends TestCase {
           "description" => "The community starter kit will install Acquia CMS. An optional content model can be added in the installation process.",
           "modules" => [
             "require" => [
-              "acquia_cms_search:^1.3.5",
-              "acquia_cms_tour:^1.3.0",
-              "acquia_cms_toolbar:^1.3.3",
+              "acquia_cms_search",
+              "acquia_cms_tour",
+              "acquia_cms_toolbar",
             ],
             "install" => [
               "acquia_cms_search",
@@ -119,7 +119,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "require" => ["acquia_claro:^1.3.2"],
+            "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
           ],
@@ -130,10 +130,10 @@ class CliTest extends TestCase {
           "modules" => [
             "require" => [
               "acquia_cms_headless",
-              "acquia_cms_search:^1.3.5",
-              "acquia_cms_tour:^1.3.0",
-              "acquia_cms_toolbar:^1.3.3",
-              "consumer_image_styles:^4.0.7",
+              "acquia_cms_search",
+              "acquia_cms_tour",
+              "acquia_cms_toolbar",
+              "consumer_image_styles",
             ],
             "install" => [
               "acquia_cms_headless_ui",
@@ -144,7 +144,7 @@ class CliTest extends TestCase {
             ],
           ],
           "themes" => [
-            "require" => ["acquia_claro:^1.3.2"],
+            "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
           ],
@@ -439,18 +439,18 @@ class CliTest extends TestCase {
     switch ($question_type) :
       case 'content_model':
         $packages = [
-          "acquia_cms_article:^1.3.4",
-          "acquia_cms_page:^1.3.3",
-          "acquia_cms_event:^1.3.4",
+          "acquia_cms_article",
+          "acquia_cms_page",
+          "acquia_cms_event",
         ];
         break;
 
       case 'demo_content':
         $packages = [
-          "acquia_cms_article:^1.3.4",
-          "acquia_cms_page:^1.3.3",
-          "acquia_cms_event:^1.3.4",
-          "acquia_cms_starter:^1.3.0",
+          "acquia_cms_article",
+          "acquia_cms_page",
+          "acquia_cms_event",
+          "acquia_cms_starter",
         ];
         break;
 
