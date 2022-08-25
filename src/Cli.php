@@ -135,9 +135,9 @@ class Cli {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $contentModelModules = [
-      'acquia_cms_article:^1.3.4',
-      'acquia_cms_page:^1.3.3',
-      'acquia_cms_event:^1.3.4',
+      'acquia_cms_article',
+      'acquia_cms_page',
+      'acquia_cms_event',
     ];
 
     // Set default theme as olivero (if not defined)
@@ -148,7 +148,7 @@ class Cli {
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $contentModelModules);
     }
     if ($isDemoContent == "yes") {
-      $demoContentModules = array_merge($contentModelModules, ['acquia_cms_starter:^1.3.0']);
+      $demoContentModules = array_merge($contentModelModules, ['acquia_cms_starter']);
       $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $demoContentModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $demoContentModules);
     }
