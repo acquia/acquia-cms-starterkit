@@ -206,7 +206,7 @@ class InstallTask {
       ]);
     }
     else {
-      $this->print("Omiting Drupal install.");
+      $this->print("Omiting Drupal install.", 'notice');
     }
 
     // Revalidate Drupal is installed.
