@@ -38,13 +38,13 @@ class ValidateDrupal {
    */
   protected $isInstalled = FALSE;
 
-
-
   /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Composer $composer
    *   Holds the composer command class object.
+   * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush
+   *   Holds the drush command class object.
    */
   public function __construct(Composer $composer, Drush $drush) {
     $this->composerCommand = $composer;
