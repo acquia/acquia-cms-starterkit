@@ -42,16 +42,7 @@ class InitNextjsApp {
       $initNextjsAppCommand = array_merge($initNextjsAppCommand, ["--env-file=" . $args['--env-file']]);
     }
 
-    $this->drushCommand->prepare($initNextjsAppCommand)->run();
-    // Set config headless settings.
-    $postInitNextjsAppCommand = array_merge([
-      "config:set",
-      "acquia_cms_headless.settings",
-      "starterkit_nextjs",
-      "--yes",
-    ], [TRUE]);
-
-    return $this->drushCommand->prepare($postInitNextjsAppCommand)->run();
+    return $this->drushCommand->prepare($initNextjsAppCommand)->run();
   }
 
 }
