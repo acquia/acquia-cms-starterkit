@@ -58,6 +58,10 @@
         }
     },
     "repositories": {
+        "acquia_cms_headless": {
+            "type": "vcs",
+            "url": "git@github.com:acquia/acquia_cms_headless.git"
+        },
         "assets": {
             "type": "composer",
             "url": "https://asset-packagist.org"
