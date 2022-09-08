@@ -22,7 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Executes the task needed to run site:install command.
  */
 class InstallTask {
-
   use StatusMessageTrait;
 
   /**
@@ -162,7 +161,7 @@ class InstallTask {
    * @poram Symfony\Component\Console\Command\Command $output
    *   The site:install Symfony console command object.
    */
-  public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
+  public function configure(InputInterface $input, OutputInterface $output, string $bundle): void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
@@ -174,28 +173,48 @@ class InstallTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function run(array $args) :void {
+  public function run(array $args): void {
     $installedDrupalVersion = $this->validateDrupal->execute();
-    if (!$installedDrupalVersion) {
+    if (!$this->validateDrupal->isInComposer()) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
       $this->print("Converting the current project to Drupal project:", 'headline');
       $this->downloadDrupal->execute();
     }
     else {
-      $this->print("Seems Drupal is already downloaded. " .
+      $this->print(
+            "Seems Drupal is already downloaded. " .
         "The downloaded Drupal core version is: $installedDrupalVersion. " .
-        "Skipping downloading Drupal.", 'success'
-      );
+        "Skipping downloading Drupal.",
+            'success'
+            );
     }
-    $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
-    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
-    $this->downloadModules->execute($this->starterKits[$this->bundle]);
 
-    $this->print("Installing Site:", 'headline');
-    $this->siteInstall->execute([
-      'no-interaction' => $this->input->getOption('no-interaction'),
-      'name' => $this->starterKits[$this->bundle]['name'],
-    ]);
+    if (!$this->input->hasOption('no-composer') || !$this->input->getOption('no-composer')) {
+      $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
+      $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
+      $this->downloadModules->execute($this->starterKits[$this->bundle]);
+    }
+    else {
+      $this->print("Omitting composer dependency management. Drupal may not have all required dependencies.", 'warning');
+    }
+
+    if (!$this->input->hasOption('no-install') || !$this->input->getOption('no-install')) {
+      $this->print("Installing Site:", 'headline');
+      $this->siteInstall->execute([
+        'no-interaction' => $this->input->getOption('no-interaction'),
+        'name' => $this->starterKits[$this->bundle]['name'],
+      ]);
+    }
+    else {
+      $this->print("Omiting Drupal install.", 'notice');
+    }
+
+    // Revalidate Drupal is installed.
+    $this->validateDrupal->execute();
+    if (!$this->validateDrupal->isInstalled()) {
+      $this->print("Drupal is not installed. Discontinuing starter kit initialization.", 'warning');
+      return;
+    }
 
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
     $modules_list = JsonParser::installPackages($bundle_modules);
@@ -235,11 +254,12 @@ class InstallTask {
         ]);
       }
       else {
-        $this->print("Skipped importing Site Studio Packages." .
+        $this->print(
+              "Skipped importing Site Studio Packages." .
           PHP_EOL .
           "You can set the key later from: /admin/cohesion/configuration/account-settings & import Site Studio packages.",
-          "warning",
-              );
+              "warning",
+                );
       }
     }
 
@@ -279,7 +299,7 @@ class InstallTask {
    * @param string $type
    *   Type of styling the message.
    */
-  protected function print(string $message, string $type) :void {
+  protected function print(string $message, string $type): void {
     $this->output->writeln($this->style($message, $type));
   }
 
