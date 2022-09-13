@@ -22,7 +22,6 @@ services:
   AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules: ~
 
