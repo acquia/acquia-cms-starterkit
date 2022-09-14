@@ -190,6 +190,9 @@ class InstallTask {
 
     $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
     $modules_list = JsonParser::installPackages($bundle_modules);
+    // Get User password from shared factory.
+    $password = SharedFactory::getData('password');
+    $this->print("User name: admin, User password: $password", 'info');
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $isDemoContent = $args['keys']['demo_content'] ?? '';
     if ($isDemoContent == "yes" && ($key = array_search('acquia_cms_starter', $modules_list)) !== FALSE) {
