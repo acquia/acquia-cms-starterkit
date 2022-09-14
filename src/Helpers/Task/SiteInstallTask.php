@@ -6,7 +6,6 @@ use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
-use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -60,13 +59,6 @@ class SiteInstallTask {
   protected $enableThemes;
 
   /**
-   * Holds Site Studio packages import step object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport
-   */
-  protected $siteStudioPackageImport;
-
-  /**
    * Holds Toggle Modules step object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules
@@ -86,7 +78,6 @@ class SiteInstallTask {
     $this->siteInstall = $container->get(SiteInstall::class);
     $this->enableModules = $container->get(EnableModules::class);
     $this->enableThemes = $container->get(EnableThemes::class);
-    $this->siteStudioPackageImport = $container->get(SiteStudioPackageImport::class);
     $this->toggleModules = $container->get(ToggleModules::class);
   }
 
@@ -144,9 +135,6 @@ class SiteInstallTask {
         'default' => 'cohesion_theme',
       ],
       'starter_kit' => 'acquia_cms_existing_site',
-    ]);
-    $this->siteStudioPackageImport->execute([
-      'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
     $this->toggleModules->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),

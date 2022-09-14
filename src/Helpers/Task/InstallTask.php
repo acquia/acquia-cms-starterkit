@@ -10,7 +10,6 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
-use AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
@@ -103,13 +102,6 @@ class InstallTask {
   protected $downloadModules;
 
   /**
-   * The site studio package import step object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\SiteStudioPackageImport
-   */
-  protected $siteStudioPackageImport;
-
-  /**
    * The toggle modules step object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules
@@ -147,7 +139,6 @@ class InstallTask {
     $this->enableThemes = $container->get(EnableThemes::class);
     $this->siteInstall = $container->get(SiteInstall::class);
     $this->downloadModules = $container->get(DownloadModules::class);
-    $this->siteStudioPackageImport = $container->get(SiteStudioPackageImport::class);
     $this->toggleModules = $container->get(ToggleModules::class);
     $this->initNextjsApp = $container->get(InitNextjsApp::class);
   }
@@ -228,13 +219,7 @@ class InstallTask {
     // Trigger Site Studio Package import, if acquia_cms_site_studio module
     // is there in active bundle.
     if (in_array('acquia_cms_site_studio', $modules_list)) {
-      if (($siteStudioApiKey && $siteStudioOrgKey) || (getenv('SITESTUDIO_API_KEY') && getenv('SITESTUDIO_ORG_KEY'))) {
-        $this->print("Running Site Studio package import:", 'headline');
-        $this->siteStudioPackageImport->execute([
-          'no-interaction' => $this->input->getOption('no-interaction'),
-        ]);
-      }
-      else {
+      if (!(($siteStudioApiKey && $siteStudioOrgKey) || (getenv('SITESTUDIO_API_KEY') && getenv('SITESTUDIO_ORG_KEY')))) {
         $this->print("Skipped importing Site Studio Packages." .
           PHP_EOL .
           "You can set the key later from: /admin/cohesion/configuration/account-settings & import Site Studio packages.",
