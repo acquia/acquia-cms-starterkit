@@ -82,7 +82,7 @@ class InstallerQuestionsTest extends TestCase {
    * @dataProvider providerBundle
    */
   public function testGetQuestionsForBundle(string $bundle, array $questions) :void {
-    $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsQuestions, $bundle)['questionMustAsk']);
+    $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsQuestions, $bundle));
   }
 
   /**
@@ -210,19 +210,30 @@ class InstallerQuestionsTest extends TestCase {
         'acquia_cms_enterprise_low_code',
         array_merge(
           CliTest::getDemoContent(),
+          CliTest::getContentModel(),
+          CliTest::getGmapsKey(),
+          CliTest::getSiteStudioApiKey(),
+          CliTest::getSiteStudioOrgKey(),
         ),
       ],
       [
         'acquia_cms_community',
         array_merge(
           CliTest::getDemoContent(),
+          CliTest::getContentModel(),
+          CliTest::getGmapsKey(),
         ),
       ],
       [
         'acquia_cms_headless',
         array_merge(
           CliTest::getDemoContent(),
+          CliTest::getContentModel(),
+          CliTest::getGmapsKey(),
           CliTest::getNextjsApp(),
+          CliTest::getNextjsAppSiteUrl(),
+          CliTest::getNextjsAppSiteName(),
+          CliTest::getNextjsAppEvnFile(),
         ),
       ],
     ];
