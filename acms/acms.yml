@@ -72,6 +72,7 @@ questions:
         - yes
         - no
     default_value: "no"
+    skip_on_value: false
   content_model:
     dependencies:
       starter_kits: acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community
@@ -83,6 +84,7 @@ questions:
         - yes
         - no
     default_value: "no"
+    skip_on_value: false
   nextjs_app:
     dependencies:
       starter_kits: acquia_cms_headless
