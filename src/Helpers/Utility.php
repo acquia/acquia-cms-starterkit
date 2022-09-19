@@ -35,34 +35,38 @@ class Utility {
   }
 
   /**
-   * Generates the random string of given length.
+   * Generates the password based upon certain required conditions.
    *
    * @param int $length
-   *   Length of string to generate.
+   *   Parameter that accepts the length of the password.
    *
    * @return string
-   *   Returns the random string.
+   *   Returns the shuffled string password.
    */
-  public static function generateString($length = 10) {
-    // This variable contains the list of allowable characters for the
-    // password. Note that the number 0 and the letter 'O' have been
-    // removed to avoid confusion between the two. The same is true
-    // of 'I', 1, and 'l'.
-    $allowable_characters = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  public static function generateRandomPassword(int $length = 12): string {
+    // Define the character libraries.
+    $sets = [];
+    $sets[] = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    $sets[] = 'abcdefghjkmnpqrstuvwxyz';
+    $sets[] = '0123456789';
+    $sets[] = '~!@#$%^&*(){}[],./?';
+    $password = '';
 
-    // Zero-based count of characters in the allowable list:
-    $len = strlen($allowable_characters) - 1;
-
-    // Declare the password as a blank string.
-    $pass = '';
-
-    // Loop the number of times specified by $length.
-    for ($i = 0; $i < $length; $i++) {
-      // Each iteration, pick a random character from the
-      // allowable string and append it to the password:
-      $pass .= $allowable_characters[mt_rand(0, $len)];
+    // Append a character from each set - gets first 4 characters.
+    foreach ($sets as $set) {
+      $password .= $set[array_rand(str_split($set))];
     }
-    return $pass;
+
+    // Use all characters to fill up to $length.
+    while (strlen($password) < $length) {
+      // Get a random set.
+      $randomSet = $sets[array_rand($sets)];
+      // Add a random char from the random set.
+      $password .= $randomSet[array_rand(str_split($randomSet))];
+    }
+
+    // Shuffle the password string before returning.
+    return str_shuffle($password);
   }
 
 }

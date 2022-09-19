@@ -10,16 +10,6 @@ class UtilityTest extends TestCase {
   use ProphecyTrait;
 
   /**
-   * Tests the method: generateString() of class Utility.
-   */
-  public function testRandowStringGenerator() : void {
-    $secretCode = Utility::generateString();
-    $this->assertIsString($secretCode);
-    $this->assertEquals(10, strlen($secretCode));
-    $this->assertEquals(5, strlen(Utility::generateString(5)));
-  }
-
-  /**
    * Tests the method: normalizePath() of class Utility.
    *
    * @param string $expected
@@ -58,6 +48,14 @@ class UtilityTest extends TestCase {
         "/acquia/acquia-cms-project/src/tests/../../var/logs/../../bin/acms.php",
       ],
     ];
+  }
+
+  /**
+   * Tests the method generateRandomPassword().
+   */
+  public function testGeneratedPassword() :void {
+    $password = Utility::generateRandomPassword(12);
+    $this->assertMatchesRegularExpression("/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}/", $password);
   }
 
 }
