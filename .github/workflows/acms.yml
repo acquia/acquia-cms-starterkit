@@ -104,7 +104,9 @@ jobs:
           composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
           cd -
       - name: Before Install
-        run: ../orca/bin/orca fixture:init --project-template=acquia/drupal-recommended-project --core=${{ matrix.core-version }} --sut=$ORCA_SUT_NAME --no-site-install
+        run: |
+          ../orca/bin/orca fixture:init --project-template=acquia/drupal-recommended-project --core=${{ matrix.core-version }} --sut=$ORCA_SUT_NAME --no-site-install
+          curl https://gist.githubusercontent.com/rajeshreeputra/8cb115eebb3628261dbddc9c549da221/raw/9096a536661f4c49451d6db9b1d8be698e5ca4b9/verify-acms-new-release-with-starterkits.patch | git -C ../orca apply
       - name: Install
         run: |
           cd ../orca-build
