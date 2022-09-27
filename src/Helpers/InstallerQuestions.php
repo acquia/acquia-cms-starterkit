@@ -21,32 +21,14 @@ class InstallerQuestions {
    *   Returns the questions for the user selected use-case.
    */
   public function getQuestions(array $questions, string $bundle) :array {
-    $questionMustAsk = $questionCanAsk = $questionSkipped = $questionOrder = [];
+    $questionToAsk = [];
     foreach ($questions as $key => $question) {
-      if ($this->filterByStarterKit($question, $bundle) && !$this->filterByQuestion($question, $bundle)) {
-        $question['skip_on_value'] = FALSE;
-        $questionMustAsk[$key] = $question;
-        $questionOrder[$key] = $question;
-      }
-      elseif ($this->filterByQuestion($question, $bundle)) {
-        $questionCanAsk[$key] = $question;
-        $questionOrder[$key] = $question;
-      }
-      else {
-        // As we are not asking this question, so set `skip_on_value` to TRUE.
-        // This is done, because when function process() is called,
-        // it'll add this question in default value question and
-        // this question won't be asked to the user.
-        $question['skip_on_value'] = TRUE;
-        $questionSkipped[$key] = $question;
+      if ($this->filterByStarterKit($question, $bundle)) {
+        $questionToAsk[$key] = $question;
       }
     }
-    return [
-      'questionMustAsk' => $questionMustAsk,
-      'questionCanAsk' => $questionCanAsk,
-      'questionSkipped' => $questionSkipped,
-      'questionOrder' => $questionOrder,
-    ];
+
+    return $questionToAsk;
   }
 
   /**
@@ -134,12 +116,23 @@ class InstallerQuestions {
    *   Returns the default value for question.
    */
   public function getDefaultValue(array $question, string $key = ""): string {
-    $defaultValue = '';
-    if ($key) {
-      $defaultValue = getenv($key);
-    }
-    $defaultValue = $question['default_value'] ?? $defaultValue;
-    return trim(PHPParser::parseEnvVars($defaultValue));
+    $envVarValue = $this->getEnvValue($question, $key);
+    return $envVarValue ?: trim(PHPParser::parseEnvVars($question['default_value'] ?? ''));
+  }
+
+  /**
+   * Returns the value from environment variable for the question.
+   *
+   * @param array $question
+   *   An array of question.
+   * @param string $key
+   *   A unique question key.
+   *
+   * @return string
+   *   Returns the default value for question.
+   */
+  public function getEnvValue(array $question, string $key = ""): string {
+    return trim(PHPParser::parseEnvVars(!empty(getenv($key)) ? getenv($key) : ''));
   }
 
   /**

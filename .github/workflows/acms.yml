@@ -47,9 +47,9 @@ jobs:
           ../orca/bin/ci/after_success.sh
           ../orca/bin/ci/after_failure.sh
           ../orca/bin/ci/after_script.sh
-  VERIFY_ACMS_INSTALL_ON_DRUPAL_PROJECT:
+  VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
     if: ${{ github.event_name == 'push' }}
-    name: "Verify commands on acquia/drupal-recommended-project"
+    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
@@ -61,10 +61,26 @@ jobs:
       DB_USER: drupal
       DB_PASSWORD: drupal
       COMPOSER_PROCESS_TIMEOUT: 1800
+      demo_content: ${{ matrix.demo-content }}
+      content_model: ${{ matrix.content-model }}
+      # nextjs_app: ${{ matrix.nextjs-app }}
       CI: TRUE
     strategy:
       matrix:
         core-version: ["CURRENT", "PREVIOUS_MINOR"]
+        starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
+        demo-content: ["yes", "no"]
+        content-model: ["yes", "no"]
+        # nextjs-app: ["yes", "no"]
+        exclude:
+          - demo-content: "yes"
+            content-model: "yes"
+          # - starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
+          #   nextjs-app: "yes"
+          # - starter-kits: ["acquia_cms_headless"]
+          #   demo-content: "no"
+          #   content-model: "no"
+          #   nextjs-app: "yes"
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
@@ -92,7 +108,7 @@ jobs:
       - name: Install
         run: |
           cd ../orca-build
-          ./vendor/bin/acms acms:install --no-interaction
+          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script

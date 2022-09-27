@@ -147,10 +147,9 @@ class AcmsInstallCommand extends Command {
    * Providing input to user, asking to provide key.
    */
   protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
-    // The questions defined in acms.yml file.
+    // Get all questions for user selected use-case defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
-    // Get all questions for user selected use-case.
-    $processedQuestions = $this->installerQuestions->process(array_merge($questions['questionMustAsk'], $questions['questionSkipped']));
+    $processedQuestions = $this->installerQuestions->process($questions);
 
     // Initialize the value with default answer for question, so that
     // if any question is dependent on other question which is skipped,
@@ -158,13 +157,18 @@ class AcmsInstallCommand extends Command {
     // doesn't throw following RunTime exception:"Not able to resolve variable".
     // @see AcquiaCMS\Cli\Helpers::shouldAskQuestion().
     $userInputValues = $processedQuestions['default'];
-    if (isset($processedQuestions['questionToAsk'])) {
-      foreach ($questions['questionOrder'] as $key => $question) {
+    foreach ($questions as $key => $question) {
+      $envVar = $this->installerQuestions->getEnvValue($question, $key);
+      if (empty($envVar)) {
         if ($this->installerQuestions->shouldAskQuestion($question, $userInputValues)) {
           $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output);
         }
       }
+      else {
+        $userInputValues[$key] = $envVar;
+      }
     }
+
     return array_merge($processedQuestions['default'], $userInputValues);
   }
 

@@ -181,8 +181,8 @@ class CliTest extends TestCase {
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
-        'skip_on_value' => FALSE,
         'default_value' => 'no',
+        'skip_on_value' => FALSE,
       ],
     ];
   }
@@ -203,8 +203,8 @@ class CliTest extends TestCase {
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
-        'skip_on_value' => FALSE,
         'default_value' => 'no',
+        'skip_on_value' => FALSE,
       ],
     ];
   }
