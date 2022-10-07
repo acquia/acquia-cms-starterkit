@@ -52,7 +52,7 @@ jobs:
           ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
     if: ${{ github.event_name == 'push' }}
-    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
+    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
       ORCA_SUT_NAME: acquia/acquia-cms-starterkit
@@ -66,6 +66,7 @@ jobs:
       COMPOSER_PROCESS_TIMEOUT: 1800
       demo_content: ${{ matrix.demo-content }}
       content_model: ${{ matrix.content-model }}
+      dam_integration: ${{ matrix.dam-integration }}
       # nextjs_app: ${{ matrix.nextjs-app }}
       CI: TRUE
     strategy:
@@ -74,10 +75,17 @@ jobs:
         starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
         demo-content: ["yes", "no"]
         content-model: ["yes", "no"]
+        dam-integration: ["yes", "no"]
         # nextjs-app: ["yes", "no"]
         exclude:
           - demo-content: "yes"
             content-model: "yes"
+          - demo-content: "no"
+            content-model: "no"
+            dam-integration: "yes"
+          - demo-content: "yes"
+            content-model: "no"
+            dam-integration: "no"
           # - starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
           #   nextjs-app: "yes"
           # - starter-kits: ["acquia_cms_headless"]
