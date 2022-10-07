@@ -76,6 +76,14 @@ class DownloadModules {
     }
     $packages = array_merge($args['modules']['require'], $args['themes']['require']);
     $packages = JsonParser::downloadPackages($packages);
+    if (in_array('drupal/acquia_cms_dam', $packages)) {
+      $this->composerCommand->prepare([
+        "config",
+        "repositories.acquia_cms_dam",
+        "--json",
+        '{ "type": "vcs", "name": "drupal/acquia_cms_dam", "url": "https://github.com/acquia/acquia_cms_dam.git" }',
+      ])->run();
+    }
     $inputArgument = array_merge(["require", "-W"], $packages);
     return $this->composerCommand->prepare($inputArgument)->run();
   }
