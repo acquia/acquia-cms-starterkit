@@ -116,22 +116,20 @@ class InstallerQuestions {
    *   Returns the default value for question.
    */
   public function getDefaultValue(array $question, string $key = ""): string {
-    $envVarValue = $this->getEnvValue($question, $key);
+    $envVarValue = $this->getEnvValue($key);
     return $envVarValue ?: trim(PHPParser::parseEnvVars($question['default_value'] ?? ''));
   }
 
   /**
    * Returns the value from environment variable for the question.
    *
-   * @param array $question
-   *   An array of question.
    * @param string $key
    *   A unique question key.
    *
    * @return string
    *   Returns the default value for question.
    */
-  public function getEnvValue(array $question, string $key = ""): string {
+  public function getEnvValue(string $key = ""): string {
     return trim(PHPParser::parseEnvVars(!empty(getenv($key)) ? getenv($key) : ''));
   }
 

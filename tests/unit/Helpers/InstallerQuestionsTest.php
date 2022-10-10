@@ -109,6 +109,29 @@ class InstallerQuestionsTest extends TestCase {
   }
 
   /**
+   * Function to test method: getDefaultValue().
+   *
+   * @param array $actual
+   *   An array of actual values.
+   * @param string $expected
+   *   An expected string value.
+   * @param string $key
+   *   A unique question key.
+   * @param array $envVariables
+   *   An array of environment variables & values.
+   *
+   * @dataProvider providerDefaultValue
+   */
+  public function testQuestionEnvValue(array $actual, string $expected, string $key = '', array $envVariables = []) :void {
+    if ($envVariables) {
+      foreach ($envVariables as $envVariable => $value) {
+        putenv("$envVariable=$value");
+      }
+    }
+    $this->assertEquals(getenv($key), $this->installerQuestions->getEnvValue($key));
+  }
+
+  /**
    * Function to test method: shouldAskQuestion().
    *
    * @param array $question
