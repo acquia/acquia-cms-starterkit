@@ -134,6 +134,7 @@ class Cli {
   public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
+    $isDamIntegration = $userInputValues['dam_integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',
@@ -151,6 +152,10 @@ class Cli {
       $demoContentModules = array_merge($contentModelModules, ['acquia_cms_starter']);
       $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $demoContentModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $demoContentModules);
+    }
+    if ($isDamIntegration == "yes") {
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], ['acquia_cms_dam']);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], ['acquia_cms_dam']);
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);

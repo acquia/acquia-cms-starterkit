@@ -211,6 +211,7 @@ class InstallerQuestionsTest extends TestCase {
         array_merge(
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
+          CliTest::getDamIntegration(),
           CliTest::getGmapsKey(),
           CliTest::getSiteStudioApiKey(),
           CliTest::getSiteStudioOrgKey(),
@@ -221,6 +222,7 @@ class InstallerQuestionsTest extends TestCase {
         array_merge(
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
+          CliTest::getDamIntegration(),
           CliTest::getGmapsKey(),
         ),
       ],
@@ -229,6 +231,7 @@ class InstallerQuestionsTest extends TestCase {
         array_merge(
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
+          CliTest::getDamIntegration(),
           CliTest::getGmapsKey(),
           CliTest::getNextjsApp(),
           CliTest::getNextjsAppSiteUrl(),
