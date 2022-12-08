@@ -71,7 +71,7 @@ jobs:
       CI: TRUE
     strategy:
       matrix:
-        core-version: ["CURRENT", "PREVIOUS_MINOR"]
+        core-version: ["CURRENT"]
         starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
         demo-content: ["yes", "no"]
         content-model: ["yes", "no"]
