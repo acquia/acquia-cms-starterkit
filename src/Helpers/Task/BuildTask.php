@@ -10,6 +10,8 @@ use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Executes the task needed to run site:build command.
@@ -82,6 +84,20 @@ class BuildTask {
   protected $bundle;
 
   /**
+   * User selected bundle.
+   *
+   * @var \Symfony\Component\Filesystem\Filesystem
+   */
+  protected $filesystem;
+
+  /**
+   * User selected bundle.
+   *
+   * @var string
+   */
+  protected $projectDir;
+
+  /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Cli $cli
@@ -89,12 +105,14 @@ class BuildTask {
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   A Symfony container class object.
    */
-  public function __construct(Cli $cli, ContainerInterface $container) {
+  public function __construct($root_dir, Cli $cli, ContainerInterface $container) {
+    $this->projectDir = $root_dir;
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->validateDrupal = $container->get(ValidateDrupal::class);
     $this->downloadDrupal = $container->get(DownloadDrupal::class);
     $this->downloadModules = $container->get(DownloadModules::class);
+    $this->filesystem = $container->get(Filesystem::class);
   }
 
   /**
@@ -141,8 +159,43 @@ class BuildTask {
   /**
    * Create build file in top level directory.
    */
-  public function createBuild():void {
-    // @todo add logic here.
+  public function createBuild($site):void {
+    $build_path = $this->projectDir . '/acms';
+    $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
+    $installed_themes = $this->starterKits[$this->bundle]['themes'];
+
+    // Build array structure for build.yml content.
+    $build_content = [
+      'sites'=> [
+        $site => [
+          'modules' => $installed_modules,
+          'starter_kit' => $this->bundle,
+          'themes' => [
+            'admin' => $installed_themes['admin'],
+            'default' => $installed_themes['default']
+          ]
+        ]
+      ]
+    ];
+
+    // Create directory if not already there.
+    if (!$this->filesystem->exists($build_path)) {
+      $this->filesystem->mkdir($build_path);
+    }
+    if ($this->filesystem->exists($build_path)) {
+      $file_name = $build_path . '/build.yml';
+      if (!$this->filesystem->exists($file_name)) {
+        $yaml_build_content = Yaml::dump($build_content, 4, 2);
+        $this->filesystem->dumpFile($file_name, $yaml_build_content);
+      }
+      // Write data to the file.
+      if ($this->filesystem->exists($file_name)) {
+        $value = Yaml::parseFile($file_name);
+        $updated_value['sites'] = array_merge($value['sites'],$build_content['sites']);
+        $yaml_updated_value = Yaml::dump($updated_value, 4, 2);
+        $this->filesystem->dumpFile($file_name, $yaml_updated_value);
+      }
+    }
   }
 
   /**

@@ -74,7 +74,7 @@ class AcmsBuildCommand extends Command {
       ->setDefinition([
         new InputArgument('name', NULL, "Name of the starter kit"),
         new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site."),
-        new InputOption('generate', 'ge', InputOption::VALUE_OPTIONAL, "Create build.yml file without running composer install/require."),
+        new InputOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require."),
       ])
       ->setHelp("The <info>acms:build</info> command to build composer dependencies & downloads it based on user selected use case.");
   }
@@ -85,6 +85,8 @@ class AcmsBuildCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
       $name = $input->getArgument('name');
+      $generate = $input->getOption('generate');
+      $site_uri = $input->getOption('uri') ?? 'default';
       $args = [];
       if ($name) {
         $this->validationOptions($name);
@@ -98,8 +100,10 @@ class AcmsBuildCommand extends Command {
       }
       $args['keys'] = $this->askKeysQuestions($input, $output, $name);
       $this->buildTask->configure($input, $output, $name);
-      $this->buildTask->run($args);
-      $this->buildTask->createBuild();
+      if (!$generate) {
+        $this->buildTask->run($args);
+      }
+      $this->buildTask->createBuild($site_uri);
       $this->postBuild($name, $output);
     }
     catch (AcmsCliException $e) {
@@ -184,7 +188,6 @@ class AcmsBuildCommand extends Command {
     $total = count($starter_kits);
     $key = 0;
     foreach ($starter_kits as $id => $starter_kit) {
-      $useCases[$id] = $starter_kit;
       $table->addRow([$id, $starter_kit['name'], $starter_kit['description']]);
       if ($key + 1 != $total) {
         $table->addRow(["", "", ""]);
