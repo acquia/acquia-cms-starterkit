@@ -98,7 +98,7 @@ class AcmsBuildCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
-      $args['keys'] = $this->askKeysQuestions($input, $output, $name);
+      $args['keys'] = $this->askKeysQuestions($input, $output, $name, 'build');
       $this->buildTask->configure($input, $output, $name);
       if (!$generate) {
         $this->buildTask->run($args);
@@ -152,9 +152,9 @@ class AcmsBuildCommand extends Command {
   /**
    * Providing input to user, asking to provide key.
    */
-  protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle) :array {
+  protected function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle, string $question_type) :array {
     // Get all questions for user selected use-case defined in acms.yml file.
-    $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions(), $bundle);
+    $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions($question_type), $bundle);
     $processedQuestions = $this->installerQuestions->process($questions);
 
     // Initialize the value with default answer for question, so that

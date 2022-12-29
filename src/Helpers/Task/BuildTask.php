@@ -100,12 +100,14 @@ class BuildTask {
   /**
    * Constructs an object.
    *
+   * @param string $root_dir
+   *   Root directory path.
    * @param \AcquiaCMS\Cli\Cli $cli
    *   An Acquia CMS cli class object.
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   A Symfony container class object.
    */
-  public function __construct($root_dir, Cli $cli, ContainerInterface $container) {
+  public function __construct(string $root_dir, Cli $cli, ContainerInterface $container) {
     $this->projectDir = $root_dir;
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
@@ -158,16 +160,22 @@ class BuildTask {
   /**
    * Alter modules and themes based on starter-kit.
    *
-   * @param $args
+   * @param array $args
+   *   An array of params argument to pass.
    */
-  protected function buildModulesAndThemes($args) :void {
+  protected function buildModulesAndThemes(array $args) :void {
     $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
   }
 
   /**
    * Create build file in top level directory.
+   *
+   * @param array $args
+   *   An array of params argument to pass.
+   * @param string $site
+   *   The site uri.
    */
-  public function createBuild($args, $site):void {
+  public function createBuild(array $args, string $site) :void {
     $build_path = $this->projectDir . '/acms';
     $this->buildModulesAndThemes($args);
     $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
@@ -175,16 +183,16 @@ class BuildTask {
 
     // Build array structure for build.yml.
     $build_content = [
-      'sites'=> [
+      'sites' => [
         $site => [
           'modules' => $installed_modules,
           'starter_kit' => $this->bundle,
           'themes' => [
             'admin' => $installed_themes['admin'],
-            'default' => $installed_themes['default']
-          ]
-        ]
-      ]
+            'default' => $installed_themes['default'],
+          ],
+        ],
+      ],
     ];
 
     // Create directory if not already there.
@@ -200,7 +208,7 @@ class BuildTask {
       // Write data to the file.
       if ($this->filesystem->exists($file_name)) {
         $value = Yaml::parseFile($file_name);
-        $updated_value['sites'] = array_merge($value['sites'],$build_content['sites']);
+        $updated_value['sites'] = array_merge($value['sites'], $build_content['sites']);
         $yaml_updated_value = Yaml::dump($updated_value, 4, 2);
         $this->filesystem->dumpFile($file_name, $yaml_updated_value);
       }
