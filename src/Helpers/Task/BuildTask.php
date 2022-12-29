@@ -151,20 +151,29 @@ class BuildTask {
       );
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
-    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
+    $this->buildModulesAndThemes($args);
     $this->downloadModules->execute($this->starterKits[$this->bundle]);
+  }
 
+  /**
+   * Alter modules and themes based on starter-kit.
+   *
+   * @param $args
+   */
+  protected function buildModulesAndThemes($args) :void {
+    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
   }
 
   /**
    * Create build file in top level directory.
    */
-  public function createBuild($site):void {
+  public function createBuild($args, $site):void {
     $build_path = $this->projectDir . '/acms';
+    $this->buildModulesAndThemes($args);
     $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
     $installed_themes = $this->starterKits[$this->bundle]['themes'];
 
-    // Build array structure for build.yml content.
+    // Build array structure for build.yml.
     $build_content = [
       'sites'=> [
         $site => [

@@ -158,7 +158,7 @@ class Cli {
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], ['acquia_cms_dam']);
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
-    $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
+    $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
     return $starterKit;
   }
 

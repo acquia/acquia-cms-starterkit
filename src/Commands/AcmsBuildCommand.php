@@ -103,7 +103,7 @@ class AcmsBuildCommand extends Command {
       if (!$generate) {
         $this->buildTask->run($args);
       }
-      $this->buildTask->createBuild($site_uri);
+      $this->buildTask->createBuild($args, $site_uri);
       $this->postBuild($name, $output);
     }
     catch (AcmsCliException $e) {
