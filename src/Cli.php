@@ -102,6 +102,7 @@ class Cli {
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
   public function getInstallerQuestions(string $question_type = NULL) :array {
+    // @todo clean up below logic in ACMS-1589.
     $fileContent = $this->getAcquiaCmsFile();
     if ($question_type) {
       return $fileContent['questions'][$question_type] ?? [];
