@@ -122,6 +122,7 @@ class CliTest extends TestCase {
             "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
+            "default" => "olivero",
           ],
         ],
         "acquia_cms_headless" => [
@@ -147,21 +148,26 @@ class CliTest extends TestCase {
             "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
+            "default" => "olivero",
           ],
         ],
       ],
-      "questions" => array_merge (
-        self::getContentModel(),
-        self::getDemoContent(),
-        self::getDamIntegration(),
-        self::getNextjsApp(),
-        self::getNextjsAppSiteUrl(),
-        self::getNextjsAppSiteName(),
-        self::getNextjsAppEvnFile(),
-        self::getGmapsKey(),
-        self::getSiteStudioApiKey(),
-        self::getSiteStudioOrgKey(),
-      ),
+      "questions" => [
+        "build" => array_merge (
+          self::getContentModel(),
+          self::getDemoContent(),
+          self::getDamIntegration(),
+        ),
+        "install" => array_merge(
+          self::getNextjsApp(),
+          self::getNextjsAppSiteUrl(),
+          self::getNextjsAppSiteName(),
+          self::getNextjsAppEvnFile(),
+          self::getGmapsKey(),
+          self::getSiteStudioApiKey(),
+          self::getSiteStudioOrgKey(),
+        ),
+      ],
     ];
   }
 
