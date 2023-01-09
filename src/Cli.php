@@ -101,8 +101,13 @@ class Cli {
   /**
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
-  public function getInstallerQuestions() :array {
+  public function getInstallerQuestions(string $question_type = NULL) :array {
+    // @todo clean up below logic in ACMS-1589.
     $fileContent = $this->getAcquiaCmsFile();
+    if ($question_type) {
+      return $fileContent['questions'][$question_type] ?? [];
+    }
+    $fileContent['questions'] = array_merge($fileContent['questions']['build'], $fileContent['questions']['install']);
     return $fileContent['questions'] ?? [];
   }
 
@@ -134,6 +139,7 @@ class Cli {
   public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
+    $isDamIntegration = $userInputValues['dam_integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',
@@ -152,8 +158,12 @@ class Cli {
       $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $demoContentModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $demoContentModules);
     }
+    if ($isDamIntegration == "yes") {
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], ['acquia_cms_dam']);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], ['acquia_cms_dam']);
+    }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
-    $starterKit['modules']['install'] = array_unique($starterKit['modules']['install']);
+    $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
     return $starterKit;
   }
 

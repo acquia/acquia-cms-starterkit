@@ -77,7 +77,8 @@ class DownloadModules {
     $packages = array_merge($args['modules']['require'], $args['themes']['require']);
     $packages = JsonParser::downloadPackages($packages);
     $inputArgument = array_merge(["require", "-W"], $packages);
-    return $this->composerCommand->prepare($inputArgument)->run();
+    $this->composerCommand->prepare($inputArgument)->run();
+    return $this->composerCommand->prepare(["update", "--lock"])->run();
   }
 
 }
