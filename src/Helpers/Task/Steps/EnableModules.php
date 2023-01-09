@@ -36,7 +36,6 @@ class EnableModules {
   public function execute(array $args = []) :int {
     $modules = $args['modules'];
     $command = array_merge(["en", "--yes"], $modules);
-    $args['keys']['UNSET_COHESION_SYNC'] = 1;
     $this->drushCommand->prepare($command)->run($args['keys']);
     return StatusCodes::OK;
   }
