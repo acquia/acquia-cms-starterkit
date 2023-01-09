@@ -7,6 +7,7 @@ use AcquiaCMS\Cli\Helpers\InstallerQuestions;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -51,7 +52,12 @@ class AskQuestions {
   /**
    * Providing input to user, asking to provide key.
    */
-  public function askKeysQuestions(InputInterface $input, OutputInterface $output, string $bundle, string $question_type, Command $helper) :array {
+  public function askKeysQuestions(
+    InputInterface $input,
+    OutputInterface $output,
+    string $bundle,
+    string $question_type,
+    QuestionHelper $helper) :array {
     // Get all questions for user selected use-case defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions($question_type), $bundle);
     $processedQuestions = $this->installerQuestions->process($questions);
@@ -89,10 +95,15 @@ class AskQuestions {
    *   A Console input interface object.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Console output interface object.
-   * @param \Symfony\Component\Console\Command\Command $helper
+   * @param \Symfony\Component\Console\Helper\QuestionHelper $helper
    *   A Symfony helper object.
    */
-  public function askQuestion(array $question, string $key, InputInterface $input, OutputInterface $output, Command $helper) : string {
+  public function askQuestion(
+    array $question,
+    string $key,
+    InputInterface $input,
+    OutputInterface $output,
+    QuestionHelper $helper) : string {
     $isRequired = $question['required'] ?? FALSE;
     $defaultValue = $this->installerQuestions->getDefaultValue($question, $key);
     $skipOnValue = $question['skip_on_value'] ?? TRUE;
