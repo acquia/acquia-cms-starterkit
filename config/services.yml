@@ -16,6 +16,7 @@ services:
   Symfony\Component\Console\Application: ~
   AcquiaCMS\Cli\Helpers\Process\Commands\Drush: ~
   AcquiaCMS\Cli\Helpers\Process\Commands\Composer: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\AskQuestions: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules: ~

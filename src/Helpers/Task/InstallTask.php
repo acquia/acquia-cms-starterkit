@@ -196,7 +196,11 @@ class InstallTask {
    * @param string $site_uri
    *   The site uri.
    */
-  public function configure(InputInterface $input, OutputInterface $output, string $bundle, string $site_uri) :void {
+  public function configure(
+    InputInterface $input,
+    OutputInterface $output,
+    string $bundle,
+    string $site_uri) :void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
