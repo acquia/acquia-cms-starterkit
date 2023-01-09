@@ -124,8 +124,7 @@ class SiteInstallCommand extends Command {
       $site_uri = $input->getOption('uri');
       // Get starterkit name from build file.
       [$starterkit_machine_name, $starterkit_name] = $this->installTask->getStarterKitName($site_uri);
-      $helper = $this->getHelper('question');
-      $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkit_machine_name, 'install', $helper);
+      $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkit_machine_name, 'install', $this->getHelper('question'));
       $this->installTask->configure($input, $output, $starterkit_machine_name, $site_uri);
       $this->installTask->run($args);
       $this->postSiteInstall($starterkit_name, $output);

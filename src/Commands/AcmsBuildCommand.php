@@ -113,8 +113,7 @@ class AcmsBuildCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
-      $helper = $this->getHelper('question');
-      $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $helper);
+      $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $this->getHelper('question'));
       $this->buildTask->configure($input, $output, $name);
       if (!$generate) {
         $this->buildTask->run($args);
