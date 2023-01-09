@@ -98,7 +98,7 @@ class Cli {
    * @param string $file_path
    *   File name to to collect information.
    *
-   * @return mixed
+   * @return array
    *   Retuen the file content.
    */
   public function getAcquiaCmsFile(string $file_path) :array {
