@@ -99,7 +99,10 @@ class AcmsBuildCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
-      $name = $input->getArgument('name');
+      $name = '';
+      if ($input->getArgument('name')) {
+        $name = explode("=", $input->getArgument('name'))[0];
+      }
       $generate = $input->getOption('generate');
       $site_uri = $input->getOption('uri');
       $args = [];

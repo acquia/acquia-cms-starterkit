@@ -6,7 +6,6 @@ use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\InstallerQuestions;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

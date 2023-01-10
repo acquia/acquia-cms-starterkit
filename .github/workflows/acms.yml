@@ -120,7 +120,7 @@ jobs:
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
-          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --no-interaction
+          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script
