@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Provides the Acquia CMS site:install command.
@@ -33,6 +34,13 @@ class AcmsInstallCommand extends Command {
   protected $genericCommand;
 
   /**
+   * User selected bundle.
+   *
+   * @var \Symfony\Component\Filesystem\Filesystem
+   */
+  protected $filesystem;
+
+  /**
    * Constructs an instance.
    *
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
@@ -40,6 +48,7 @@ class AcmsInstallCommand extends Command {
    */
   public function __construct(ContainerInterface $container) {
     $this->genericCommand = $container->get(Generic::class);
+    $this->filesystem = $container->get(Filesystem::class);
     parent::__construct();
   }
 
@@ -60,18 +69,28 @@ class AcmsInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) :int {
+    $build_command = $install_command = [];
+    if ($input->getArgument('name')) {
+      $build_command[] = explode("=", $input->getArgument('name'))[0];
+    }
+    if ($input->getOption('no-interaction')) {
+      $install_command[] = '--no-interaction';
+    }
     $site_uri = $input->getOption('uri');
+    if ($this->filesystem->exists('./vendor/bin/acms')) {
+      $this->genericCommand->setCommand('./vendor/bin/acms');
+    }
+    else {
+      $this->genericCommand->setCommand('./bin/acms');
+    }
+    $install_command = array_merge($install_command, ['--uri=' . $site_uri]);
+    $build_command = array_merge($build_command, $install_command);
+    $build_command = array_merge(['acms:build'], $build_command);
+    $install_command = array_merge(['site:install'], $install_command);
     // Execute acms acms:build.
-    $this->genericCommand->setCommand('./vendor/bin/acms');
-    $output = $this->genericCommand->prepare([
-      'acms:build',
-      '--uri=' . $site_uri,
-    ])->run();
+    $output = $this->genericCommand->prepare($build_command)->run();
     // Execute acms site:install.
-    $output = $this->genericCommand->prepare([
-      'site:install',
-      '--uri=' . $site_uri,
-    ])->run();
+    $output = $this->genericCommand->prepare($install_command)->run();
     return StatusCodes::OK;
   }
 

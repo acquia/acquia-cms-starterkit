@@ -27,7 +27,7 @@ class SharedFactory {
    *   Returns the generated data.
    */
   public static function getData(string $key, string $value = ''): string {
-    if (!isset($value) && empty($value)) {
+    if (empty($value)) {
       $value = self::setData($key, $value);
     }
     return $value;
