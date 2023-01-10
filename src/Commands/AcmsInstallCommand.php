@@ -84,7 +84,10 @@ class AcmsInstallCommand extends Command {
     $install_command = array_merge($install_command, ['--uri=' . $site_uri]);
     $build_command = array_merge($build_command, $install_command);
     $build_command = array_merge(['acms:build'], $build_command);
-    $install_command = array_merge(['site:install'], $install_command);
+    $install_command = array_merge([
+      'site:install',
+      '--without-product-info',
+    ], $install_command);
     // Execute acms acms:build.
     $output = $this->genericCommand->prepare($build_command)->run();
     // Execute acms site:install.
