@@ -108,6 +108,7 @@ class SiteInstallCommand extends Command {
         new InputOption('no', '', InputOption::VALUE_NONE, "Cancels at any confirmation prompt."),
         new InputOption('hide-command', 'hide', InputOption::VALUE_NONE, "Doesn't show the command executed on terminal."),
         new InputOption('display-command', 'd', InputOption::VALUE_NONE, "Doesn't show the command executed on terminal."),
+        new InputOption('without-product-info', 'wpi', InputOption::VALUE_NONE, "Doesn't show the product logo and headline."),
       ])
       ->setAliases(['site-install', 'si'])
       ->setHelp("The <info>site:install</info> command install Drupal along with modules/themes/configuration/profile.");
@@ -119,8 +120,10 @@ class SiteInstallCommand extends Command {
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
       $args = [];
-      $this->acquiaCmsCli->printLogo();
-      $this->acquiaCmsCli->printHeadline();
+      if (!$input->getOption('without-product-info')) {
+        $this->acquiaCmsCli->printLogo();
+        $this->acquiaCmsCli->printHeadline();
+      }
       $site_uri = $input->getOption('uri');
       // Get starterkit name from build file.
       [$starterkit_machine_name, $starterkit_name] = $this->installTask->getStarterKitName($site_uri);
