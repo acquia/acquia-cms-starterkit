@@ -11,20 +11,24 @@ on:
     branches: [ develop ]
     paths-ignore:
       - README.md
+env:
+  ORCA_SUT_NAME: acquia/acquia-cms-starterkit
+  ORCA_SUT_BRANCH: develop
+  ORCA_VERSION: v3.26.0
+  ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
+  ORCA_ENABLE_NIGHTWATCH: "FALSE"
+  DB_DATABASE: drupal
+  DB_USER: drupal
+  DB_PASSWORD: drupal
+  ORCA_PHPCS_STANDARD: AcquiaPHP
+  COMPOSER_PROCESS_TIMEOUT: 1800
 jobs:
   # @todo add tests to validate each starter-kit use case.
   STATIC_CODE_ANALYSIS:
     name: "Static Code Analysis"
     runs-on: ubuntu-latest
     env:
-      ORCA_SUT_NAME: acquia/acquia-cms-starterkit
       ORCA_JOB: STATIC_CODE_ANALYSIS
-      ORCA_SUT_BRANCH: develop
-      ORCA_VERSION: ^3
-      ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
-      ORCA_ENABLE_NIGHTWATCH: "FALSE"
-      ORCA_PHPCS_STANDARD: AcquiaPHP
-      COMPOSER_PROCESS_TIMEOUT: 1800
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
@@ -55,15 +59,6 @@ jobs:
     name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
-      ORCA_SUT_NAME: acquia/acquia-cms-starterkit
-      ORCA_SUT_BRANCH: develop
-      ORCA_VERSION: ^3
-      ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
-      ORCA_ENABLE_NIGHTWATCH: "FALSE"
-      DB_DATABASE: drupal
-      DB_USER: drupal
-      DB_PASSWORD: drupal
-      COMPOSER_PROCESS_TIMEOUT: 1800
       demo_content: ${{ matrix.demo-content }}
       content_model: ${{ matrix.content-model }}
       dam_integration: ${{ matrix.dam-integration }}
@@ -135,16 +130,6 @@ jobs:
   VERIFY_ACMS_INSTALL_CURRENT_PROJECT:
     name: "Verify commands on current project (Non Drupal)"
     runs-on: ubuntu-latest
-    env:
-      ORCA_SUT_NAME: acquia/acquia-cms-starterkit
-      ORCA_SUT_BRANCH: develop
-      ORCA_VERSION: ^3
-      ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
-      ORCA_ENABLE_NIGHTWATCH: "FALSE"
-      DB_DATABASE: drupal
-      DB_USER: drupal
-      DB_PASSWORD: drupal
-      COMPOSER_PROCESS_TIMEOUT: 1800
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
