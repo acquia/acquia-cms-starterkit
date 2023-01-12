@@ -110,7 +110,7 @@ jobs:
           composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
           cd -
       - name: Before Install
-        run: ../orca/bin/orca fixture:init --project-template=acquia/drupal-recommended-project --core=${{ matrix.core-version }} --sut=$ORCA_SUT_NAME --no-site-install
+        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --dev --profile=minimal --no-site-install
       - name: Install
         run: |
           cd ../orca-build
