@@ -38,6 +38,7 @@ class GenericCommandTest extends TestCase {
   protected function setUp(): void {
     $output = $this->prophesize(OutputInterface::class);
     $input = $this->prophesize(InputInterface::class);
+    $input->hasOption('hide-command')->willReturn(TRUE);
     $this->output = $output->reveal();
     $this->input = $input->reveal();
     $this->genericCommand = new Generic(getcwd(), $this->output, $this->input);
