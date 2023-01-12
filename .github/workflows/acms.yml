@@ -62,6 +62,11 @@ jobs:
       demo_content: ${{ matrix.demo-content }}
       content_model: ${{ matrix.content-model }}
       dam_integration: ${{ matrix.dam-integration }}
+      CONNECTOR_ID: ${{ secrets.CONNECTOR_ID }}
+      GMAPS_KEY: ${{ secrets.GMAPS_KEY }}
+      SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
+      SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
+      SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
       # nextjs_app: ${{ matrix.nextjs-app }}
       CI: TRUE
     strategy:
