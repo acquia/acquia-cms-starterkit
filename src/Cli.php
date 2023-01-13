@@ -132,12 +132,7 @@ class Cli {
     // Read build.yml file from root directory.
     if ($this->filesystem->exists($this->rootDirectory . '/acms/build.yml')) {
       $fileContents = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/build.yml');
-      if (isset($fileContents['sites'][$site_uri])) {
-        $fileContents = $fileContents['sites'][$site_uri];
-      }
-      else {
-        $fileContents = $this->getAcquiaCmsFile($default_file_path)['sites']['default'];
-      }
+      $fileContents = $fileContents['sites'][$site_uri] ?? $this->getAcquiaCmsFile($default_file_path)['sites']['default'];
     }
     else {
       $fileContents = $this->getAcquiaCmsFile($default_file_path)['sites']['default'];

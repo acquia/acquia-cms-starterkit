@@ -70,9 +70,7 @@ class AcmsInstallCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     $build_command = $install_command = [];
-    if ($input->getArgument('name')) {
-      $build_command[] = explode("=", $input->getArgument('name'))[0];
-    }
+    $build_command[] = $input->getArgument('name');
     if ($input->getOption('no-interaction')) {
       $install_command[] = '--no-interaction';
     }
