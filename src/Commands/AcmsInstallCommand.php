@@ -21,7 +21,9 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Provides the Acquia CMS site:install command.
  *
- * @code ./vendor/bin/acms acms:install
+ * @code
+ *   ./vendor/bin/acms acms:install
+ * @endcode
  */
 class AcmsInstallCommand extends Command {
 
