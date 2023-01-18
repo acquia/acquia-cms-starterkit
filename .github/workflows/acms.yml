@@ -71,7 +71,7 @@ jobs:
       CI: TRUE
     strategy:
       matrix:
-        core-version: ["CURRENT"]
+        core-version: ["CURRENT", "PREVIOUS_MINOR"]
         starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
         demo-content: ["yes", "no"]
         content-model: ["yes", "no"]
@@ -115,7 +115,7 @@ jobs:
           composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
           cd -
       - name: Before Install
-        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --dev --profile=minimal --no-site-install
+        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install
       - name: Install
         run: |
           cd ../orca-build
