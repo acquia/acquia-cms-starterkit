@@ -11,6 +11,8 @@ use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,7 +23,9 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Provides the Acquia CMS site:install command.
  *
- * @code ./vendor/bin/acms acms:install
+ * @code
+ *   ./vendor/bin/acms acms:install
+ * @endcode
  */
 class AcmsInstallCommand extends Command {
 
@@ -125,7 +129,6 @@ class AcmsInstallCommand extends Command {
    * Providing input to user, asking to select the starter-kit.
    */
   protected function askBundleQuestion(InputInterface $input, OutputInterface $output) :string {
-    $helper = $this->getHelper('question');
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
     $starterKit = "acquia_cms_enterprise_low_code";
@@ -139,8 +142,12 @@ class AcmsInstallCommand extends Command {
       }
       return $answer;
     });
-    $question->setMaxAttempts(3);
-    return $helper->ask($input, $output, $question);
+    $helper = $this->getHelper('question');
+    if ($helper instanceof QuestionHelper) {
+      $question->setMaxAttempts(3);
+      $response = $helper->ask($input, $output, $question);
+    }
+    return $response ?? "";
   }
 
   /**
@@ -206,8 +213,10 @@ class AcmsInstallCommand extends Command {
     $output->writeln("");
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$bundle`.";
-    $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
-    $output->writeln($formattedInfoBlock);
+    if ($formatter instanceof FormatterHelper) {
+      $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
+      $output->writeln($formattedInfoBlock);
+    }
     $output->writeln("");
   }
 
@@ -224,7 +233,6 @@ class AcmsInstallCommand extends Command {
    *   A Console output interface object.
    */
   public function askQuestion(array $question, string $key, InputInterface $input, OutputInterface $output) : string {
-    $helper = $this->getHelper('question');
     $isRequired = $question['required'] ?? FALSE;
     $defaultValue = $this->installerQuestions->getDefaultValue($question, $key);
     $skipOnValue = $question['skip_on_value'] ?? TRUE;
@@ -257,7 +265,11 @@ class AcmsInstallCommand extends Command {
     if (isset($question['allowed_values']['options'])) {
       $askQuestion->setAutocompleterValues($question['allowed_values']['options']);
     }
-    $response = $helper->ask($input, $output, $askQuestion);
+    $helper = $this->getHelper('question');
+    $response = NULL;
+    if ($helper instanceof QuestionHelper) {
+      $response = $helper->ask($input, $output, $askQuestion);
+    }
     return ($response === NULL) ? $defaultValue : $response;
   }
 

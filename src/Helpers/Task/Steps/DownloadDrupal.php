@@ -3,7 +3,7 @@
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
 use AcquiaCMS\Cli\Helpers\Process\Commands\Composer;
-use AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient;
+use AcquiaCMS\Cli\Http\Client\Github\AcquiaRecommendedClient;
 
 /**
  * Run the composer command to downlod the latest Drupal.
@@ -20,21 +20,21 @@ class DownloadDrupal {
   /**
    * An acquia minimal client object.
    *
-   * @var \AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient
+   * @var \AcquiaCMS\Cli\Http\Client\Github\AcquiaRecommendedClient
    */
-  protected $acquiaMinimalClient;
+  protected $client;
 
   /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Composer $composer
    *   Holds the composer command class object.
-   * @param \AcquiaCMS\Cli\Http\Client\Github\AcquiaMinimalClient $acquiaMinimalClient
+   * @param \AcquiaCMS\Cli\Http\Client\Github\AcquiaRecommendedClient $client
    *   Hold the Acquia Minimal http cliend object.
    */
-  public function __construct(Composer $composer, AcquiaMinimalClient $acquiaMinimalClient) {
+  public function __construct(Composer $composer, AcquiaRecommendedClient $client) {
     $this->composerCommand = $composer;
-    $this->acquiaMinimalClient = $acquiaMinimalClient;
+    $this->client = $client;
   }
 
   /**
@@ -44,7 +44,7 @@ class DownloadDrupal {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $jsonArray = json_decode($this->acquiaMinimalClient->getFileContents("composer.json"));
+    $jsonArray = json_decode($this->client->getFileContents("composer.json"));
     foreach ($jsonArray->repositories as $repoName => $data) {
       $this->composerCommand->prepare([
         "config",
@@ -70,6 +70,9 @@ class DownloadDrupal {
       ])->run();
     }
     $requirePackages = (array) $jsonArray->require;
+    $requirePackages = array_filter($requirePackages, function ($package) {
+      return $package != "acquia/acquia-cms-starterkit";
+    }, ARRAY_FILTER_USE_KEY);
     $packages = array_map(function ($key, $value) {
       return $key . ":" . $value;
     }, array_keys($requirePackages), $requirePackages);

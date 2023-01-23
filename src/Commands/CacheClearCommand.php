@@ -10,7 +10,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Provides the placeholder command to clear caches.
  *
- * @code ./vendor/bin/acms cc
+ * @code
+ *   ./vendor/bin/acms cc
+ * @endcode
  */
 class CacheClearCommand extends Command {
 

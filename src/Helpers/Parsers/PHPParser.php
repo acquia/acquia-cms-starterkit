@@ -36,7 +36,7 @@ class PHPParser {
     $input = trim($input);
     $pattern = '/\${?(\w+)}?(\s)(==|>|>=|<|<=|!=)(\s)(".*"|(\d+\.?\d+))/i';
     preg_match($pattern, $input, $matches);
-    if (!isset($matches[0]) || (isset($matches[0]) && $input != $matches[0])) {
+    if (empty($matches) || (isset($matches[0]) && $input != $matches[0])) {
       $errorMessages = [
         "Invalid Question expression: $input",
         '',

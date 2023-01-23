@@ -17,7 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Provides the Acquia CMS site:install command.
  *
- * @code ./vendor/bin/acms site:install
+ * @code
+ *   ./vendor/bin/acms site:install
+ * @endcode
  */
 class SiteInstallCommand extends Command {
 
