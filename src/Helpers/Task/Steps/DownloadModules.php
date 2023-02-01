@@ -47,6 +47,7 @@ class DownloadModules {
   public function execute(array $args = []) :int {
     $composerContents = $this->acquiaCmsCli->getRootComposer();
     $composerContents = json_decode($composerContents);
+    $composerContentsExtra = $composerContents->{'extra'};
     if (!isset($composerContents->require->{'drush/drush'})) {
       $this->composerCommand->prepare([
         "require",
@@ -67,7 +68,7 @@ class DownloadModules {
         "true",
       ])->run();
     }
-    if (!isset($composerContents->{'extra.enable-patching'}) || (isset($composerContents->{'extra.enable-patching'}) && $composerContents->{'extra.enable-patching'} != "true")) {
+    if (!isset($composerContentsExtra->{'enable-patching'}) || (isset($composerContentsExtra->{'enable-patching'}) && !$composerContentsExtra->{'enable-patching'})) {
       $this->composerCommand->prepare([
         "config",
         "extra.enable-patching",
@@ -75,6 +76,40 @@ class DownloadModules {
       ])->run();
     }
     $packages = array_merge($args['modules']['require'], $args['themes']['require']);
+
+    // Add scaffolding from acquia_cms_site_studio modules.
+    if (in_array('acquia_cms_site_studio', $args['modules']['require'])) {
+      $allowedPackages = $composerContentsExtra->{'drupal-scaffold'}->{'allowed-packages'};
+      if (isset($allowedPackages) && !in_array('drupal/acquia_cms_site_studio', $allowedPackages)) {
+        $this->composerCommand->prepare([
+          "config",
+          "extra.drupal-scaffold.allowed-packages",
+          '["drupal/acquia_cms_site_studio"]',
+          "--json",
+          "--merge",
+        ])->run();
+
+        // Remove scaffolding from acquia/drupal-recommended-project
+        // for default.settings.php & default.services.yml files.
+        // @todo remove below code once ACMS-1648 is done.
+        $fileMapping = $this->composerCommand->prepare([
+          "config",
+          "extra.drupal-scaffold.file-mapping",
+          "--json",
+        ])->runQuietly();
+
+        $fileMappingDefaultJson = json_decode($fileMapping);
+        unset($fileMappingDefaultJson->{'[web-root]/sites/default/default.settings.php'});
+        unset($fileMappingDefaultJson->{'[web-root]/sites/default/default.services.yml'});
+        $fileMappingUpdatedJson = json_encode($fileMappingDefaultJson);
+        $fileMapping = $this->composerCommand->prepare([
+          "config",
+          "extra.drupal-scaffold.file-mapping",
+          $fileMappingUpdatedJson,
+          "--json",
+        ])->run();
+      }
+    }
     $packages = JsonParser::downloadPackages($packages);
     $inputArgument = array_merge(["require", "-W"], $packages);
     $this->composerCommand->prepare($inputArgument)->run();
