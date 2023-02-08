@@ -2,17 +2,13 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
-use AcquiaCMS\Cli\Enum\StatusCodes;
-use AcquiaCMS\Cli\Helpers\Process\Commands\Generic;
-use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
-use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
+use AcquiaCMS\Cli\Enum\StatusCode;
+use AcquiaCMS\Cli\Tasks\TaskManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Provides the Acquia CMS site:install command.
@@ -23,32 +19,21 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class AcmsInstallCommand extends Command {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
-
   /**
-   * A drush command object.
+   * The TaskManager service object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Generic
+   * @var \AcquiaCMS\Cli\Tasks\TaskManager
    */
-  protected $genericCommand;
-
-  /**
-   * User selected bundle.
-   *
-   * @var \Symfony\Component\Filesystem\Filesystem
-   */
-  protected $filesystem;
+  protected $taskManager;
 
   /**
    * Constructs an instance.
    *
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   A Symfony container class object.
+   * @param \AcquiaCMS\Cli\Tasks\TaskManager $task_manager
+   *   Provides the AcquiaCMS InstallerQuestions class object.
    */
-  public function __construct(ContainerInterface $container) {
-    $this->genericCommand = $container->get(Generic::class);
-    $this->filesystem = $container->get(Filesystem::class);
+  public function __construct(TaskManager $task_manager) {
+    $this->taskManager = $task_manager;
     parent::__construct();
   }
 
@@ -69,32 +54,15 @@ class AcmsInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output) :int {
-    $build_command = $install_command = [];
-    $build_command[] = $input->getArgument('name');
-    if ($input->getOption('no-interaction')) {
-      $install_command[] = '--no-interaction';
+    try {
+      $this->taskManager->configure($input, $output, $this);
+      $this->taskManager->executeTasks();
     }
-    $site_uri = $input->getOption('uri');
-    if ($this->filesystem->exists('./vendor/bin/acms')) {
-      $this->genericCommand->setCommand('./vendor/bin/acms');
+    catch (\Exception $e) {
+      $output->writeln("<error>" . $e->getMessage() . "</error>");
+      return StatusCode::ERROR;
     }
-    else {
-      $this->genericCommand->setCommand('./bin/acms');
-    }
-    $install_command = array_merge($install_command, ['--uri=' . $site_uri]);
-    $build_command = array_merge($build_command, $install_command);
-    $build_command = array_merge(['acms:build'], $build_command);
-    $install_command = array_merge([
-      'site:install',
-      '--without-product-info',
-    ], $install_command);
-
-    // Execute acms acms:build.
-    $this->genericCommand->prepare($build_command)->run();
-
-    // Execute acms site:install.
-    $this->genericCommand->prepare($install_command)->run();
-    return StatusCodes::OK;
+    return StatusCode::OK;
   }
 
 }

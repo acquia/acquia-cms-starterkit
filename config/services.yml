@@ -13,6 +13,23 @@ services:
     public: false
     resource: ../src
 
+  task_manager:
+    class: AcquiaCMS\Cli\Tasks\TaskManager
+  task_discovery:
+    class: AcquiaCMS\Cli\Tasks\TaskDiscovery
+  drush_command:
+    class: AcquiaCMS\Cli\Helpers\Process\Commands\Drush
+  composer_command:
+    class: AcquiaCMS\Cli\Helpers\Process\Commands\Composer
+  file_loader:
+    class: AcquiaCMS\Cli\Helpers\FileSystem\FileLoader
+  install_questions:
+    class: AcquiaCMS\Cli\Helpers\InstallQuestions
+  expression_language:
+    class: Symfony\Component\ExpressionLanguage\ExpressionLanguage
+  drupal_project:
+    class: AcquiaCMS\Cli\Http\Client\Github\AcquiaRecommendedClient
+
   Symfony\Component\Console\Application: ~
   AcquiaCMS\Cli\Helpers\Process\Commands\Drush: ~
   AcquiaCMS\Cli\Helpers\Process\Commands\Composer: ~

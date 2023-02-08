@@ -10,3 +10,4 @@ parameters:
 		- "#Method .* return type has no value type specified in iterable type array.#"
 		- "#Property .* type has no value type specified in iterable type array.#"
 		- "#Call to an undefined method.*ObjectProphecy::hasOption.*#"
+		- "#Unsafe usage of new static.*#"
