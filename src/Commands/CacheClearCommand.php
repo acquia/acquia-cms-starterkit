@@ -2,7 +2,7 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
-use AcquiaCMS\Cli\Enum\StatusCodes;
+use AcquiaCMS\Cli\Enum\StatusCode;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,7 +37,7 @@ class CacheClearCommand extends Command {
     // when cache gets corrupted and if implemented using console command,
     // it might not allow us to clear cache, when it's actually needed.
     // @see {project_root}/bin/acms.php
-    return StatusCodes::OK;
+    return StatusCode::OK;
   }
 
 }

@@ -3,7 +3,7 @@
 namespace AcquiaCMS\Cli\Commands;
 
 use AcquiaCMS\Cli\Cli;
-use AcquiaCMS\Cli\Enum\StatusCodes;
+use AcquiaCMS\Cli\Enum\StatusCode;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\Task\SiteInstallTask;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
@@ -97,9 +97,9 @@ class SiteInstallCommand extends Command {
     }
     catch (AcmsCliException $e) {
       $output->writeln("<error>" . $e->getMessage() . "</error>");
-      return StatusCodes::ERROR;
+      return StatusCode::ERROR;
     }
-    return StatusCodes::OK;
+    return StatusCode::OK;
   }
 
 }

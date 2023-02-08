@@ -4,8 +4,10 @@ parameters:
 		- src
 		- tests
 	reportUnmatchedIgnoredErrors: false
+	checkGenericClassInNonGenericObjectType: false
 	ignoreErrors:
 		- "#Method .*has parameter .*with no value type specified in iterable type array#"
 		- "#Method .* return type has no value type specified in iterable type array.#"
 		- "#Property .* type has no value type specified in iterable type array.#"
 		- "#Call to an undefined method.*ObjectProphecy::hasOption.*#"
+		- "#Unsafe usage of new static.*#"
