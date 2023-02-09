@@ -123,6 +123,28 @@ class DownloadModules {
         ])->run();
       }
     }
+    // Add nnnick/chartjs, swagger-api/swagger-ui library in installer paths.
+    $installerPathsLibrary = $composerContentsExtra->{'installer-paths'}->{'[web-root]/libraries/{$name}'};
+    if (isset($installerPathsLibrary) && !in_array('nnnick/chartjs', $installerPathsLibrary)) {
+      $this->composerCommand->prepare([
+        "config",
+        'extra.installer-paths.[web-root]/libraries/{$name}',
+        '["nnnick/chartjs"]',
+        "--json",
+        "--merge",
+      ])->run();
+    }
+    if ($args['name'] == 'Acquia CMS Headless') {
+      if (isset($installerPathsLibrary) && !in_array('swagger-api/swagger-ui', $installerPathsLibrary)) {
+        $this->composerCommand->prepare([
+          "config",
+          'extra.installer-paths.[web-root]/libraries/{$name}',
+          '["swagger-api/swagger-ui"]',
+          "--json",
+          "--merge",
+        ])->run();
+      }
+    }
     $packages = JsonParser::downloadPackages($packages);
     $inputArgument = array_merge(["require", "-W"], $packages);
     $this->composerCommand->prepare($inputArgument)->run();
