@@ -75,6 +75,20 @@ class DownloadModules {
       ])->run();
     }
     $packages = array_merge($args['modules']['require'], $args['themes']['require']);
+
+    // Update allow plugin section for php-http/discovery. The acquia_cms_place
+    // module has indirect dependency to plugin php-http/discovery. So, below
+    // check we've added for the acquia_cms_article module, as the module
+    // acquia_cms_place is not directly getting installed by an starter-kit.
+    $allowedPlugins = (array) $composerContents->config->{'allow-plugins'};
+    if (in_array('acquia_cms_article', $args['modules']['require']) && !array_key_exists('php-http/discovery', $allowedPlugins)) {
+      $this->composerCommand->prepare([
+        "config",
+        "--no-plugins",
+        "allow-plugins.php-http/discovery",
+        "true",
+      ])->run();
+    }
     $packages = JsonParser::downloadPackages($packages);
     $inputArgument = array_merge(["require", "-W"], $packages);
     $this->composerCommand->prepare($inputArgument)->run();
