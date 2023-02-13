@@ -124,7 +124,7 @@ class DownloadModules {
       }
     }
     // Add nnnick/chartjs, swagger-api/swagger-ui library in installer paths.
-    $installerPathsLibrary = $composerContentsExtra->{'installer-paths'}->{'[web-root]/libraries/{$name}'};
+    $installerPathsLibrary = $composerContentsExtra->{'installer-paths'}->{'[docroot]/libraries/{$name}'};
     if (isset($installerPathsLibrary) && !in_array('nnnick/chartjs', $installerPathsLibrary)) {
       $this->composerCommand->prepare([
         "config",
