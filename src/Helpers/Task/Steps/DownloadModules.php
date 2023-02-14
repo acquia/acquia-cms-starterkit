@@ -89,7 +89,7 @@ class DownloadModules {
         "allow-plugins.php-http/discovery",
         "true",
       ])->run();
-
+    }
     // Add scaffolding from acquia_cms_site_studio modules.
     if (in_array('acquia_cms_site_studio', $args['modules']['require'])) {
       $allowedPackages = $composerContentsExtra->{'drupal-scaffold'}->{'allowed-packages'};
@@ -120,6 +120,28 @@ class DownloadModules {
           "extra.drupal-scaffold.file-mapping",
           $fileMappingUpdatedJson,
           "--json",
+        ])->run();
+      }
+    }
+    // Add nnnick/chartjs, swagger-api/swagger-ui library in installer paths.
+    $installerPathsLibrary = $composerContentsExtra->{'installer-paths'}->{'docroot/libraries/{$name}'};
+    if (!in_array('nnnick/chartjs', $installerPathsLibrary)) {
+      $this->composerCommand->prepare([
+        "config",
+        'extra.installer-paths.docroot/libraries/{$name}',
+        '["nnnick/chartjs"]',
+        "--json",
+        "--merge",
+      ])->run();
+    }
+    if ($args['name'] == 'Acquia CMS Headless') {
+      if (!in_array('swagger-api/swagger-ui', $installerPathsLibrary)) {
+        $this->composerCommand->prepare([
+          "config",
+          'extra.installer-paths.docroot/libraries/{$name}',
+          '["swagger-api/swagger-ui"]',
+          "--json",
+          "--merge",
         ])->run();
       }
     }
