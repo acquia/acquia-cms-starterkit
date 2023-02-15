@@ -145,6 +145,15 @@ class DownloadModules {
         ])->run();
       }
     }
+    // Add mnsami/composer-custom-directory-installer package.
+    if (!array_key_exists('mnsami/composer-custom-directory-installer', $allowedPlugins)) {
+      $this->composerCommand->prepare([
+        "config",
+        "--no-plugins",
+        "allow-plugins.mnsami/composer-custom-directory-installer",
+        "true",
+      ])->run();
+    }
     $packages = JsonParser::downloadPackages($packages);
     $inputArgument = array_merge(["require", "-W"], $packages);
     $this->composerCommand->prepare($inputArgument)->run();
