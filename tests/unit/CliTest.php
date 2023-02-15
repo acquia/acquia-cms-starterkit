@@ -87,6 +87,7 @@ class CliTest extends TestCase {
               "acquia_cms_search",
               "acquia_cms_tour",
               "acquia_cms_toolbar",
+              "mnsami/composer-custom-directory-installer",
             ],
             "install" => [
               "acquia_cms_site_studio",
@@ -111,6 +112,7 @@ class CliTest extends TestCase {
               "acquia_cms_search",
               "acquia_cms_tour",
               "acquia_cms_toolbar",
+              "mnsami/composer-custom-directory-installer",
             ],
             "install" => [
               "acquia_cms_search",
@@ -134,6 +136,7 @@ class CliTest extends TestCase {
               "acquia_cms_tour",
               "acquia_cms_toolbar",
               "consumer_image_styles",
+              "mnsami/composer-custom-directory-installer",
             ],
             "install" => [
               "acquia_cms_headless_ui",
