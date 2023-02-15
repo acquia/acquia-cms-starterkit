@@ -47,6 +47,7 @@ class DownloadModules {
   public function execute(array $args = []) :int {
     $composerContents = $this->acquiaCmsCli->getRootComposer();
     $composerContents = json_decode($composerContents);
+    $composerContentsExtra = $composerContents->{'extra'};
     if (!isset($composerContents->require->{'drush/drush'})) {
       $this->composerCommand->prepare([
         "require",
@@ -67,7 +68,7 @@ class DownloadModules {
         "true",
       ])->run();
     }
-    if (!isset($composerContents->{'extra.enable-patching'}) || (isset($composerContents->{'extra.enable-patching'}) && $composerContents->{'extra.enable-patching'} != "true")) {
+    if (!isset($composerContentsExtra->{'enable-patching'}) || (isset($composerContentsExtra->{'enable-patching'}) && !$composerContentsExtra->{'enable-patching'})) {
       $this->composerCommand->prepare([
         "config",
         "extra.enable-patching",
@@ -86,6 +87,37 @@ class DownloadModules {
         "config",
         "--no-plugins",
         "allow-plugins.php-http/discovery",
+        "true",
+      ])->run();
+    }
+    // Add nnnick/chartjs, swagger-api/swagger-ui library in installer paths.
+    $installerPathsLibrary = $composerContentsExtra->{'installer-paths'}->{'docroot/libraries/{$name}'};
+    if (!in_array('nnnick/chartjs', $installerPathsLibrary)) {
+      $this->composerCommand->prepare([
+        "config",
+        'extra.installer-paths.docroot/libraries/{$name}',
+        '["nnnick/chartjs"]',
+        "--json",
+        "--merge",
+      ])->run();
+    }
+    if ($args['name'] == 'Acquia CMS Headless') {
+      if (!in_array('swagger-api/swagger-ui', $installerPathsLibrary)) {
+        $this->composerCommand->prepare([
+          "config",
+          'extra.installer-paths.docroot/libraries/{$name}',
+          '["swagger-api/swagger-ui"]',
+          "--json",
+          "--merge",
+        ])->run();
+      }
+    }
+    // Add mnsami/composer-custom-directory-installer package.
+    if (!array_key_exists('mnsami/composer-custom-directory-installer', $allowedPlugins)) {
+      $this->composerCommand->prepare([
+        "config",
+        "--no-plugins",
+        "allow-plugins.mnsami/composer-custom-directory-installer",
         "true",
       ])->run();
     }
