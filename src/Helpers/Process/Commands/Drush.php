@@ -11,7 +11,7 @@ class Drush extends CommandBase {
    * {@inheritdoc}
    */
   public function getBaseCommand() :string {
-    return './vendor/bin/drush';
+    return 'drush';
   }
 
   /**
