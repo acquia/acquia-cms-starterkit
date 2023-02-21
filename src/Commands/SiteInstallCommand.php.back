@@ -2,17 +2,10 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
-use AcquiaCMS\Cli\Cli;
-use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\Task\SiteInstallTask;
-use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
-use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Provides the Acquia CMS site:install command.
@@ -22,37 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @endcode
  */
 class SiteInstallCommand extends Command {
-
-  use StatusMessageTrait;
-  use UserInputTrait;
-
-  /**
-   * The AcquiaCMS Cli object.
-   *
-   * @var \AcquiaCMS\Cli\Cli
-   */
-  protected $acquiaCmsCli;
-
-  /**
-   * Holds Site Install task.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\Task\SiteInstallTask
-   */
-  protected $siteInstallTask;
-
-  /**
-   * Constructs an instance.
-   *
-   * @param \AcquiaCMS\Cli\Cli $cli
-   *   Provides the AcquiaCMS Cli class object.
-   * @param \AcquiaCMS\Cli\Helpers\Task\SiteInstallTask $siteInstallTask
-   *   Provides the Acquia CMS Install task object.
-   */
-  public function __construct(Cli $cli, SiteInstallTask $siteInstallTask) {
-    $this->acquiaCmsCli = $cli;
-    $this->siteInstallTask = $siteInstallTask;
-    parent::__construct();
-  }
 
   /**
    * {@inheritdoc}
@@ -85,21 +47,6 @@ class SiteInstallCommand extends Command {
       ])
       ->setAliases(['site-install', 'si'])
       ->setHelp("The <info>site:install</info> command install Drupal along with modules/themes/configuration/profile.");
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function execute(InputInterface $input, OutputInterface $output) :int {
-    try {
-      $this->siteInstallTask->configure($input, $output);
-      $this->siteInstallTask->run();
-    }
-    catch (AcmsCliException $e) {
-      $output->writeln("<error>" . $e->getMessage() . "</error>");
-      return StatusCode::ERROR;
-    }
-    return StatusCode::OK;
   }
 
 }
