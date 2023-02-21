@@ -103,16 +103,8 @@ class CommandBase implements CommandInterface {
    *   Returns the command output status code.
    */
   public function run(array $env = []) :int {
-    if (!$this->input->hasOption('hide-command')) {
-      $this->output->writeln(sprintf('> %s', $this->process->getCommandLine()));
-    }
-    $status = $this->process->run(function ($type, $buffer) {
-      if (Process::ERR != $type) {
-        $this->output->writeln($buffer);
-      }
-    }, $env);
-    $this->verifyCommand();
-    return $status;
+    print getenv('PATH');
+    return 1;
   }
 
   /**
