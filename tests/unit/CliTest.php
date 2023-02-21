@@ -151,8 +151,14 @@ class CliTest extends TestCase {
         ],
       ],
       "questions" => array_merge (
-        self::getContentModel(),
+        [
+          'starter_kit' => [
+            'question' => 'Please choose bundle from one of the above use case',
+            'default_value' => 'acquia_cms_enterprise_low_code',
+          ],
+        ],
         self::getDemoContent(),
+        self::getContentModel(),
         self::getDamIntegration(),
         self::getNextjsApp(),
         self::getNextjsAppSiteUrl(),
@@ -174,16 +180,12 @@ class CliTest extends TestCase {
   public static function getContentModel(): array {
     return [
       'content_model' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
-          'questions' => ['${demo_content} == "no"'],
-        ],
+        'if' => 'questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"] && questions.demo_content == "no"',
         'question' => "Do you want to enable the content model (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
         'default_value' => 'no',
-        'skip_on_value' => FALSE,
       ],
     ];
   }
@@ -197,15 +199,12 @@ class CliTest extends TestCase {
   public static function getDemoContent(): array {
     return [
       'demo_content' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
-        ],
+        'if' => 'questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]',
         'question' => "Do you want to enable demo content (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
         'default_value' => 'no',
-        'skip_on_value' => FALSE,
       ],
     ];
   }
@@ -219,14 +218,11 @@ class CliTest extends TestCase {
   public static function getDamIntegration(): array {
     return [
       'dam_integration' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
-        ],
+        'if' => 'questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]',
         'question' => "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
-        'skip_on_value' => FALSE,
         'default_value' => 'no',
       ],
     ];
@@ -241,14 +237,11 @@ class CliTest extends TestCase {
   public static function getNextjsApp(): array {
     return [
       'nextjs_app' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-        ],
+        'if' => 'questions.starter_kit == "acquia_cms_headless"',
         'question' => "Would you like to preconfigure a next.js site (yes/no) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
-        'skip_on_value' => FALSE,
         'default_value' => 'no',
       ],
     ];
@@ -263,13 +256,9 @@ class CliTest extends TestCase {
   public static function getNextjsAppSiteUrl(): array {
     return [
       'nextjs_app_site_url' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
-        ],
+        'if' => 'questions.starter_kit == "acquia_cms_headless" && questions.nextjs_app == "yes"',
         'question' => "Please provide the Next.js site url",
         'default_value' => 'http://localhost:3000',
-        'skip_on_value' => FALSE,
         'warning' => "The site url is not set. Using default: 'http://localhost:3000'.\nYou can set the site url later from: /admin/config/services/next.",
       ],
     ];
@@ -284,13 +273,9 @@ class CliTest extends TestCase {
   public static function getNextjsAppSiteName(): array {
     return [
       'nextjs_app_site_name' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
-        ],
+        'if' => 'questions.starter_kit == "acquia_cms_headless" && questions.nextjs_app == "yes"',
         'question' => "Please provide the Site Name",
         'default_value' => 'Headless Site',
-        'skip_on_value' => FALSE,
         'warning' => "The Site Name is not set. Site Name is set to 'Headless Site'.\nYou can set the site url later from: /admin/config/services/next.",
       ],
     ];
@@ -305,10 +290,7 @@ class CliTest extends TestCase {
   public static function getNextjsAppEvnFile(): array {
     return [
       'nextjs_app_env_file' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
-        ],
+        'if' => 'questions.starter_kit == "acquia_cms_headless" && questions.nextjs_app == "yes"',
         'question' => "Please provide the .env.local file path",
       ],
     ];
@@ -323,10 +305,7 @@ class CliTest extends TestCase {
   public static function getSiteStudioApiKey(): array {
     return [
       'SITESTUDIO_API_KEY' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "ALL"'],
-        ],
+        'if' => 'questions.starter_kit == "acquia_cms_enterprise_low_code"',
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
@@ -342,10 +321,7 @@ class CliTest extends TestCase {
   public static function getSiteStudioOrgKey(): array {
     return [
       'SITESTUDIO_ORG_KEY' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "ALL"'],
-        ],
+        'if' => 'questions.starter_kit == "acquia_cms_enterprise_low_code"',
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
@@ -361,10 +337,7 @@ class CliTest extends TestCase {
   public static function getGmapsKey(): array {
     return [
       'GMAPS_KEY' => [
-        'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
-          'questions' => ['${demo_content} == "yes"', '${content_model} == "yes"'],
-        ],
+        'if' => 'questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]',
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
       ],
