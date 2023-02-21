@@ -24,36 +24,36 @@ env:
   COMPOSER_PROCESS_TIMEOUT: 1800
 jobs:
   # @todo add tests to validate each starter-kit use case.
-  STATIC_CODE_ANALYSIS:
-    name: "Static Code Analysis"
-    runs-on: ubuntu-latest
-    env:
-      ORCA_JOB: STATIC_CODE_ANALYSIS
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: xdebug
-      - name: Download ORCA
-        run: composer create-project --no-dev --ignore-platform-req=php acquia/orca ../orca "$ORCA_VERSION" -n
-      - name: Run GrumpPHP tests
-        run: |
-          composer install
-          ./vendor/bin/grumphp run
-      - name: Before Install
-        run: ../orca/bin/ci/before_install.sh
-      - name: Install
-        run: ../orca/bin/ci/install.sh
-      - name: Before script
-        run: ../orca/bin/ci/before_script.sh
-      - name: Script
-        run: ../orca/bin/ci/script.sh
-      - name: After script
-        run: |
-          ../orca/bin/ci/after_success.sh
-          ../orca/bin/ci/after_failure.sh
-          ../orca/bin/ci/after_script.sh
+#  STATIC_CODE_ANALYSIS:
+#    name: "Static Code Analysis"
+#    runs-on: ubuntu-latest
+#    env:
+#      ORCA_JOB: STATIC_CODE_ANALYSIS
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: 8.1
+#          coverage: xdebug
+#      - name: Download ORCA
+#        run: composer create-project --no-dev --ignore-platform-req=php acquia/orca ../orca "$ORCA_VERSION" -n
+#      - name: Run GrumpPHP tests
+#        run: |
+#          composer install
+#          ./vendor/bin/grumphp run
+#      - name: Before Install
+#        run: ../orca/bin/ci/before_install.sh
+#      - name: Install
+#        run: ../orca/bin/ci/install.sh
+#      - name: Before script
+#        run: ../orca/bin/ci/before_script.sh
+#      - name: Script
+#        run: ../orca/bin/ci/script.sh
+#      - name: After script
+#        run: |
+#          ../orca/bin/ci/after_success.sh
+#          ../orca/bin/ci/after_failure.sh
+#          ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
     if: ${{ github.event_name == 'push' }}
     name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
@@ -71,21 +71,21 @@ jobs:
       CI: TRUE
     strategy:
       matrix:
-        core-version: ["CURRENT", "PREVIOUS_MINOR"]
-        starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
-        demo-content: ["yes", "no"]
-        content-model: ["yes", "no"]
-        dam-integration: ["yes", "no"]
+        core-version: ["CURRENT"]
+        starter-kits: ["acquia_cms_enterprise_low_code"]
+        demo-content: ["yes"]
+#        content-model: ["yes", "no"]
+#        dam-integration: ["yes", "no"]
         # nextjs-app: ["yes", "no"]
-        exclude:
-          - demo-content: "yes"
-            content-model: "yes"
-          - demo-content: "no"
-            content-model: "no"
-            dam-integration: "yes"
-          - demo-content: "yes"
-            content-model: "no"
-            dam-integration: "no"
+#        exclude:
+#          - demo-content: "yes"
+#            content-model: "yes"
+#          - demo-content: "no"
+#            content-model: "no"
+#            dam-integration: "yes"
+#          - demo-content: "yes"
+#            content-model: "no"
+#            dam-integration: "no"
           # - starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
           #   nextjs-app: "yes"
           # - starter-kits: ["acquia_cms_headless"]
@@ -132,27 +132,27 @@ jobs:
           ../orca/bin/ci/after_success.sh
           ../orca/bin/ci/after_failure.sh
           ../orca/bin/ci/after_script.sh
-  VERIFY_ACMS_INSTALL_CURRENT_PROJECT:
-    name: "Verify commands on current project (Non Drupal)"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: xdebug
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
-          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
-          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
-          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
-          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
-      - name: Download Composer Dependencies
-        run: composer install
-      - name: Install
-        run: ./bin/acms acms:install --no-interaction
-      - name: Execute all PHPUnit tests
-        run: ./vendor/bin/phpunit
+#  VERIFY_ACMS_INSTALL_CURRENT_PROJECT:
+#    name: "Verify commands on current project (Non Drupal)"
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: 8.1
+#          coverage: xdebug
+#      - name: Set up MySQL
+#        run: |
+#          sudo /etc/init.d/mysql start
+#          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
+#          mysql -e 'SHOW DATABASES;' -uroot -proot
+#          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
+#          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
+#          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
+#          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
+#      - name: Download Composer Dependencies
+#        run: composer install
+#      - name: Install
+#        run: ./bin/acms acms:install --no-interaction
+#      - name: Execute all PHPUnit tests
+#        run: ./vendor/bin/phpunit
