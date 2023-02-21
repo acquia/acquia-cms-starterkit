@@ -31,20 +31,16 @@ services:
     class: AcquiaCMS\Cli\Http\Client\Github\AcquiaRecommendedClient
 
   Symfony\Component\Console\Application: ~
-  AcquiaCMS\Cli\Helpers\Process\Commands\Drush: ~
-  AcquiaCMS\Cli\Helpers\Process\Commands\Composer: ~
-  AcquiaCMS\Cli\Helpers\Process\Commands\Generic: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\AskQuestions: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal: ~
-  AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules: ~
-  AcquiaCMS\Cli\Validation\StarterKitValidation: ~
-  Symfony\Component\Filesystem\Filesystem: ~
+#  AcquiaCMS\Cli\Helpers\Process\Commands\Drush: ~
+#  AcquiaCMS\Cli\Helpers\Process\Commands\Composer: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal: ~
+#  AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules: ~
   Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
 
   Symfony\Component\Console\Input\ArgvInput: ~
