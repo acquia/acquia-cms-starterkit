@@ -92,8 +92,8 @@ class CommandBase implements CommandInterface {
     $this->process = new Process($commands);
     $this->process->setTimeout(NULL)
       ->setIdleTimeout(NULL)
+      ->setTty(Process::isTtySupported())
       ->setWorkingDirectory($this->rootDir);
-    $this->setInput($this->input);
     return $this;
   }
 
