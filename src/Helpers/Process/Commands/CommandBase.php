@@ -93,6 +93,7 @@ class CommandBase implements CommandInterface {
     $this->process->setTimeout(NULL)
       ->setIdleTimeout(NULL)
       ->setWorkingDirectory($this->rootDir);
+    $this->setInput($this->input);
     return $this;
   }
 
@@ -103,8 +104,17 @@ class CommandBase implements CommandInterface {
    *   Returns the command output status code.
    */
   public function run(array $env = []) :int {
-    print getenv('PATH');
-    return 1;
+    $env = array_merge($env, ['PATH' => getenv('PATH')]);
+    if (!$this->input->hasOption('hide-command')) {
+      $this->output->writeln(sprintf('> %s', $this->process->getCommandLine()));
+    }
+    $status = $this->process->run(function ($type, $buffer) {
+      if (Process::ERR != $type) {
+        $this->output->writeln($buffer);
+      }
+    }, $env);
+    $this->verifyCommand();
+    return $status;
   }
 
   /**
@@ -114,6 +124,7 @@ class CommandBase implements CommandInterface {
    *   Returns the executed command output.
    */
   public function runQuietly(array $env = [], bool $validate_command = TRUE) :string {
+    $env = array_merge($env, ['PATH' => getenv('PATH')]);
     $this->process->setTty(FALSE);
     $this->process->run(NULL, $env);
     if ($validate_command) {
@@ -160,7 +171,7 @@ class CommandBase implements CommandInterface {
   protected function getCommand(array $commands): array {
     $executableFinder = new ExecutableFinder();
     $baseCommand = $this->getBaseCommand();
-    $baseCommand = $executableFinder->find($baseCommand, NULL, $this->getAdditionalDirectories());
+    $baseCommand = $executableFinder->find($baseCommand);
     if ($baseCommand) {
       $baseCommand = str_replace($this->rootDir . "/", "", $baseCommand);
     }
@@ -181,33 +192,6 @@ class CommandBase implements CommandInterface {
    */
   public function setInput(InputInterface $input): void {
     $this->input = $input;
-  }
-
-  /**
-   * Gets the additional directories to look for command.
-   */
-  protected function getAdditionalDirectories(): array {
-    $additionalDirectories = [
-      "/usr/local/bin/",
-      "/usr/bin/",
-    ];
-    if (getenv('CI_WORKSPACE')) {
-      $additionalDirectories[] = '$CI_WORKSPACE/vendor/bin';
-    }
-    if (getenv('ORCA_FIXTURE_DIR')) {
-      $additionalDirectories[] = '$ORCA_FIXTURE_DIR/vendor/bin';
-    }
-    if (getenv('ORCA_ROOT')) {
-      $additionalDirectories[] = '$ORCA_ROOT/vendor/bin';
-      $additionalDirectories[] = '$ORCA_ROOT/bin';
-    }
-    if (getenv('HOME')) {
-      $additionalDirectories[] = '$HOME/.composer/vendor/bin';
-    }
-    return array_merge($additionalDirectories, [
-      $this->rootDir . '/vendor/bin',
-      $this->rootDir . '/bin',
-    ]);
   }
 
 }

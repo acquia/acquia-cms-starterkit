@@ -20,7 +20,14 @@ if (!file_exists(__DIR__ . '/../vendor/autoload.php') && !file_exists(__DIR__ . 
 
 set_time_limit(0);
 ini_set('memory_limit', -1);
-
+putenv('PATH=$HOME/.composer/vendor/bin:' . getenv('PATH'));
+putenv('PATH=$ORCA_ROOT/bin:' . getenv('PATH'));
+putenv('PATH=$ORCA_ROOT/vendor/bin:' . getenv('PATH'));
+putenv('PATH=$ORCA_FIXTURE_DIR/vendor/bin:' . getenv('PATH'));
+putenv('PATH=$CI_WORKSPACE/vendor/bin:' . getenv('PATH'));
+putenv('PATH=$HOME/.phpenv/shims:' . getenv('PATH'));
+putenv('PATH=/usr/bin:' . getenv('PATH'));
+putenv('PATH=/usr/local/bin:' . getenv('PATH'));
 $input = new ArgvInput();
 $env = $input->getParameterOption(['--env', '-e'], "prod", TRUE);
 $kernel = new Kernel($env, FALSE);
