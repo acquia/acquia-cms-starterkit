@@ -110,6 +110,8 @@ class TaskManager {
     $this->input = $input;
     $this->output = $output;
     $this->command = $command;
+    $this->container->get('composer_command')->setInput($input);
+    $this->container->get('drush_command')->setInput($input);
   }
 
   /**
