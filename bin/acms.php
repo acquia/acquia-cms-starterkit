@@ -16,7 +16,11 @@ if (!file_exists(__DIR__ . '/../vendor/autoload.php') && !file_exists(__DIR__ . 
   echo "\033[31mCould not find autoloader. Run `composer install` command first.\033[0m" . PHP_EOL;
   exit(1);
 }
-(@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
+
+// Check if autoload.php file exists.
+if (!file_exists(__DIR__ . '/../vendor/autoload.php') || !file_exists(__DIR__ . '/../../../autoload.php')) {
+  (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
+}
 
 set_time_limit(0);
 ini_set('memory_limit', -1);
