@@ -55,7 +55,7 @@ jobs:
           ../orca/bin/ci/after_failure.sh
           ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
     name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
@@ -115,7 +115,7 @@ jobs:
           composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
           cd -
       - name: Before Install
-        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install
+        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
       - name: Install
         run: |
           cd ../orca-build
