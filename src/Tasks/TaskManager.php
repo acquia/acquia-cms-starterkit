@@ -68,7 +68,14 @@ class TaskManager {
    *   Returns an array of sorted tasks.
    */
   public function getTasks(): array {
+    $commandDir = preg_replace('/[^A-Za-z0-9]/', ' ', $this->command->getName());
+    $commandDir = ucwords($commandDir);
+    $commandDir = $this->container->getParameter("kernel.project_dir") . "/src/Steps/" . str_replace(" ", "", $commandDir);
+    if (is_dir($commandDir)) {
+      $this->discovery->addDirectory($commandDir);
+    }
     $tasks = $this->discovery->getTasks();
+    $this->filterTasks($tasks);
     return $this->sortTasks($tasks);
   }
 
@@ -86,7 +93,7 @@ class TaskManager {
       return $workers[$name];
     }
 
-    throw new \Exception('Worker not found.');
+    throw new \Exception('Task not found.');
   }
 
   /**
@@ -134,12 +141,25 @@ class TaskManager {
    * @param array $tasks
    *   An array of tasks.
    */
-  public function sortTasks(array $tasks) : array {
+  public function sortTasks(array $tasks): array {
     uasort($tasks, function ($a, $b) {
       if ($a->weight == $b->weight) {
         return strcasecmp($a->id, $b->id);
       }
       return $a->weight - $b->weight;
+    });
+    return $tasks;
+  }
+
+  /**
+   * Filters the task based on status.
+   *
+   * @param array $tasks
+   *   An array of annotation tasks.
+   */
+  public function filterTasks(array &$tasks): array {
+    $tasks = array_filter($tasks, function ($task) {
+      return $task->status;
     });
     return $tasks;
   }

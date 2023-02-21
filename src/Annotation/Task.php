@@ -36,6 +36,13 @@ class Task {
   public string $class;
 
   /**
+   * Decides if task needs to be included or not. Default is TRUE.
+   *
+   * @var bool
+   */
+  public bool $status = TRUE;
+
+  /**
    * Returns the task id.
    */
   public function getId(): string {
@@ -47,6 +54,13 @@ class Task {
    */
   public function getWeight(): int {
     return $this->weight;
+  }
+
+  /**
+   * Returns the status of the task.
+   */
+  public function getStatus(): bool {
+    return $this->status;
   }
 
 }
