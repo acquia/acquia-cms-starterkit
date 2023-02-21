@@ -46,7 +46,7 @@ class CommandBase implements CommandInterface {
    *
    * @var \Symfony\Component\Console\Input\InputInterface
    */
-  protected $input;
+  public $input;
 
   /**
    * A class constructor.
@@ -201,6 +201,33 @@ class CommandBase implements CommandInterface {
    */
   public function setInput(InputInterface $input): void {
     $this->input = $input;
+  }
+
+  /**
+   * Gets the additional directories to look for command.
+   */
+  protected function getAdditionalDirectories(): array {
+    $additionalDirectories = [
+      "/usr/local/bin/",
+      "/usr/bin/",
+    ];
+    if (getenv('CI_WORKSPACE')) {
+      $additionalDirectories[] = '$CI_WORKSPACE/vendor/bin';
+    }
+    if (getenv('ORCA_FIXTURE_DIR')) {
+      $additionalDirectories[] = '$ORCA_FIXTURE_DIR/vendor/bin';
+    }
+    if (getenv('ORCA_ROOT')) {
+      $additionalDirectories[] = '$ORCA_ROOT/vendor/bin';
+      $additionalDirectories[] = '$ORCA_ROOT/bin';
+    }
+    if (getenv('HOME')) {
+      $additionalDirectories[] = '$HOME/.composer/vendor/bin';
+    }
+    return array_merge($additionalDirectories, [
+      $this->rootDir . '/vendor/bin',
+      $this->rootDir . '/bin',
+    ]);
   }
 
 }
