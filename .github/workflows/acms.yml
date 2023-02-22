@@ -118,7 +118,7 @@ jobs:
       - name: Before Install
         run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
       - name: Install
-        shell: 'script -q -e -c "bash {0}"'
+        shell: bash
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
