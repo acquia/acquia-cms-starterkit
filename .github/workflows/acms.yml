@@ -44,6 +44,7 @@ jobs:
       - name: Before Install
         run: ../orca/bin/ci/before_install.sh
       - name: Install
+        shell: 'script -q -e -c "bash {0}"'
         run: ../orca/bin/ci/install.sh
       - name: Before script
         run: ../orca/bin/ci/before_script.sh
@@ -117,6 +118,7 @@ jobs:
       - name: Before Install
         run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
       - name: Install
+        shell: 'script -q -e -c "bash {0}"'
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
@@ -153,6 +155,7 @@ jobs:
       - name: Download Composer Dependencies
         run: composer install
       - name: Install
+        shell: 'script -q -e -c "bash {0}"'
         run: ./bin/acms acms:install --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
