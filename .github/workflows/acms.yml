@@ -14,7 +14,7 @@ on:
 env:
   ORCA_SUT_NAME: acquia/acquia-cms-starterkit
   ORCA_SUT_BRANCH: develop
-  ORCA_VERSION: v3.26.0
+  ORCA_VERSION: ^3
   ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
   ORCA_ENABLE_NIGHTWATCH: "FALSE"
   DB_DATABASE: drupal
@@ -44,6 +44,7 @@ jobs:
       - name: Before Install
         run: ../orca/bin/ci/before_install.sh
       - name: Install
+        shell: 'script -q -e -c "bash {0}"'
         run: ../orca/bin/ci/install.sh
       - name: Before script
         run: ../orca/bin/ci/before_script.sh
@@ -55,7 +56,7 @@ jobs:
           ../orca/bin/ci/after_failure.sh
           ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
     name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
@@ -115,8 +116,9 @@ jobs:
           composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
           cd -
       - name: Before Install
-        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install
+        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
       - name: Install
+        shell: 'script -q -e -c "bash {0}"'
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
@@ -153,6 +155,7 @@ jobs:
       - name: Download Composer Dependencies
         run: composer install
       - name: Install
+        shell: 'script -q -e -c "bash {0}"'
         run: ./bin/acms acms:install --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
