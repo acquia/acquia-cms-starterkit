@@ -163,7 +163,7 @@ class CliTest extends TestCase {
         self::getNextjsAppEvnFile(),
         self::getGmapsKey(),
         self::getSiteStudioApiKey(),
-        self::getSiteStudioOrgKey(),
+        self::getSiteStudioAgencyKey(),
       ),
     ];
   }
@@ -342,15 +342,15 @@ class CliTest extends TestCase {
    * @return array[]
    *   Returns an array of question.
    */
-  public static function getSiteStudioOrgKey(): array {
+  public static function getSiteStudioAgencyKey(): array {
     return [
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code',
           'questions' => ['${demo_content} == "ALL"'],
         ],
-        'question' => "Please provide the Site Studio Organization Key",
-        'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
+        'question' => "Please provide the Site Studio Agency Key",
+        'warning' => "The Site Studio Agency key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
     ];
   }
