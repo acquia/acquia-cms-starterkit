@@ -157,6 +157,20 @@ jobs:
         with:
           php-version: 8.1
           coverage: xdebug
+      - name: Setup NextJs Application
+        run: |
+          cd ..
+          npx create-next-app -e https://github.com/acquia/next-acms/tree/main/starters/basic-starter nextjs_app
+          cd nextjs_app
+          cp .env.example .env.local
+          nextjs_app_path=$(pwd)
+          echo "${nextjs_app_path}"
+          echo "nextjs_app_env_file=${nextjs_app_path}/.env.local" >> ${GITHUB_ENV}
+      - name: Get .env.local file content before Install
+        id: envfiledatabefore
+        run: echo ::set-output name=nextjs_app_env_file::$(cat ${nextjs_app_env_file})
+      - name: Output .env.local file content before Install
+        run: echo ${{ steps.envfiledatabefore.outputs.nextjs_app_env_file }}
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
@@ -181,6 +195,11 @@ jobs:
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
           ./vendor/bin/acms acms:install acquia_cms_headless --no-interaction
+      - name: Get .env.local file content after Install
+        id: envfiledataafter
+        run: echo ::set-output name=nextjs_app_env_file::$(cat ${nextjs_app_env_file})
+      - name: Output .env.local file content after Install
+        run: echo ${{ steps.envfiledataafter.outputs.nextjs_app_env_file }}
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script
