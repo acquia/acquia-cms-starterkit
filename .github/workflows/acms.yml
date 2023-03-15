@@ -157,6 +157,15 @@ jobs:
         with:
           php-version: 8.1
           coverage: xdebug
+      - name: Setup NextJs Application
+        run: |
+          cd ..
+          npx create-next-app -e https://github.com/acquia/next-acms/tree/main/starters/basic-starter nextjs_app
+          cd nextjs_app
+          cp .env.example .env.local
+          nextjs_app_path=$(pwd)
+          echo "${nextjs_app_path}"
+          echo "nextjs_app_env_file=${nextjs_app_path}/.env.local" >> ${GITHUB_ENV}
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
