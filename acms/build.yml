@@ -1,0 +1,17 @@
+sites:
+  default:
+    modules:
+      - acquia_cms_site_studio
+      - acquia_cms_article
+      - acquia_cms_document
+      - acquia_cms_event
+      - acquia_cms_page
+      - acquia_cms_search
+      - acquia_cms_site_studio
+      - acquia_cms_toolbar
+      - acquia_cms_tour
+      - acquia_cms_video
+    starter_kit: acquia_cms_existing_site
+    themes:
+      admin: acquia_claro
+      default: cohesion_theme
