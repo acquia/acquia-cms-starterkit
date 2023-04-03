@@ -11,6 +11,8 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\AskQuestions;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -127,7 +129,10 @@ class SiteInstallCommand extends Command {
       $site_uri = $input->getOption('uri');
       // Get starterkit name from build file.
       [$starterkit_machine_name, $starterkit_name] = $this->installTask->getStarterKitName($site_uri);
-      $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkit_machine_name, 'install', $this->getHelper('question'));
+      $helper = $this->getHelper('question');
+      if ($helper instanceof QuestionHelper) {
+        $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkit_machine_name, 'install', $helper);
+      }
       $this->installTask->configure($input, $output, $starterkit_machine_name, $site_uri);
       $this->installTask->run($args);
       $this->postSiteInstall($starterkit_name, $output);
@@ -151,8 +156,10 @@ class SiteInstallCommand extends Command {
     $output->writeln("");
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$bundle`.";
-    $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
-    $output->writeln($formattedInfoBlock);
+    if ($formatter instanceof FormatterHelper) {
+      $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
+      $output->writeln($formattedInfoBlock);
+    }
     $output->writeln("");
   }
 

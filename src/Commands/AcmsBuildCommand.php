@@ -12,6 +12,8 @@ use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Helper\FormatterHelper;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -113,7 +115,10 @@ class AcmsBuildCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
-      $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $this->getHelper('question'));
+      $helper = $this->getHelper('question');
+      if ($helper instanceof QuestionHelper) {
+        $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $helper);
+      }
       $this->buildTask->configure($input, $output, $name);
       if (!$generate) {
         $this->buildTask->run($args);
@@ -161,7 +166,10 @@ class AcmsBuildCommand extends Command {
       return $answer;
     });
     $question->setMaxAttempts(3);
-    return $helper->ask($input, $output, $question);
+    if ($helper instanceof QuestionHelper) {
+      return $helper->ask($input, $output, $question);
+    }
+    return '';
   }
 
   /**
@@ -197,8 +205,10 @@ class AcmsBuildCommand extends Command {
     $output->writeln("");
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully built composer dependencies using the bundle: `$bundle`.";
-    $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
-    $output->writeln($formattedInfoBlock);
+    if ($formatter instanceof FormatterHelper) {
+      $formattedInfoBlock = $formatter->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);
+      $output->writeln($formattedInfoBlock);
+    }
     $output->writeln("");
   }
 
