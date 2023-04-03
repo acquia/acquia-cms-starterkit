@@ -24,7 +24,9 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Provides the Acquia CMS site:build command.
  *
- * @code ./vendor/bin/acms acms:build
+ * @code
+ * ./vendor/bin/acms acms:build
+ * @endcode
  */
 class AcmsBuildCommand extends Command {
 
