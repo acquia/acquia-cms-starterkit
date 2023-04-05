@@ -255,7 +255,7 @@ class CliTest extends TestCase {
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
         ],
-        'question' => "Would you like to add GDPR functionality to the site ?",
+        'question' => "Would you like to add GDPR functionality to the site (Yes/No) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
