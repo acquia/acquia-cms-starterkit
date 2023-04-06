@@ -88,10 +88,12 @@ class AcmsInstallCommand extends Command {
       'site:install',
       '--without-product-info',
     ], $install_command);
+
     // Execute acms acms:build.
-    $output = $this->genericCommand->prepare($build_command)->run();
+    $this->genericCommand->prepare($build_command)->run();
+
     // Execute acms site:install.
-    $output = $this->genericCommand->prepare($install_command)->run();
+    $this->genericCommand->prepare($install_command)->run();
     return StatusCodes::OK;
   }
 
