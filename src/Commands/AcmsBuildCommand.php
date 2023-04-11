@@ -153,6 +153,7 @@ class AcmsBuildCommand extends Command {
    * Providing input to user, asking to select the starter-kit.
    */
   protected function askBundleQuestion(InputInterface $input, OutputInterface $output): string {
+    /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
@@ -171,7 +172,6 @@ class AcmsBuildCommand extends Command {
     if ($helper instanceof QuestionHelper) {
       return $helper->ask($input, $output, $question);
     }
-    return '';
   }
 
   /**
@@ -205,6 +205,7 @@ class AcmsBuildCommand extends Command {
    */
   protected function postBuild(string $bundle, OutputInterface $output): void {
     $output->writeln("");
+    /** @var \Symfony\Component\Console\Helper\FormatterHelper $formatter */
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully built composer dependencies using the bundle: `$bundle`.";
     if ($formatter instanceof FormatterHelper) {

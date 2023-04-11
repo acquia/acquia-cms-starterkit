@@ -101,7 +101,7 @@ class Cli {
    * @return array
    *   Retuen the file content.
    */
-  public function getAcquiaCmsFile(string $file_path) :array {
+  public function getAcquiaCmsFile(string $file_path): array {
     $fileContents = [];
     try {
       $fileContents = Yaml::parseFile($file_path);
@@ -115,7 +115,7 @@ class Cli {
   /**
    * Returns an array of starter-kits defined in acms.yml file.
    */
-  public function getStarterKits() :array {
+  public function getStarterKits(): array {
     $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
     return $fileContent['starter_kits'] ?? [];
   }
@@ -126,7 +126,7 @@ class Cli {
    * @param string $site_uri
    *   The site uri.
    */
-  public function getBuildInformtaion(string $site_uri) :array {
+  public function getBuildInformtaion(string $site_uri): array {
     $default_file_path = $this->projectDirectory . '/acms/build.yml';
     $fileContents = [];
     // Read build.yml file from root directory.

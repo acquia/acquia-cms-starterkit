@@ -1,15 +1,3 @@
-/// <reference types="cypress" />
-
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
-// https://on.cypress.io/introduction-to-cypress
 
 describe('places', () => {
   beforeEach(() => {
@@ -17,7 +5,7 @@ describe('places', () => {
     // so we must tell it to visit our website with the `cy.visit()` command.
     // Since we want to visit the same URL at the start of all our tests,
     // we include it in our beforeEach function so that it runs before each test
-    cy.visit('http://localhost:3000/places')
+    cy.visit('http://127.0.0.1:3000/places')
   })
 
   const links = [
@@ -25,7 +13,7 @@ describe('places', () => {
     "Articles",
     "Events",
     "People",
-    "Places",
+    "Places"
   ]
 
   it('verify page header', () => {
@@ -52,21 +40,21 @@ describe('places', () => {
     const places = [
       {
         "title": "Boston Head Office",
+        "link": "/place/office/boston-head-office",
         "address": "53 State Street, 10th FloorBoston, MA 02109",
-        "contact": "1234 678 9101",
-				"link": "/place/office/boston-head-office"
+        "contact": "1234 678 9101"
       },
       {
         "title": "Brighton Office",
+        "link": "/place/office/brighton-office",
         "address": "100-101 Queens RoadBrighton,  BN1 3XF",
-        "contact": "1023 567 892",
-				"link": "/place/office/brighton-office"
+        "contact": "1023 567 892"
       },
       {
         "title": "London sales and support office",
+        "link": "/place/office/london-sales-and-support-office",
         "address": "37 Cremer StreetLondon,  E2 8HD",
-        "contact": "1234 678 9101",
-				"link": "/place/office/london-sales-and-support-office"
+        "contact": "1234 678 9101"
       }
     ];
     const element = cy.get("main div.container div.gap-14").find("article")
