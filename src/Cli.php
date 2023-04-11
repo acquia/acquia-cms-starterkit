@@ -73,21 +73,21 @@ class Cli {
   /**
    * Prints the Acquia CMS logo in terminal.
    */
-  public function printLogo() :void {
+  public function printLogo(): void {
     $this->output->writeln("<info>" . file_get_contents($this->getLogo()) . "</info>");
   }
 
   /**
    * Returns the path to Acquia CMS logo.
    */
-  public function getLogo() :string {
+  public function getLogo(): string {
     return $this->projectDirectory . "/assets/acquia_cms.icon.ascii";
   }
 
   /**
    * Prints the Acquia CMS welcome headline.
    */
-  public function printHeadline() :void {
+  public function printHeadline(): void {
     $this->output->writeln("<fg=cyan;options=bold,underscore> " . $this->headline . "</>");
     $this->output->writeln("");
   }
@@ -154,7 +154,7 @@ class Cli {
    * @return string
    *   Returns the contents of composer.json file exist at root directory.
    */
-  public function getRootComposer() :string {
+  public function getRootComposer(): string {
     $rootComposerJson = $this->rootDirectory . "/composer.json";
     if (!file_exists($rootComposerJson)) {
       return "";
@@ -173,7 +173,7 @@ class Cli {
    * @return array
    *   Returns an array of altered starter-kit.
    */
-  public function alterModulesAndThemes(array &$starterKit, array $userInputValues) :array {
+  public function alterModulesAndThemes(array &$starterKit, array $userInputValues): array {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $isDamIntegration = $userInputValues['dam_integration'] ?? '';
