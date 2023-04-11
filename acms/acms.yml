@@ -101,6 +101,16 @@ questions:
           - no
       skip_on_value: false
       default_value: "no"
+    gdpr_integration:
+      dependencies:
+        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community
+      question: "Would you like to add GDPR functionality to the site (Yes/No) ?"
+      allowed_values:
+        options:
+          - yes
+          - no
+      default_value: "no"
+      skip_on_value: false
   install:
     nextjs_app:
       dependencies:
@@ -143,9 +153,6 @@ questions:
     GMAPS_KEY:
       dependencies:
         starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless
-        questions:
-          - ${demo_content} == "yes"
-          - ${content_model} == "yes"
       question: "Please provide the Google Maps API Key"
       warning: |-
         The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
@@ -153,8 +160,6 @@ questions:
     SITESTUDIO_API_KEY:
       dependencies:
         starter_kits: acquia_cms_enterprise_low_code
-        questions:
-          - ${demo_content} == "ALL" # @todo make it better configurable.
       question: "Please provide the Site Studio API Key"
       warning: |-
         The Site Studio API key is not set. The Site Studio packages won't get imported.
@@ -162,8 +167,6 @@ questions:
     SITESTUDIO_ORG_KEY:
       dependencies:
         starter_kits: acquia_cms_enterprise_low_code
-        questions:
-          - ${demo_content} == "ALL" # @todo make it better configurable.
       question: "Please provide the Site Studio Organization Key"
       warning: |-
         The Site Studio Organization key is not set. The Site Studio packages won't get imported.

@@ -4,14 +4,12 @@ namespace AcquiaCMS\Cli\Helpers\Task;
 
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
-use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal;
-use AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules;
+use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
-use AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -123,22 +121,65 @@ class InstallTask {
   protected $bundle;
 
   /**
+   * The site uri.
+   *
+   * @var string
+   */
+  protected $siteUri;
+
+  /**
+   * An absolute directory path to project.
+   *
+   * @var string
+   */
+  protected $projectDirectory;
+
+  /**
+   * An absolute root directory path of the project.
+   *
+   * @var string
+   */
+  protected $rootDirectory;
+
+  /**
+   * Holds build information.
+   *
+   * @var mixed
+   */
+  protected $buildInformation;
+
+  /**
+   * A drush command object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
+   */
+  protected $drushCommand;
+
+  /**
    * Constructs an object.
    *
+   * @param string $project_dir
+   *   Returns an absolute path to project.
+   * @param string $root_dir
+   *   Returns an absolute root path to project.
    * @param \AcquiaCMS\Cli\Cli $cli
    *   An Acquia CMS cli class object.
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   A Symfony container class object.
    */
-  public function __construct(Cli $cli, ContainerInterface $container) {
+  public function __construct(
+    string $project_dir,
+    string $root_dir,
+    Cli $cli,
+    ContainerInterface $container) {
+    $this->projectDirectory = $project_dir;
+    $this->rootDirectory = $root_dir;
     $this->acquiaCmsCli = $cli;
     $this->starterKits = $this->acquiaCmsCli->getStarterKits();
-    $this->validateDrupal = $container->get(ValidateDrupal::class);
-    $this->downloadDrupal = $container->get(DownloadDrupal::class);
+    $this->drushCommand = $container->get(Drush::class);
     $this->enableModules = $container->get(EnableModules::class);
     $this->enableThemes = $container->get(EnableThemes::class);
     $this->siteInstall = $container->get(SiteInstall::class);
-    $this->downloadModules = $container->get(DownloadModules::class);
     $this->toggleModules = $container->get(ToggleModules::class);
     $this->initNextjsApp = $container->get(InitNextjsApp::class);
   }
@@ -146,17 +187,24 @@ class InstallTask {
   /**
    * Configures the InstallTask class object.
    *
-   * @poram Symfony\Component\Console\Input\InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   A Symfony input interface object.
-   * @poram Symfony\Component\Console\Input\OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony output interface object.
-   * @poram Symfony\Component\Console\Command\Command $output
-   *   The site:install Symfony console command object.
+   * @param string $bundle
+   *   The starter kit machine name.
+   * @param string $site_uri
+   *   The site uri.
    */
-  public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
+  public function configure(
+    InputInterface $input,
+    OutputInterface $output,
+    string $bundle,
+    string $site_uri) :void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
+    $this->siteUri = $site_uri;
   }
 
   /**
@@ -166,48 +214,45 @@ class InstallTask {
    *   An array of params argument to pass.
    */
   public function run(array $args) :void {
-    $installedDrupalVersion = $this->validateDrupal->execute();
-    if (!$installedDrupalVersion) {
-      $this->print("Looks like, current project is not a Drupal project:", 'warning');
-      $this->print("Converting the current project to Drupal project:", 'headline');
-      $this->downloadDrupal->execute();
-    }
-    else {
-      $this->print("Seems Drupal is already downloaded. " .
-        "The downloaded Drupal core version is: $installedDrupalVersion. " .
-        "Skipping downloading Drupal.", 'success'
-      );
-    }
-    $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
-    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
-    $this->downloadModules->execute($this->starterKits[$this->bundle]);
-
     $this->print("Installing Site:", 'headline');
+    $staretkit_name = 'Existing Site';
+    if (isset($this->starterKits[$this->bundle])) {
+      $staretkit_name = $this->starterKits[$this->bundle]['name'];
+    }
     $this->siteInstall->execute([
       'no-interaction' => $this->input->getOption('no-interaction'),
-      'name' => $this->starterKits[$this->bundle]['name'],
+      'name' => $staretkit_name,
     ]);
 
-    $bundle_modules = $this->starterKits[$this->bundle]['modules']['install'] ?? [];
+    // Add user selected starter-kit to state.
+    $command = array_merge([
+      "state:set",
+      "acquia_cms.starter_kit",
+    ], [$this->bundle]);
+    $this->drushCommand->prepare($command)->run();
+    $bundle_modules = $this->buildInformation['modules'] ?? [];
     $modules_list = JsonParser::installPackages($bundle_modules);
     // Get User password from shared factory.
     $password = SharedFactory::getData('password');
     $this->print("User name: admin, User password: $password", 'info');
     $this->print("Enabling modules for the starter-kit:", 'headline');
-    $isDemoContent = $args['keys']['demo_content'] ?? '';
-    if ($isDemoContent == "yes" && ($key = array_search('acquia_cms_starter', $modules_list)) !== FALSE) {
+    $isDemoContent = FALSE;
+    if ($key = array_search('acquia_cms_starter', $modules_list)) {
       // Remove acquia_cms_starter module in the list of modules to install.
       // Because we install this module separately in the last.
       unset($modules_list[$key]);
+      $isDemoContent = TRUE;
     }
+    // Enable modules.
     $this->enableModules->execute([
       'modules' => $modules_list,
       'keys' => $args['keys'],
     ]);
 
+    // Enable themes.
     $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableThemes->execute([
-      'themes' => $this->starterKits[$this->bundle]['themes'],
+      'themes' => $this->buildInformation['themes'],
       'starter_kit' => $this->bundle,
     ]);
 
@@ -235,7 +280,7 @@ class InstallTask {
     // acquia_cms_starter module is in the list of module installation and any
     // content model module is not available in the list of module installation
     // like acquia_cms_article, acquia_cms_page etc.
-    if ($isDemoContent == "yes") {
+    if ($isDemoContent) {
       $this->print("Enabling Starter module for the starter-kit:", 'headline');
       $this->enableModules->execute([
         'modules' => ['acquia_cms_starter'],
@@ -269,6 +314,27 @@ class InstallTask {
    */
   protected function print(string $message, string $type) :void {
     $this->output->writeln($this->style($message, $type));
+  }
+
+  /**
+   * Function to return starterkit name from build file.
+   *
+   * @param string $site_uri
+   *   The site URI.
+   *
+   * @return array
+   *   Returns the starterkit name, machine name.
+   */
+  public function getStarterKitName(string $site_uri): array {
+    $starter_kit_name = 'Existing Site';
+    $this->buildInformation = $this->acquiaCmsCli->getBuildInformtaion($site_uri);
+    if ($this->buildInformation['starter_kit'] != 'acquia_cms_existing_site') {
+      $starter_kit_name = $this->starterKits[$this->buildInformation['starter_kit']]['name'];
+    }
+    return [
+      $this->buildInformation['starter_kit'],
+      $starter_kit_name,
+    ];
   }
 
 }

@@ -3,6 +3,8 @@
 namespace AcquiaCMS\Cli;
 
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -39,6 +41,13 @@ class Cli {
   protected $rootDirectory;
 
   /**
+   * User selected bundle.
+   *
+   * @var \Symfony\Component\Filesystem\Filesystem
+   */
+  protected $filesystem;
+
+  /**
    * Constructs an object.
    *
    * @param string $project_dir
@@ -47,11 +56,18 @@ class Cli {
    *   Returns an absolute root path to project.
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   Holds the symfony console output object.
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   A Symfony container class object.
    */
-  public function __construct(string $project_dir, string $root_dir, OutputInterface $output) {
+  public function __construct(
+    string $project_dir,
+    string $root_dir,
+    OutputInterface $output,
+    ContainerInterface $container) {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->output = $output;
+    $this->filesystem = $container->get(Filesystem::class);
   }
 
   /**
@@ -77,12 +93,18 @@ class Cli {
   }
 
   /**
-   * Gets the Acquia CMS file contents.
+   * Returns an array of information defined in provided file.
+   *
+   * @param string $file_path
+   *   File name to to collect information.
+   *
+   * @return array
+   *   Retuen the file content.
    */
-  public function getAcquiaCmsFile() :array {
+  public function getAcquiaCmsFile(string $file_path) :array {
     $fileContents = [];
     try {
-      $fileContents = Yaml::parseFile($this->projectDirectory . '/acms/acms.yml');
+      $fileContents = Yaml::parseFile($file_path);
     }
     catch (\Exception $e) {
       $this->output->writeln("<error>" . $e->getMessage() . "</error>");
@@ -94,21 +116,36 @@ class Cli {
    * Returns an array of starter-kits defined in acms.yml file.
    */
   public function getStarterKits() :array {
-    $fileContent = $this->getAcquiaCmsFile();
+    $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
     return $fileContent['starter_kits'] ?? [];
+  }
+
+  /**
+   * Returns an array of starter-kits information from build.yml file.
+   *
+   * @param string $site_uri
+   *   The site uri.
+   */
+  public function getBuildInformtaion(string $site_uri) :array {
+    $default_file_path = $this->projectDirectory . '/acms/build.yml';
+    $fileContents = [];
+    // Read build.yml file from root directory.
+    if ($this->filesystem->exists($this->rootDirectory . '/acms/build.yml')) {
+      $fileContents = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/build.yml');
+      $fileContents = $fileContents['sites'][$site_uri] ?? $this->getAcquiaCmsFile($default_file_path)['sites']['default'];
+    }
+    else {
+      $fileContents = $this->getAcquiaCmsFile($default_file_path)['sites']['default'];
+    }
+    return $fileContents ?? [];
   }
 
   /**
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
-  public function getInstallerQuestions(string $question_type = NULL) :array {
-    // @todo clean up below logic in ACMS-1589.
-    $fileContent = $this->getAcquiaCmsFile();
-    if ($question_type) {
-      return $fileContent['questions'][$question_type] ?? [];
-    }
-    $fileContent['questions'] = array_merge($fileContent['questions']['build'], $fileContent['questions']['install']);
-    return $fileContent['questions'] ?? [];
+  public function getInstallerQuestions(string $question_type) :array {
+    $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
+    return $fileContent['questions'][$question_type] ?? [];
   }
 
   /**
@@ -140,6 +177,7 @@ class Cli {
     $isContentModel = $userInputValues['content_model'] ?? '';
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $isDamIntegration = $userInputValues['dam_integration'] ?? '';
+    $isGdprIntegration = $userInputValues['gdpr_integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',
@@ -161,6 +199,11 @@ class Cli {
     if ($isDamIntegration == "yes") {
       $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], ['acquia_cms_dam']);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], ['acquia_cms_dam']);
+    }
+    if ($isGdprIntegration == "yes") {
+      $gdprModules = ['gdpr', 'eu_cookie_compliance', 'gdpr_fields'];
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $gdprModules);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $gdprModules);
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
