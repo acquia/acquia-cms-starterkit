@@ -20,8 +20,15 @@ describe('homepage', () => {
     cy.visit('http://localhost:3000/')
   })
 
-  it('verify page header', () => {
+  const links = [
+    "Home",
+    "Articles",
+    "Events",
+    "People",
+    "Places",
+  ]
 
+  it('verify page header', () => {
     // We can go even further and check that the default todos each contain
     // the correct text. We use the `first` and `last` functions
     // to get just the first and last matched elements individually,
@@ -29,13 +36,7 @@ describe('homepage', () => {
     cy.get('header span').should('have.text', 'Acquia CMS')
     cy.get("header").find('img').should('have.attr', 'alt', 'Logo')
       .should('have.attr', 'loading', 'lazy')
-    const links = [
-      "Home",
-      "Articles",
-      "Events",
-      "People",
-      "Places",
-    ]
+
     cy.get('header nav .menu-item').each(($el, index, $list) => {
       cy.wrap($el).should("have.text", links[index])
     });
@@ -56,13 +57,13 @@ describe('homepage', () => {
   it('verify page main container', () => {
     const articles = [
       {
-        "title": "Event one medium length placeholder heading."
-      },
-      {
         "title": "Event two medium length placeholder heading."
       },
       {
-        "title": "Event four medium length placeholder heading."
+        "title": "Event five medium length placeholder heading."
+      },
+      {
+        "title": "Event three medium length placeholder heading."
       }
     ];
     cy.get("main div.container > h2").first().should("have.text", "Featured Events")
@@ -80,13 +81,6 @@ describe('homepage', () => {
   })
 
   it('verify page footer', () => {
-    const links = [
-      "Home",
-      "Articles",
-      "Events",
-      "People",
-      "Places",
-    ]
     cy.get('footer nav .menu-item').each(($el, index, $list) => {
       cy.wrap($el).should("have.text", links[index])
     });
