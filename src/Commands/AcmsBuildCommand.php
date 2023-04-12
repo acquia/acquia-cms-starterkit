@@ -101,7 +101,7 @@ class AcmsBuildCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) :int {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     try {
       $name = $input->getArgument('name');
       $generate = $input->getOption('generate');
@@ -141,7 +141,7 @@ class AcmsBuildCommand extends Command {
    * @param string $name
    *   A name of the user selected use-case.
    */
-  protected function validationOptions(string $name) :bool {
+  protected function validationOptions(string $name): bool {
     $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
     if (!in_array($name, $starterKits)) {
       throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
@@ -152,7 +152,8 @@ class AcmsBuildCommand extends Command {
   /**
    * Providing input to user, asking to select the starter-kit.
    */
-  protected function askBundleQuestion(InputInterface $input, OutputInterface $output) :string {
+  protected function askBundleQuestion(InputInterface $input, OutputInterface $output): string {
+    /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');
     $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
     $this->renderStarterKits($output);
@@ -171,13 +172,12 @@ class AcmsBuildCommand extends Command {
     if ($helper instanceof QuestionHelper) {
       return $helper->ask($input, $output, $question);
     }
-    return '';
   }
 
   /**
    * Renders the table showing list of all starter kits.
    */
-  protected function renderStarterKits(OutputInterface $output) :void {
+  protected function renderStarterKits(OutputInterface $output): void {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
     $starter_kits = $this->acquiaCmsCli->getStarterKits();
@@ -203,8 +203,9 @@ class AcmsBuildCommand extends Command {
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony console output object.
    */
-  protected function postBuild(string $bundle, OutputInterface $output) :void {
+  protected function postBuild(string $bundle, OutputInterface $output): void {
     $output->writeln("");
+    /** @var \Symfony\Component\Console\Helper\FormatterHelper $formatter */
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully built composer dependencies using the bundle: `$bundle`.";
     if ($formatter instanceof FormatterHelper) {
