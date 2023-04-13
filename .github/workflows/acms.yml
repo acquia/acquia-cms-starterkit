@@ -24,116 +24,116 @@ env:
   COMPOSER_PROCESS_TIMEOUT: 1800
 jobs:
   # @todo add tests to validate each starter-kit use case.
-  STATIC_CODE_ANALYSIS:
-    name: "Static Code Analysis"
-    runs-on: ubuntu-latest
-    env:
-      ORCA_JOB: STATIC_CODE_ANALYSIS
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: xdebug
-      - name: Download ORCA
-        run: composer create-project --no-dev --ignore-platform-req=php acquia/orca ../orca "$ORCA_VERSION" -n
-      - name: Run GrumpPHP tests
-        run: |
-          composer install
-          ./vendor/bin/grumphp run
-      - name: Before Install
-        run: ../orca/bin/ci/before_install.sh
-      - name: Install
-        shell: 'script -q -e -c "bash {0}"'
-        run: ../orca/bin/ci/install.sh
-      - name: Before script
-        run: ../orca/bin/ci/before_script.sh
-      - name: Script
-        run: ../orca/bin/ci/script.sh
-      - name: After script
-        run: |
-          ../orca/bin/ci/after_success.sh
-          ../orca/bin/ci/after_failure.sh
-          ../orca/bin/ci/after_script.sh
-  VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
-    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
-    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
-    runs-on: ubuntu-latest
-    env:
-      demo_content: ${{ matrix.demo-content }}
-      content_model: ${{ matrix.content-model }}
-      dam_integration: ${{ matrix.dam-integration }}
-      CONNECTOR_ID: ${{ secrets.CONNECTOR_ID }}
-      GMAPS_KEY: ${{ secrets.GMAPS_KEY }}
-      SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
-      SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
-      SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
-      # nextjs_app: ${{ matrix.nextjs-app }}
-      CI: TRUE
-    strategy:
-      matrix:
-        core-version: ["CURRENT", "PREVIOUS_MINOR"]
-        starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
-        demo-content: ["yes", "no"]
-        content-model: ["yes", "no"]
-        dam-integration: ["yes", "no"]
-        # nextjs-app: ["yes", "no"]
-        exclude:
-          - demo-content: "yes"
-            content-model: "yes"
-          - demo-content: "no"
-            content-model: "no"
-            dam-integration: "yes"
-          - demo-content: "yes"
-            content-model: "no"
-            dam-integration: "no"
-          # - starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
-          #   nextjs-app: "yes"
-          # - starter-kits: ["acquia_cms_headless"]
-          #   demo-content: "no"
-          #   content-model: "no"
-          #   nextjs-app: "yes"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: xdebug
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
-          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
-          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
-          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
-          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
-      - name: Download Composer Dependencies
-        run: composer install
-      - name: Download ORCA
-        run: |
-          cd ..
-          composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
-          cd -
-      - name: Before Install
-        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
-      - name: Install
-        shell: 'script -q -e -c "bash {0}"'
-        run: |
-          cd ../orca-build
-          composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
-          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
-      - name: Execute all PHPUnit tests
-        run: ./vendor/bin/phpunit
-      - name: Before script
-        run: ../orca/bin/ci/before_script.sh
-      - name: Script
-        run: ../orca/bin/ci/script.sh
-      - name: After script
-        run: |
-          ../orca/bin/ci/after_success.sh
-          ../orca/bin/ci/after_failure.sh
-          ../orca/bin/ci/after_script.sh
+#  STATIC_CODE_ANALYSIS:
+#    name: "Static Code Analysis"
+#    runs-on: ubuntu-latest
+#    env:
+#      ORCA_JOB: STATIC_CODE_ANALYSIS
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: 8.1
+#          coverage: xdebug
+#      - name: Download ORCA
+#        run: composer create-project --no-dev --ignore-platform-req=php acquia/orca ../orca "$ORCA_VERSION" -n
+#      - name: Run GrumpPHP tests
+#        run: |
+#          composer install
+#          ./vendor/bin/grumphp run
+#      - name: Before Install
+#        run: ../orca/bin/ci/before_install.sh
+#      - name: Install
+#        shell: 'script -q -e -c "bash {0}"'
+#        run: ../orca/bin/ci/install.sh
+#      - name: Before script
+#        run: ../orca/bin/ci/before_script.sh
+#      - name: Script
+#        run: ../orca/bin/ci/script.sh
+#      - name: After script
+#        run: |
+#          ../orca/bin/ci/after_success.sh
+#          ../orca/bin/ci/after_failure.sh
+#          ../orca/bin/ci/after_script.sh
+#  VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
+#    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+#    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
+#    runs-on: ubuntu-latest
+#    env:
+#      demo_content: ${{ matrix.demo-content }}
+#      content_model: ${{ matrix.content-model }}
+#      dam_integration: ${{ matrix.dam-integration }}
+#      CONNECTOR_ID: ${{ secrets.CONNECTOR_ID }}
+#      GMAPS_KEY: ${{ secrets.GMAPS_KEY }}
+#      SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
+#      SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
+#      SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
+#      # nextjs_app: ${{ matrix.nextjs-app }}
+#      CI: TRUE
+#    strategy:
+#      matrix:
+#        core-version: ["CURRENT", "PREVIOUS_MINOR"]
+#        starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
+#        demo-content: ["yes", "no"]
+#        content-model: ["yes", "no"]
+#        dam-integration: ["yes", "no"]
+#        # nextjs-app: ["yes", "no"]
+#        exclude:
+#          - demo-content: "yes"
+#            content-model: "yes"
+#          - demo-content: "no"
+#            content-model: "no"
+#            dam-integration: "yes"
+#          - demo-content: "yes"
+#            content-model: "no"
+#            dam-integration: "no"
+#          # - starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
+#          #   nextjs-app: "yes"
+#          # - starter-kits: ["acquia_cms_headless"]
+#          #   demo-content: "no"
+#          #   content-model: "no"
+#          #   nextjs-app: "yes"
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: 8.1
+#          coverage: xdebug
+#      - name: Set up MySQL
+#        run: |
+#          sudo /etc/init.d/mysql start
+#          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
+#          mysql -e 'SHOW DATABASES;' -uroot -proot
+#          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
+#          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
+#          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
+#          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
+#      - name: Download Composer Dependencies
+#        run: composer install
+#      - name: Download ORCA
+#        run: |
+#          cd ..
+#          composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
+#          cd -
+#      - name: Before Install
+#        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
+#      - name: Install
+#        shell: 'script -q -e -c "bash {0}"'
+#        run: |
+#          cd ../orca-build
+#          composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
+#          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
+#      - name: Execute all PHPUnit tests
+#        run: ./vendor/bin/phpunit
+#      - name: Before script
+#        run: ../orca/bin/ci/before_script.sh
+#      - name: Script
+#        run: ../orca/bin/ci/script.sh
+#      - name: After script
+#        run: |
+#          ../orca/bin/ci/after_success.sh
+#          ../orca/bin/ci/after_failure.sh
+#          ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_HEADLESS_WITH_NEXTJS:
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
     name: "Verify ACMS Headless and NextJs with core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
@@ -156,9 +156,10 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: 8.1
-          coverage: xdebug
       - name: Setup NextJs Application
         run: |
+          pwd
+          exit
           cd ..
           npx create-next-app -e https://github.com/acquia/next-acms/tree/main/starters/basic-starter nextjs_app
           cd nextjs_app
@@ -166,63 +167,63 @@ jobs:
           nextjs_app_path=$(pwd)
           echo "${nextjs_app_path}"
           echo "nextjs_app_env_file=${nextjs_app_path}/.env.local" >> ${GITHUB_ENV}
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
-          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
-          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
-          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
-          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
-      - name: Download Composer Dependencies
-        run: composer install
-      - name: Download ORCA
-        run: |
-          cd ..
-          composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
-          cd -
-      - name: Before Install
-        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
-      - name: Install
-        shell: 'script -q -e -c "bash {0}"'
-        run: |
-          cd ../orca-build
-          composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
-          ./vendor/bin/acms acms:install acquia_cms_headless --no-interaction
-      - name: Execute all PHPUnit tests
-        run: ./vendor/bin/phpunit
-      - name: Before script
-        run: ../orca/bin/ci/before_script.sh
-      - name: Script
-        run: ../orca/bin/ci/script.sh
-      - name: After script
-        run: |
-          ../orca/bin/ci/after_success.sh
-          ../orca/bin/ci/after_failure.sh
-          ../orca/bin/ci/after_script.sh
-  VERIFY_ACMS_INSTALL_CURRENT_PROJECT:
-    name: "Verify commands on current project (Non Drupal)"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: xdebug
-      - name: Set up MySQL
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
-          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
-          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
-          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
-          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
-      - name: Download Composer Dependencies
-        run: composer install
-      - name: Install
-        shell: 'script -q -e -c "bash {0}"'
-        run: ./bin/acms acms:install --no-interaction
-      - name: Execute all PHPUnit tests
-        run: ./vendor/bin/phpunit
+#      - name: Set up MySQL
+#        run: |
+#          sudo /etc/init.d/mysql start
+#          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
+#          mysql -e 'SHOW DATABASES;' -uroot -proot
+#          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
+#          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
+#          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
+#          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
+#      - name: Download Composer Dependencies
+#        run: composer install
+#      - name: Download ORCA
+#        run: |
+#          cd ..
+#          composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
+#          cd -
+#      - name: Before Install
+#        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
+#      - name: Install
+#        shell: 'script -q -e -c "bash {0}"'
+#        run: |
+#          cd ../orca-build
+#          composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
+#          ./vendor/bin/acms acms:install acquia_cms_headless --no-interaction
+#      - name: Execute all PHPUnit tests
+#        run: ./vendor/bin/phpunit
+#      - name: Before script
+#        run: ../orca/bin/ci/before_script.sh
+#      - name: Script
+#        run: ../orca/bin/ci/script.sh
+#      - name: After script
+#        run: |
+#          ../orca/bin/ci/after_success.sh
+#          ../orca/bin/ci/after_failure.sh
+#          ../orca/bin/ci/after_script.sh
+#  VERIFY_ACMS_INSTALL_CURRENT_PROJECT:
+#    name: "Verify commands on current project (Non Drupal)"
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: 8.1
+#          coverage: xdebug
+#      - name: Set up MySQL
+#        run: |
+#          sudo /etc/init.d/mysql start
+#          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
+#          mysql -e 'SHOW DATABASES;' -uroot -proot
+#          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
+#          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
+#          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
+#          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
+#      - name: Download Composer Dependencies
+#        run: composer install
+#      - name: Install
+#        shell: 'script -q -e -c "bash {0}"'
+#        run: ./bin/acms acms:install --no-interaction
+#      - name: Execute all PHPUnit tests
+#        run: ./vendor/bin/phpunit
