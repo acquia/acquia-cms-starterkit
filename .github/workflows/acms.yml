@@ -122,7 +122,74 @@ jobs:
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
-          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --no-interaction
+          ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
+      - name: Execute all PHPUnit tests
+        run: ./vendor/bin/phpunit
+      - name: Before script
+        run: ../orca/bin/ci/before_script.sh
+      - name: Script
+        run: ../orca/bin/ci/script.sh
+      - name: After script
+        run: |
+          ../orca/bin/ci/after_success.sh
+          ../orca/bin/ci/after_failure.sh
+          ../orca/bin/ci/after_script.sh
+  VERIFY_ACMS_HEADLESS_WITH_NEXTJS:
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
+    name: "Verify ACMS Headless and NextJs with core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
+    runs-on: ubuntu-latest
+    env:
+      demo_content: "yes"
+      CONNECTOR_ID: ${{ secrets.CONNECTOR_ID }}
+      GMAPS_KEY: ${{ secrets.GMAPS_KEY }}
+      SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
+      nextjs_app: "yes"
+      nextjs_app_site_url: "http://localhost:3000"
+      nextjs_app_site_name: "Headless Site 1"
+      nextjs_app_env_file: ""
+      CI: TRUE
+    strategy:
+      matrix:
+        core-version: ["CURRENT", "PREVIOUS_MINOR"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          coverage: xdebug
+      - name: Setup NextJs Application
+        run: |
+          cd ..
+          npx create-next-app -e https://github.com/acquia/next-acms/tree/main/starters/basic-starter nextjs_app
+          cd nextjs_app
+          cp .env.example .env.local
+          nextjs_app_path=$(pwd)
+          echo "${nextjs_app_path}"
+          echo "nextjs_app_env_file=${nextjs_app_path}/.env.local" >> ${GITHUB_ENV}
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -uroot -proot
+          mysql -e 'SHOW DATABASES;' -uroot -proot
+          mysql -e 'CREATE USER "drupal"@"localhost" IDENTIFIED BY "drupal";' -uroot -proot
+          mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "drupal"@"localhost" WITH GRANT OPTION;' -uroot -proot
+          mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
+          mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
+      - name: Download Composer Dependencies
+        run: composer install
+      - name: Download ORCA
+        run: |
+          cd ..
+          composer create-project --no-dev --ignore-platform-req=php acquia/orca orca "$ORCA_VERSION"
+          cd -
+      - name: Before Install
+        run: ../orca/bin/orca fixture:init --core=${{ matrix.core-version }} --sut=${ORCA_SUT_NAME} --profile=minimal --no-site-install --no-sqlite
+      - name: Install
+        shell: 'script -q -e -c "bash {0}"'
+        run: |
+          cd ../orca-build
+          composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
+          ./vendor/bin/acms acms:install acquia_cms_headless --no-interaction
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script

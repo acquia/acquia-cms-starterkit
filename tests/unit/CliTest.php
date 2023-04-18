@@ -47,7 +47,8 @@ class CliTest extends TestCase {
     $output = $this->output->reveal();
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
-    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output);
+    $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
+    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container);
   }
 
   /**
@@ -58,7 +59,7 @@ class CliTest extends TestCase {
   public function testExecute() :void {
     $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
-    $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile());
+    $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml'));
   }
 
   /**
@@ -124,6 +125,7 @@ class CliTest extends TestCase {
             "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
+            "default" => "olivero",
           ],
         ],
         "acquia_cms_headless" => [
@@ -150,21 +152,27 @@ class CliTest extends TestCase {
             "require" => ["acquia_claro"],
             "install" => ["acquia_claro"],
             "admin" => "acquia_claro",
+            "default" => "olivero",
           ],
         ],
       ],
-      "questions" => array_merge (
-        self::getContentModel(),
-        self::getDemoContent(),
-        self::getDamIntegration(),
-        self::getNextjsApp(),
-        self::getNextjsAppSiteUrl(),
-        self::getNextjsAppSiteName(),
-        self::getNextjsAppEvnFile(),
-        self::getGmapsKey(),
-        self::getSiteStudioApiKey(),
-        self::getSiteStudioOrgKey(),
-      ),
+      "questions" => [
+        "build" => array_merge (
+          self::getContentModel(),
+          self::getDemoContent(),
+          self::getDamIntegration(),
+          self::getGdprIntegration()
+        ),
+        "install" => array_merge(
+          self::getNextjsApp(),
+          self::getNextjsAppSiteUrl(),
+          self::getNextjsAppSiteName(),
+          self::getNextjsAppEvnFile(),
+          self::getGmapsKey(),
+          self::getSiteStudioApiKey(),
+          self::getSiteStudioOrgKey(),
+        ),
+      ],
     ];
   }
 
@@ -226,6 +234,28 @@ class CliTest extends TestCase {
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
         ],
         'question' => "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for dam_integration Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getGdprIntegration(): array {
+    return [
+      'gdpr_integration' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
+        ],
+        'question' => "Would you like to add GDPR functionality to the site (Yes/No) ?",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -328,7 +358,6 @@ class CliTest extends TestCase {
       'SITESTUDIO_API_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -347,7 +376,6 @@ class CliTest extends TestCase {
       'SITESTUDIO_ORG_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code',
-          'questions' => ['${demo_content} == "ALL"'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -366,7 +394,6 @@ class CliTest extends TestCase {
       'GMAPS_KEY' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
-          'questions' => ['${demo_content} == "yes"', '${content_model} == "yes"'],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",

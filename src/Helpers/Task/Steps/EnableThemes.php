@@ -3,7 +3,6 @@
 namespace AcquiaCMS\Cli\Helpers\Task\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCodes;
-use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 
 /**
@@ -35,17 +34,17 @@ class EnableThemes {
    *   An array of params argument to pass.
    */
   public function execute(array $args = []) :int {
-    $packages = JsonParser::installPackages($args['themes']['install']);
+    // Get default, admin theme.
+    $packages = [
+      $args['themes']['admin'],
+      $args['themes']['default'],
+    ];
 
-    // Enable default theme (if it's not under theme install).
-    if (!in_array($args['themes']['default'], $packages)) {
-      $packages[] = $args['themes']['default'];
-    }
     // Enable themes.
     $command = array_merge(["theme:enable"], [implode(",", $packages)]);
     $this->drushCommand->prepare($command)->run();
 
-    // Set default and/or admin theme.
+    // Set admin theme.
     if (isset($args['themes']['admin'])) {
       $command = array_merge([
         "config:set",
@@ -65,20 +64,13 @@ class EnableThemes {
       $this->drushCommand->prepare($command)->run();
     }
 
+    // Set default theme.
     $command = array_merge([
       "config:set",
       "system.theme",
       "default",
       "--yes",
     ], [$args['themes']['default']]);
-    $this->drushCommand->prepare($command)->run();
-
-    // Add user selected starter-kit to state.
-    // @todo Move code to somewhere else.
-    $command = array_merge([
-      "state:set",
-      "acquia_cms.starter_kit",
-    ], [$args['starter_kit']]);
     $this->drushCommand->prepare($command)->run();
 
     return StatusCodes::OK;

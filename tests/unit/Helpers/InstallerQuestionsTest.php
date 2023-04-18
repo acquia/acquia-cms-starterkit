@@ -59,6 +59,20 @@ class InstallerQuestionsTest extends TestCase {
   protected $acmsQuestions;
 
   /**
+   * An array of questions defined in acms.yml file.
+   *
+   * @var array
+   */
+  protected $acmsBuildQuestions;
+
+  /**
+   * An array of questions defined in acms.yml file.
+   *
+   * @var array
+   */
+  protected $acmsInstallQuestions;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -66,9 +80,11 @@ class InstallerQuestionsTest extends TestCase {
     $output = $this->output->reveal();
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
-    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output);
+    $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
+    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container);
     $this->installerQuestions = new InstallerQuestions();
-    $this->acmsQuestions = $this->acquiaCli->getInstallerQuestions();
+    $this->acmsBuildQuestions = $this->acquiaCli->getInstallerQuestions('build');
+    $this->acmsInstallQuestions = $this->acquiaCli->getInstallerQuestions('install');
   }
 
   /**
@@ -79,10 +95,24 @@ class InstallerQuestionsTest extends TestCase {
    * @param array $questions
    *   An array of questions.
    *
-   * @dataProvider providerBundle
+   * @dataProvider providerBundleBuild
    */
-  public function testGetQuestionsForBundle(string $bundle, array $questions) :void {
-    $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsQuestions, $bundle));
+  public function testGetQuestionsForBundleBuild(string $bundle, array $questions) :void {
+    $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsBuildQuestions, $bundle));
+  }
+
+  /**
+   * Tests that the keys are correct.
+   *
+   * @param string $bundle
+   *   The user selected use-case id.
+   * @param array $questions
+   *   An array of questions.
+   *
+   * @dataProvider providerBundleInstall
+   */
+  public function testGetQuestionsForBundleInstall(string $bundle, array $questions) :void {
+    $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsInstallQuestions, $bundle));
   }
 
   /**
@@ -139,9 +169,6 @@ class InstallerQuestionsTest extends TestCase {
     return [
       'dependencies' => [
         'starter_kits' => 'acquia_cms_enterprise_low_code',
-        'questions' => [
-          '${demo_content} == "ALL"',
-        ],
       ],
       'question' => "Please provide the Site Studio Organization Key",
       'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -199,12 +226,12 @@ class InstallerQuestionsTest extends TestCase {
   }
 
   /**
-   * Data provider for ::testGetQuestionsForBundle().
+   * Data provider for ::testGetQuestionsForBundleBuild().
    *
    * @return array[]
    *   Sets of arguments to pass to the test method.
    */
-  public function providerBundle() :array {
+  public function providerBundleBuild() :array {
     return [
       [
         'acquia_cms_enterprise_low_code',
@@ -212,9 +239,7 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
-          CliTest::getGmapsKey(),
-          CliTest::getSiteStudioApiKey(),
-          CliTest::getSiteStudioOrgKey(),
+          CliTest::getGdprIntegration(),
         ),
       ],
       [
@@ -223,7 +248,7 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
-          CliTest::getGmapsKey(),
+          CliTest::getGdprIntegration(),
         ),
       ],
       [
@@ -232,6 +257,36 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
+        ),
+      ],
+    ];
+  }
+
+  /**
+   * Data provider for ::testGetQuestionsForBundleInstall().
+   *
+   * @return array[]
+   *   Sets of arguments to pass to the test method.
+   */
+  public function providerBundleInstall() :array {
+    return [
+      [
+        'acquia_cms_enterprise_low_code',
+        array_merge(
+          CliTest::getGmapsKey(),
+          CliTest::getSiteStudioApiKey(),
+          CliTest::getSiteStudioOrgKey(),
+        ),
+      ],
+      [
+        'acquia_cms_community',
+        array_merge(
+          CliTest::getGmapsKey(),
+        ),
+      ],
+      [
+        'acquia_cms_headless',
+        array_merge(
           CliTest::getGmapsKey(),
           CliTest::getNextjsApp(),
           CliTest::getNextjsAppSiteUrl(),
