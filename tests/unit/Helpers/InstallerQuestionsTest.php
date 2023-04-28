@@ -239,7 +239,6 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
-          CliTest::getGdprIntegration(),
         ),
       ],
       [
@@ -248,7 +247,6 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getDemoContent(),
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
-          CliTest::getGdprIntegration(),
         ),
       ],
       [
