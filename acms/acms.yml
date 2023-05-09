@@ -13,7 +13,6 @@ starter_kits:
         - google_tag
         - honeypot
         - mnsami/composer-custom-directory-installer
-        - nnnick/chartjs
         - recaptcha
         - reroute_email
         - shield
@@ -42,7 +41,6 @@ starter_kits:
         - google_tag
         - honeypot
         - mnsami/composer-custom-directory-installer
-        - nnnick/chartjs
         - recaptcha
         - reroute_email
         - shield
@@ -68,7 +66,6 @@ starter_kits:
         - acquia_cms_toolbar
         - consumer_image_styles
         - mnsami/composer-custom-directory-installer
-        - nnnick/chartjs
         - reroute_email
         - shield
       install:
