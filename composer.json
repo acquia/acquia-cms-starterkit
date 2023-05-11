@@ -53,12 +53,37 @@
             "webdriver-binary/binary-chromedriver": true
         }
     },
+    "extra": {
+        "patches": {
+            "acquia/cohesion": {
+                "2571235 - Roles should depend on objects that are building the granted permissions": "https://www.drupal.org/files/issues/2023-05-09/3340269-acquia_cms_site_studio-allow-site-studio-dynamic-permissions-10.patch"
+            },
+            "drupal/acquia_cms_headless": {
+                "Changes added for acquia_config_management for headless module": "https://gist.githubusercontent.com/vishalkhode1/6f0db8df0499b8d3f6829957dea1e147/raw/9b48876e0387ac36a0be950c293af205354e9784/acms_config_manangement_headless.patch"
+            },
+            "drupal/acquia_cms_site_studio": {
+                "Changes added for acquia_config_management for site studio module": "https://gist.githubusercontent.com/vishalkhode1/772ce774c091e22f4cbbf23da8d5a9de/raw/b112593311ec54bc706c761cac72bb346dc7f900/acms_config_manangement_site_studio.patch"
+            }
+        }
+    },
     "autoload": {
         "psr-4": {
             "AcquiaCMS\\Cli\\": "src/"
         }
     },
     "repositories": {
+        "acquia_recommended_settings": {
+            "type": "vcs",
+            "url": "https://github.com/acquia/drupal-recommended-settings.git"
+        },
+        "acquia_global_commands": {
+            "type": "vcs",
+            "url": "https://github.com/vishalkhode1/acquia_global_commands.git"
+        },
+        "acquia_config_management": {
+            "type": "vcs",
+            "url": "https://github.com/vishalkhode1/acquia_config_management.git"
+        },
         "assets": {
             "type": "composer",
             "url": "https://asset-packagist.org"

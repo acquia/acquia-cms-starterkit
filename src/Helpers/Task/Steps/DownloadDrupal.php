@@ -54,6 +54,9 @@ class DownloadDrupal {
       ])->run();
     }
     foreach ($jsonArray->extra as $key => $data) {
+      if ($key == "patches") {
+        continue;
+      }
       $this->composerCommand->prepare([
         "config",
         "--json",

@@ -16,8 +16,14 @@ starter_kits:
         - recaptcha
         - reroute_email
         - shield
+        - "drupal/acquia_config_management:dev-develop"
+        - "acquia/drupal-recommended-settings:dev-develop"
+        - "drupal/config_split:^2.0"
+        - "drupal/config_filter:^2.4"
       install:
         - acquia_cms_site_studio
+        - acquia_cms_site_studio_cm
+        - acquia_config_management
         - acquia_cms_page
         - acquia_cms_search
         - acquia_cms_tour
@@ -74,6 +80,7 @@ starter_kits:
         - acquia_cms_tour
         - acquia_cms_toolbar
         - consumer_image_styles
+        - acquia_config_management
     themes:
       require:
         - acquia_claro
