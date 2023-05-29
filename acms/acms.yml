@@ -4,11 +4,11 @@ starter_kits:
     description: "The low-code starter kit will install Acquia CMS with Site Studio and a UIkit. It provides drag and drop content authoring and low-code site building. An optional content model can be added in the installation process."
     modules:
       require:
-        - acquia_cms_site_studio
-        - acquia_cms_page
-        - acquia_cms_search
-        - acquia_cms_tour
-        - acquia_cms_toolbar
+        - acquia_cms_site_studio:1.x-dev
+        - acquia_cms_page:1.x-dev
+        - acquia_cms_search:1.x-dev
+        - acquia_cms_tour:2.x-dev
+        - acquia_cms_toolbar:1.x-dev
         - google_analytics
         - google_tag
         - honeypot
@@ -16,8 +16,10 @@ starter_kits:
         - recaptcha
         - reroute_email
         - shield
+        - drupal/sitestudio_config_management
       install:
         - acquia_cms_site_studio
+        - sitestudio_config_management
         - acquia_cms_page
         - acquia_cms_search
         - acquia_cms_tour
@@ -34,9 +36,9 @@ starter_kits:
     description: "The community starter kit will install Acquia CMS. An optional content model can be added in the installation process."
     modules:
       require:
-        - acquia_cms_search
-        - acquia_cms_tour
-        - acquia_cms_toolbar
+        - acquia_cms_search:1.x-dev
+        - acquia_cms_tour:2.x-dev
+        - acquia_cms_toolbar:1.x-dev
         - google_analytics
         - google_tag
         - honeypot
@@ -60,10 +62,10 @@ starter_kits:
     description: "The headless starter kit preconfigures Drupal for serving structured, RESTful \ncontent to 3rd party content displays such as mobile apps, smart displays and \nfrontend driven websites (e.g. React or Next.js)."
     modules:
       require:
-        - acquia_cms_headless
-        - acquia_cms_search
-        - acquia_cms_tour
-        - acquia_cms_toolbar
+        - acquia_cms_headless:1.x-dev
+        - acquia_cms_search:1.x-dev
+        - acquia_cms_tour:2.x-dev
+        - acquia_cms_toolbar:1.x-dev
         - consumer_image_styles
         - mnsami/composer-custom-directory-installer
         - reroute_email
