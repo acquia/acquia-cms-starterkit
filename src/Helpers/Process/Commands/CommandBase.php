@@ -5,6 +5,7 @@ namespace AcquiaCMS\Cli\Helpers\Process\Commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -166,6 +167,8 @@ class CommandBase implements CommandInterface {
    *   Returns an array of command to execute.
    */
   protected function getCommand(array $commands): array {
+    $executableFinder = new ExecutableFinder();
+    $commandPath = $executableFinder->find('composer', NULL, [$this->rootDir . '/vendor/bin']);
     return array_merge(
       [$this->getBaseCommand()],
       $commands,
