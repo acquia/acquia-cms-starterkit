@@ -180,8 +180,6 @@ class CommandBase implements CommandInterface {
     }
     // This is done so that if command exists in the root directory,
     // so use relative path (instead of absolute path).
-    // Maybe we can use path library to convert absolute path to relative path.
-    // See here: https://symfony.com/doc/current/components/filesystem.html#makepathrelative
     $this->command = str_replace($this->rootDir, ".", $this->command);
 
     return array_merge(
