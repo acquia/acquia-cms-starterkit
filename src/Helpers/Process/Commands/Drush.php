@@ -10,14 +10,14 @@ class Drush extends CommandBase {
   /**
    * {@inheritdoc}
    */
-  public function getBaseCommand() :string {
+  public function getBaseCommand(): string {
     return 'drush';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getCommand(array $commands) : array {
+  protected function getCommand(array $commands): array {
     $uri = $this->input->getParameterOption('--uri');
     $commands = parent::getCommand($commands);
     if ($uri) {

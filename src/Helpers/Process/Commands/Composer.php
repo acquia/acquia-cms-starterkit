@@ -10,7 +10,7 @@ class Composer extends CommandBase {
   /**
    * {@inheritdoc}
    */
-  public function getBaseCommand() :string {
+  public function getBaseCommand(): string {
     return 'composer';
   }
 
