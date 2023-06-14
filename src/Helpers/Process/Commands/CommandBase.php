@@ -49,13 +49,6 @@ class CommandBase implements CommandInterface {
   protected $input;
 
   /**
-   * List of common package.
-   *
-   * @var array
-   */
-  protected $package = ['composer', 'drush'];
-
-  /**
    * A class constructor.
    *
    * @param string $root_dir
@@ -174,19 +167,19 @@ class CommandBase implements CommandInterface {
    *   Returns an array of command to execute.
    */
   protected function getCommand(array $commands): array {
-    $this->command = $this->getBaseCommand();
-    if (in_array($this->command, $this->package)) {
-      // Use symfony executable finder object to look into
-      // global and application command to execute.
-      $executableFinder = new ExecutableFinder();
-      $this->command = $executableFinder->find($this->command, NULL, [
-        $this->rootDir . '/vendor/bin',
-        $this->rootDir . '/bin',
-      ]);
-      if (!$this->command) {
-        throw new \RuntimeException("Could not find command executable.");
-      }
+    preg_match("/[^\/]+$/", $this->getBaseCommand(), $baseCommand);
+    $this->command = $baseCommand ? $baseCommand[0] : '';
+    // Use symfony executable finder object to look into
+    // global and application command to execute.
+    $executableFinder = new ExecutableFinder();
+    $this->command = $executableFinder->find($this->command, NULL, [
+      $this->rootDir . '/vendor/bin',
+      $this->rootDir . '/bin',
+    ]);
+    if (!$this->command) {
+      throw new \RuntimeException("Could not find command executable.");
     }
+
     // This is done so that if command exists in the root directory,
     // so use relative path (instead of absolute path).
     $this->command = str_replace($this->rootDir, ".", $this->command);

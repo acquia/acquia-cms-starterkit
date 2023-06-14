@@ -3,7 +3,6 @@ acquia/acquia-cms-starterkit:
 
 # Do not install acquia_cms and Lightning modules.
 acquia/acquia_cms: ~
-acquia/blt : ~
 drupal/lightning_core: ~
 drupal/lightning_api: ~
 drupal/lightning_layout: ~
