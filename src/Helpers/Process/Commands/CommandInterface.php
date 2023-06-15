@@ -34,7 +34,7 @@ interface CommandInterface {
    * @return int
    *   Returns 0 (for success), 1 (for failure)
    */
-  public function run(array $env = []) :int;
+  public function run(array $env = []): int;
 
   /**
    * Executes the command quietly (without printing command on terminal).
@@ -42,7 +42,7 @@ interface CommandInterface {
    * @return string
    *   Return the executed command output.
    */
-  public function runQuietly(array $env = [], bool $validate_command = TRUE) :string;
+  public function runQuietly(array $env = [], bool $validate_command = TRUE): string;
 
   /**
    * Return the base command name.
