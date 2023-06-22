@@ -25,6 +25,7 @@
     "require": {
         "acquia/drupal-environment-detector": "^1.4",
         "composer/composer": "^2.2",
+        "cweagans/composer-patches": "^1.7",
         "stecman/symfony-console-completion": "^0.11.0 || ^0.12.0",
         "symfony/config": "^4.4 || ^5 || ^6",
         "symfony/console": "^4.4 || ^5 || ^6",
@@ -49,8 +50,18 @@
             "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "ergebnis/composer-normalize": true,
+            "mnsami/composer-custom-directory-installer": true,
+            "php-http/discovery": true,
             "phpro/grumphp-shim": true,
             "webdriver-binary/binary-chromedriver": true
+        }
+    },
+    "extra": {
+        "composer-exit-on-patch-failure": true,
+        "patches": {
+            "stecman/symfony-console-completion": {
+                "Return type fix for stecman/symfony-console-completion": "https://github.com/stecman/symfony-console-completion/pull/94.patch"
+            }
         }
     },
     "autoload": {
