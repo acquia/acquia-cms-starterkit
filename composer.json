@@ -58,11 +58,7 @@
     },
     "extra": {
         "composer-exit-on-patch-failure": true,
-        "patches": {
-            "stecman/symfony-console-completion": {
-                "Return type fix for stecman/symfony-console-completion": "https://github.com/stecman/symfony-console-completion/pull/94.patch"
-            }
-        }
+        "patches": {}
     },
     "autoload": {
         "psr-4": {
