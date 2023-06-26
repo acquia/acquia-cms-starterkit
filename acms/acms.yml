@@ -9,7 +9,6 @@ starter_kits:
         - acquia_cms_search
         - acquia_cms_tour
         - acquia_cms_toolbar
-        - google_analytics
         - google_tag
         - honeypot
         - mnsami/composer-custom-directory-installer
@@ -37,7 +36,6 @@ starter_kits:
         - acquia_cms_search
         - acquia_cms_tour
         - acquia_cms_toolbar
-        - google_analytics
         - google_tag
         - honeypot
         - mnsami/composer-custom-directory-installer
