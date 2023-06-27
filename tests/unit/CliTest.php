@@ -173,7 +173,8 @@ class CliTest extends TestCase {
           self::getContentModel(),
           self::getDemoContent(),
           self::getDamIntegration(),
-          self::getGdprIntegration()
+          self::getGdprIntegration(),
+          self::getPwaIntegration()
         ),
         "install" => array_merge(
           self::getNextjsApp(),
@@ -256,7 +257,7 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for dam_integration Question.
+   * Returns the test data for gdpr_integration Question.
    *
    * @return array[]
    *   Returns an array of question.
@@ -278,7 +279,29 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for pwa_integration Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getPwaIntegration(): array {
+    return [
+      'pwa_integration' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
+        ],
+        'question' => "Would you like to add PWA functionality to the site (Yes/No) ?",
+        'allowed_values' => [
+          'options' => ['yes', 'no'],
+        ],
+        'skip_on_value' => FALSE,
+        'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for nextjs app Question.
    *
    * @return array[]
    *   Returns an array of question.
@@ -300,7 +323,7 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for nextjs app site url Question.
    *
    * @return array[]
    *   Returns an array of question.
@@ -321,7 +344,7 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for next js app site name Question.
    *
    * @return array[]
    *   Returns an array of question.
@@ -342,7 +365,7 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for nextjs app environment file path Question.
    *
    * @return array[]
    *   Returns an array of question.

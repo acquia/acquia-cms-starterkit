@@ -69,6 +69,7 @@ jobs:
       SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
       SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
       gdpr_integration: ${{ matrix.gdpr-integration }}
+      pwa_integration: ${{ matrix.pwa-integration }}
       CI: TRUE
     strategy:
       matrix:
@@ -84,15 +85,19 @@ jobs:
           - demo-content: "no"
             content-model: "no"
             dam-integration: "yes"
+            pwa-integration: "yes"
           - demo-content: "yes"
             content-model: "no"
             dam-integration: "no"
+            pwa-integration: "no"
           - demo-content: "no"
             content-model: "no"
             gdpr-integration: "yes"
+            pwa-integration: "yes"
           - demo-content: "yes"
             content-model: "no"
             gdpr-integration: "no"
+            pwa-integration: "no"
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2

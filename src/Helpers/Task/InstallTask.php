@@ -5,6 +5,7 @@ namespace AcquiaCMS\Cli\Helpers\Task;
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
+use AcquiaCMS\Cli\Helpers\Task\Steps\ConfigurePwa;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules;
 use AcquiaCMS\Cli\Helpers\Task\Steps\EnableThemes;
 use AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp;
@@ -107,11 +108,18 @@ class InstallTask {
   protected $toggleModules;
 
   /**
-   * The site studio package import step object.
+   * The nextjs site setup step object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp
    */
   protected $initNextjsApp;
+
+  /**
+   * The PWA configuration step object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Task\Steps\ConfigurePwa
+   */
+  protected $configurePwa;
 
   /**
    * User selected bundle.
@@ -182,6 +190,7 @@ class InstallTask {
     $this->siteInstall = $container->get(SiteInstall::class);
     $this->toggleModules = $container->get(ToggleModules::class);
     $this->initNextjsApp = $container->get(InitNextjsApp::class);
+    $this->configurePwa = $container->get(ConfigurePwa::class);
   }
 
   /**
@@ -248,6 +257,11 @@ class InstallTask {
       'modules' => $modules_list,
       'keys' => $args['keys'],
     ]);
+
+    // Update PWA configs.
+    if (in_array('pwa', $modules_list)) {
+      $this->configurePwa->execute($args);
+    }
 
     // Enable themes.
     $this->print("Enabling themes for the starter-kit:", 'headline');

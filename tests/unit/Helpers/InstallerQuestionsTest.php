@@ -240,6 +240,7 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
           CliTest::getGdprIntegration(),
+          CliTest::getPwaIntegration(),
         ),
       ],
       [
@@ -249,6 +250,7 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getContentModel(),
           CliTest::getDamIntegration(),
           CliTest::getGdprIntegration(),
+          CliTest::getPwaIntegration(),
         ),
       ],
       [

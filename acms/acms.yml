@@ -123,6 +123,16 @@ questions:
           - no
       default_value: "no"
       skip_on_value: false
+    pwa_integration:
+      dependencies:
+        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community
+      question: "Would you like to add PWA functionality to the site (Yes/No) ?"
+      allowed_values:
+        options:
+          - yes
+          - no
+      default_value: "no"
+      skip_on_value: false
   install:
     nextjs_app:
       dependencies:
@@ -183,3 +193,21 @@ questions:
       warning: |-
         The Site Studio Organization key is not set. The Site Studio packages won't get imported.
         You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
+    pwa_site_name:
+      dependencies:
+        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community
+      question: "Please provide the PWA site name"
+      skip_on_value: false
+      default_value: "Acquia CMS"
+      warning: |-
+        The Site Name is not set. Site Name is set to 'Acquia CMS'.
+        You can set the later from: /admin/config/services/pwa/manifest
+    pwa_short_name:
+      dependencies:
+        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community
+      question: "Please provide the PWA site short name"
+      skip_on_value: false
+      default_value: "Acquia CMS"
+      warning: |-
+        The Short Name is not set. Short Name is set to 'Acquia CMS'.
+        You can set the later from: /admin/config/services/pwa/manifest

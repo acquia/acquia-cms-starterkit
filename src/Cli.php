@@ -178,6 +178,7 @@ class Cli {
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $isDamIntegration = $userInputValues['dam_integration'] ?? '';
     $isGdprIntegration = $userInputValues['gdpr_integration'] ?? '';
+    $isPwaIntegration = $userInputValues['pwa_integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',
@@ -204,6 +205,10 @@ class Cli {
       $gdprModules = ['gdpr', 'eu_cookie_compliance', 'gdpr_fields'];
       $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $gdprModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $gdprModules);
+    }
+    if ($isPwaIntegration == "yes") {
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], ['pwa:^2.0']);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], ['pwa']);
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));

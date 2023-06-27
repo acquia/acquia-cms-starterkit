@@ -18,6 +18,7 @@ services:
   AcquiaCMS\Cli\Helpers\Process\Commands\Composer: ~
   AcquiaCMS\Cli\Helpers\Process\Commands\Generic: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\AskQuestions: ~
+  AcquiaCMS\Cli\Helpers\Task\Steps\ConfigurePwa: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\DownloadDrupal: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\DownloadModules: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\EnableModules: ~
