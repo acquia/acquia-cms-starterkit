@@ -184,6 +184,8 @@ class CliTest extends TestCase {
           self::getGmapsKey(),
           self::getSiteStudioApiKey(),
           self::getSiteStudioOrgKey(),
+          self::getPwaSiteName(),
+          self::getPwaShortName(),
         ),
       ],
     ];
@@ -296,6 +298,46 @@ class CliTest extends TestCase {
         ],
         'skip_on_value' => FALSE,
         'default_value' => 'no',
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for GMAPS_KEY Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getPwaSiteName(): array {
+    return [
+      'pwa_site_name' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
+        ],
+        'question' => "Please provide the PWA site name",
+        'skip_on_value' => FALSE,
+        'default_value' => 'Acquia CMS',
+        'warning' => "The Site Name is not set. Site Name is set to 'Acquia CMS'.\nYou can set the later from: /admin/config/services/pwa/manifest.",
+      ],
+    ];
+  }
+
+  /**
+   * Returns the test data for GMAPS_KEY Question.
+   *
+   * @return array[]
+   *   Returns an array of question.
+   */
+  public static function getPwaShortName(): array {
+    return [
+      'pwa_short_name' => [
+        'dependencies' => [
+          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
+        ],
+        'question' => "Please provide the PWA site short name",
+        'skip_on_value' => FALSE,
+        'default_value' => 'Acquia CMS',
+        'warning' => "The Short Name is not set. Short Name is set to 'Acquia CMS'.\nYou can set the later from: /admin/config/services/pwa/manifest.",
       ],
     ];
   }

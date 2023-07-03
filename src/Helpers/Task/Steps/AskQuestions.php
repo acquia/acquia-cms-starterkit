@@ -68,8 +68,8 @@ class AskQuestions {
     // @see AcquiaCMS\Cli\Helpers::shouldAskQuestion().
     $userInputValues = $processedQuestions['default'];
     foreach ($questions as $key => $question) {
-      $envVar = $this->installerQuestions->getEnvValue($question, $key);
-      if (empty($envVar)) {
+      $envVar = $input->getOption($key) ?? $this->installerQuestions->getEnvValue($question, $key);
+      if (empty($envVar) || empty($input->getOption($key))) {
         if ($this->installerQuestions->shouldAskQuestion($question, $userInputValues)) {
 
           $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output, $helper);

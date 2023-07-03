@@ -85,13 +85,14 @@ class SiteInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() :void {
+  protected function configure(): void {
     $this->setName("site:install")
       ->setDescription("A wrapper command for drush site:install command.")
       ->setDefinition([
         new InputArgument('profile', InputArgument::IS_ARRAY,
           "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
         "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
+        new InputOption('name', '', InputOption::VALUE_OPTIONAL, "Name of the starter kit"),
         new InputOption('db-url', '', InputOption::VALUE_OPTIONAL, "A Drupal 6 style database URL. Required for initial install, not re-install. If omitted and required, Drush prompts for this item."),
         new InputOption('db-prefix', '', InputOption::VALUE_OPTIONAL, "An optional table prefix to use for initial install."),
         new InputOption('db-su', '', InputOption::VALUE_OPTIONAL, "Account to use when creating a new database. Must have Grant permission (mysql only). Optional."),
@@ -104,13 +105,27 @@ class SiteInstallCommand extends Command {
         new InputOption('site-name', '', InputOption::VALUE_OPTIONAL, "Name of the Drupal site.", 'Acquia CMS'),
         new InputOption('site-pass', '', InputOption::VALUE_OPTIONAL),
         new InputOption('sites-subdir', '', InputOption::VALUE_OPTIONAL, "Name of directory under <info>sites</info> which should be created."),
-        new InputOption('existing-config ', '', InputOption::VALUE_NONE, "Configuration from <info>sync</info> directory should be imported during installation."),
+        new InputOption('existing-config', '', InputOption::VALUE_NONE, "Configuration from <info>sync</info> directory should be imported during installation."),
         new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
         new InputOption('yes', 'y', InputOption::VALUE_NONE, "Equivalent to --no-interaction."),
         new InputOption('no', '', InputOption::VALUE_NONE, "Cancels at any confirmation prompt."),
         new InputOption('hide-command', 'hide', InputOption::VALUE_NONE, "Doesn't show the command executed on terminal."),
         new InputOption('display-command', 'd', InputOption::VALUE_NONE, "Doesn't show the command executed on terminal."),
         new InputOption('without-product-info', 'wpi', InputOption::VALUE_NONE, "Doesn't show the product logo and headline."),
+        new InputOption('demo_content', '', InputOption::VALUE_OPTIONAL, "Provide option to add demo content."),
+        new InputOption('content_model', '', InputOption::VALUE_OPTIONAL, "Provide option to include ACMS recommended content types."),
+        new InputOption('dam_integration', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('gdpr_integration', '', InputOption::VALUE_OPTIONAL, "Provide option to add GDPR in application."),
+        new InputOption('GMAPS_KEY', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('SITESTUDIO_API_KEY', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('SITESTUDIO_ORG_KEY', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('nextjs_app', '', InputOption::VALUE_OPTIONAL, "Provide option to add demo content."),
+        new InputOption('nextjs_app_site_url', '', InputOption::VALUE_OPTIONAL, "Provide option to include ACMS recommended content types."),
+        new InputOption('nextjs_app_site_name', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('nextjs_app_env_file', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('pwa_integration', '', InputOption::VALUE_OPTIONAL, "Provide option to add pwa in application."),
+        new InputOption('pwa_site_name', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
+        new InputOption('pwa_short_name', '', InputOption::VALUE_OPTIONAL, "Provide option to add DAM in application."),
       ])
       ->setAliases(['site-install', 'si'])
       ->setHelp("The <info>site:install</info> command install Drupal along with modules/themes/configuration/profile.");
@@ -119,7 +134,7 @@ class SiteInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) :int {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     try {
       $args = [];
       if (!$input->getOption('without-product-info')) {
@@ -152,7 +167,7 @@ class SiteInstallCommand extends Command {
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony console output object.
    */
-  protected function postSiteInstall(string $bundle, OutputInterface $output) :void {
+  protected function postSiteInstall(string $bundle, OutputInterface $output): void {
     $output->writeln("");
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$bundle`.";

@@ -278,12 +278,16 @@ class InstallerQuestionsTest extends TestCase {
           CliTest::getGmapsKey(),
           CliTest::getSiteStudioApiKey(),
           CliTest::getSiteStudioOrgKey(),
+          CliTest::getPwaSiteName(),
+          CliTest::getPwaShortName(),
         ),
       ],
       [
         'acquia_cms_community',
         array_merge(
           CliTest::getGmapsKey(),
+          CliTest::getPwaSiteName(),
+          CliTest::getPwaShortName(),
         ),
       ],
       [

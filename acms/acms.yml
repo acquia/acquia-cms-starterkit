@@ -201,7 +201,7 @@ questions:
       default_value: "Acquia CMS"
       warning: |-
         The Site Name is not set. Site Name is set to 'Acquia CMS'.
-        You can set the later from: /admin/config/services/pwa/manifest
+        You can set the later from: /admin/config/services/pwa/manifest.
     pwa_short_name:
       dependencies:
         starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community
@@ -210,4 +210,4 @@ questions:
       default_value: "Acquia CMS"
       warning: |-
         The Short Name is not set. Short Name is set to 'Acquia CMS'.
-        You can set the later from: /admin/config/services/pwa/manifest
+        You can set the later from: /admin/config/services/pwa/manifest.
