@@ -57,7 +57,7 @@ jobs:
           ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
-    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
+    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, gdpr-integration=${{ matrix.gdpr-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
       demo_content: ${{ matrix.demo-content }}
@@ -68,7 +68,7 @@ jobs:
       SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
       SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
       SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
-      # nextjs_app: ${{ matrix.nextjs-app }}
+      gdpr_integration: ${{ matrix.gdpr-integration }}
       CI: TRUE
     strategy:
       matrix:
@@ -77,7 +77,7 @@ jobs:
         demo-content: ["yes", "no"]
         content-model: ["yes", "no"]
         dam-integration: ["yes", "no"]
-        # nextjs-app: ["yes", "no"]
+        gdpr-integration: ["yes", "no"]
         exclude:
           - demo-content: "yes"
             content-model: "yes"
@@ -87,12 +87,12 @@ jobs:
           - demo-content: "yes"
             content-model: "no"
             dam-integration: "no"
-          # - starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
-          #   nextjs-app: "yes"
-          # - starter-kits: ["acquia_cms_headless"]
-          #   demo-content: "no"
-          #   content-model: "no"
-          #   nextjs-app: "yes"
+          - demo-content: "no"
+            content-model: "no"
+            gdpr-integration: "yes"
+          - demo-content: "yes"
+            content-model: "no"
+            gdpr-integration: "no"
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2

@@ -5,6 +5,7 @@ namespace AcquiaCMS\Cli\Helpers\Process\Commands;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -70,7 +71,7 @@ class CommandBase implements CommandInterface {
    * @param string $path
    *   Sets the base command.
    */
-  public function setCommand(string $path) :void {
+  public function setCommand(string $path): void {
     $this->command = $path;
   }
 
@@ -86,7 +87,7 @@ class CommandBase implements CommandInterface {
    * @throws \RuntimeException
    *   Throws RuntimeException if no base command.
    */
-  public function prepare(array $commands = []) : CommandInterface {
+  public function prepare(array $commands = []): CommandInterface {
     $commands = $this->getCommand($commands);
     $this->process = new Process($commands);
     $this->process->setTimeout(NULL)
@@ -102,7 +103,7 @@ class CommandBase implements CommandInterface {
    * @return int
    *   Returns the command output status code.
    */
-  public function run(array $env = []) :int {
+  public function run(array $env = []): int {
     if (!$this->input->hasOption('hide-command')) {
       $this->output->writeln(sprintf('> %s', $this->process->getCommandLine()));
     }
@@ -121,7 +122,7 @@ class CommandBase implements CommandInterface {
    * @return string
    *   Returns the executed command output.
    */
-  public function runQuietly(array $env = [], bool $validate_command = TRUE) :string {
+  public function runQuietly(array $env = [], bool $validate_command = TRUE): string {
     $this->process->setTty(FALSE);
     $this->process->run(NULL, $env);
     if ($validate_command) {
@@ -133,7 +134,7 @@ class CommandBase implements CommandInterface {
   /**
    * Verify if command executed successfully.
    */
-  protected function verifyCommand() :void {
+  protected function verifyCommand(): void {
     if (!$this->process->isSuccessful()) {
       $this->process->disableOutput();
       throw new ProcessFailedException($this->process);
@@ -166,8 +167,25 @@ class CommandBase implements CommandInterface {
    *   Returns an array of command to execute.
    */
   protected function getCommand(array $commands): array {
+    preg_match("/[^\/]+$/", $this->getBaseCommand(), $baseCommand);
+    $this->command = $baseCommand ? $baseCommand[0] : '';
+    // Use symfony executable finder object to look into
+    // global and application command to execute.
+    $executableFinder = new ExecutableFinder();
+    $this->command = $executableFinder->find($this->command, NULL, [
+      $this->rootDir . '/vendor/bin',
+      $this->rootDir . '/bin',
+    ]);
+    if (!$this->command) {
+      throw new \RuntimeException("Could not find command executable.");
+    }
+
+    // This is done so that if command exists in the root directory,
+    // so use relative path (instead of absolute path).
+    $this->command = str_replace($this->rootDir, ".", $this->command);
+
     return array_merge(
-      [$this->getBaseCommand()],
+      [$this->command],
       $commands,
     );
   }
