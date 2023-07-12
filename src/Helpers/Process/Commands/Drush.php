@@ -21,7 +21,7 @@ class Drush extends CommandBase {
     $uri = $this->input->getParameterOption('--uri');
     $commands = parent::getCommand($commands);
     if ($uri) {
-      $commands = array_merge($commands, ['--uri=' . $uri]);
+      $commands = array_unique(array_merge($commands, ['--uri=' . $uri]));
     }
     return $commands;
   }
