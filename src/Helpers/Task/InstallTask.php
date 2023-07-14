@@ -232,8 +232,8 @@ class InstallTask {
     ], [$this->bundle]);
     $this->drushCommand->prepare($command)->run();
     $bundleModules = $this->buildInformation['modules'] ?? [];
-    // Get User password from shared factory.
-    $password = SharedFactory::getData('password');
+    // Get User password from shared factory or from option argument.
+    $password = $siteInstallArgs['account-pass'] ?? SharedFactory::getData('password');
     $this->print("User name: admin, User password: $password", 'info');
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $isDemoContent = FALSE;
