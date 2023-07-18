@@ -85,7 +85,7 @@ class SiteInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() :void {
+  protected function configure(): void {
     $this->setName("site:install")
       ->setDescription("A wrapper command for drush site:install command.")
       ->setDefinition([
@@ -119,7 +119,7 @@ class SiteInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) :int {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     try {
       $args = [];
       if (!$input->getOption('without-product-info')) {
@@ -152,7 +152,7 @@ class SiteInstallCommand extends Command {
    * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony console output object.
    */
-  protected function postSiteInstall(string $bundle, OutputInterface $output) :void {
+  protected function postSiteInstall(string $bundle, OutputInterface $output): void {
     $output->writeln("");
     $formatter = $this->getHelper('formatter');
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$bundle`.";

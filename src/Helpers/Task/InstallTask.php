@@ -200,7 +200,7 @@ class InstallTask {
     InputInterface $input,
     OutputInterface $output,
     string $bundle,
-    string $site_uri) :void {
+    string $site_uri): void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
@@ -213,16 +213,17 @@ class InstallTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function run(array $args) :void {
+  public function run(array $args): void {
     $this->print("Installing Site:", 'headline');
-    $staretkit_name = 'Existing Site';
+    $starterkitName = 'Existing Site';
     if (isset($this->starterKits[$this->bundle])) {
-      $staretkit_name = $this->starterKits[$this->bundle]['name'];
+      $starterkitName = $this->starterKits[$this->bundle]['name'];
     }
-    $this->siteInstall->execute([
-      'no-interaction' => $this->input->getOption('no-interaction'),
-      'name' => $staretkit_name,
-    ]);
+    $siteInstallArgs = array_filter($this->input->getOptions()) + [
+      'name' => $starterkitName,
+    ];
+
+    $this->siteInstall->execute($siteInstallArgs);
 
     // Add user selected starter-kit to state.
     $command = array_merge([
@@ -230,22 +231,22 @@ class InstallTask {
       "acquia_cms.starter_kit",
     ], [$this->bundle]);
     $this->drushCommand->prepare($command)->run();
-    $bundle_modules = $this->buildInformation['modules'] ?? [];
-    $modules_list = JsonParser::installPackages($bundle_modules);
-    // Get User password from shared factory.
-    $password = SharedFactory::getData('password');
+    $bundleModules = $this->buildInformation['modules'] ?? [];
+    // Get User password from shared factory or from option argument.
+    $password = $siteInstallArgs['account-pass'] ?? SharedFactory::getData('password');
     $this->print("User name: admin, User password: $password", 'info');
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $isDemoContent = FALSE;
-    if ($key = array_search('acquia_cms_starter', $modules_list)) {
+    $modulesList = JsonParser::installPackages($bundleModules);
+    if ($key = array_search('acquia_cms_starter', $modulesList)) {
       // Remove acquia_cms_starter module in the list of modules to install.
       // Because we install this module separately in the last.
-      unset($modules_list[$key]);
+      unset($modulesList[$key]);
       $isDemoContent = TRUE;
     }
     // Enable modules.
     $this->enableModules->execute([
-      'modules' => $modules_list,
+      'modules' => $modulesList,
       'keys' => $args['keys'],
     ]);
 
@@ -266,7 +267,7 @@ class InstallTask {
     $siteStudioOrgKey = $args['keys']['SITESTUDIO_ORG_KEY'] ?? '';
     // Trigger Site Studio Package import, if acquia_cms_site_studio module
     // is there in active bundle.
-    if (in_array('acquia_cms_site_studio', $modules_list)) {
+    if (in_array('acquia_cms_site_studio', $modulesList)) {
       if (!(($siteStudioApiKey && $siteStudioOrgKey) || (getenv('SITESTUDIO_API_KEY') && getenv('SITESTUDIO_ORG_KEY')))) {
         $this->print("Skipped importing Site Studio Packages." .
           PHP_EOL .
@@ -312,7 +313,7 @@ class InstallTask {
    * @param string $type
    *   Type of styling the message.
    */
-  protected function print(string $message, string $type) :void {
+  protected function print(string $message, string $type): void {
     $this->output->writeln($this->style($message, $type));
   }
 
