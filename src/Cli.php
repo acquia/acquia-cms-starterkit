@@ -116,8 +116,14 @@ class Cli {
    * Returns an array of starter-kits defined in acms.yml file.
    */
   public function getStarterKits(): array {
-    $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
-    return $fileContent['starter_kits'] ?? [];
+    $defaultStarterkits = $userDefinedStarterkits = [];
+    $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
+    if ($this->filesystem->exists($this->rootDirectory . '/acms.yml')) {
+      $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms.yml');
+    }
+    $fileContent = array_merge($defaultStarterkits['starter_kits'], $userDefinedStarterkits['starter_kits'] ?? []);
+
+    return $fileContent;
   }
 
   /**
