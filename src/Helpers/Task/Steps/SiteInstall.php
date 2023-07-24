@@ -68,18 +68,18 @@ class SiteInstall {
       "--site-name=$this->siteName",
       "--account-pass=$this->password",
     ];
+
+    // Remove without-product-info from argument as it is only used internally.
+    unset($args['without-product-info']);
+
     // Iterate arguments i.e options to prepare for site install.
     foreach ($args as $key => $value) {
-      if (!in_array($key, [
-        'without-product-info',
-        'no-interaction',
-      ])) {
+      if ($value != "true") {
         $siteInstallCommand[] = "--" . $key . "=" . $value;
       }
-    }
-    // Option no-interation then add suffix --yes to the command.
-    if (isset($args['no-interaction']) && $args['no-interaction']) {
-      $siteInstallCommand = array_merge($siteInstallCommand, ["--yes"]);
+      else {
+        $siteInstallCommand[] = "--" . $key;
+      }
     }
 
     return $this->drushCommand->prepare($siteInstallCommand)->run();
