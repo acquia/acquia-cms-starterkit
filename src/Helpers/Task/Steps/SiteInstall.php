@@ -18,6 +18,20 @@ class SiteInstall {
   public $drushCommand;
 
   /**
+   * Site name.
+   *
+   * @var string
+   */
+  public string $siteName;
+
+  /**
+   * Account password.
+   *
+   * @var string
+   */
+  protected string $password;
+
+  /**
    * Constructs an object.
    *
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush
@@ -25,6 +39,8 @@ class SiteInstall {
    */
   public function __construct(Drush $drush) {
     $this->drushCommand = $drush;
+    SharedFactory::setData('password');
+    $this->password = SharedFactory::getData('password');
   }
 
   /**
@@ -33,17 +49,39 @@ class SiteInstall {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :int {
-    SharedFactory::setData('password');
-    $siteInstallCommand = $args['command'] ?? [
+  public function execute(array $args = []): int {
+    // Handle the account password.
+    if (array_key_exists('account-pass', $args)) {
+      $this->password = $args['account-pass'];
+      unset($args['account-pass']);
+    }
+
+    $this->siteName = array_key_exists('site-name', $args) ?
+    $args['site-name'] : $args['name'];
+    unset($args['name']);
+    unset($args['site-name']);
+
+    // Prepare site install command data.
+    $siteInstallCommand = [
       "site:install",
       "minimal",
-      "--site-name=" . $args['name'],
-      "--account-pass=" . SharedFactory::getData('password'),
+      "--site-name=$this->siteName",
+      "--account-pass=$this->password",
     ];
+    // Iterate arguments i.e options to prepare for site install.
+    foreach ($args as $key => $value) {
+      if (!in_array($key, [
+        'without-product-info',
+        'no-interaction',
+      ])) {
+        $siteInstallCommand[] = "--" . $key . "=" . $value;
+      }
+    }
+    // Option no-interation then add suffix --yes to the command.
     if (isset($args['no-interaction']) && $args['no-interaction']) {
       $siteInstallCommand = array_merge($siteInstallCommand, ["--yes"]);
     }
+
     return $this->drushCommand->prepare($siteInstallCommand)->run();
   }
 
