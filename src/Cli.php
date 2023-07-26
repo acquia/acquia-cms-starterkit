@@ -122,8 +122,8 @@ class Cli {
     $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
     $starterkits = $defaultStarterkits['starter_kits'];
     // Check if user defined starterkit file exist in root directory.
-    if ($this->filesystem->exists($this->rootDirectory . '/acms.yml')) {
-      $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms.yml');
+    if ($this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
+      $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
       // Check if starter_kits existis else assign empty array.
       $userDefinedStarterkits = $userDefinedStarterkits['starter_kits'] ?? [];
       // Merge default and user defined starterkits.
