@@ -109,15 +109,29 @@ class Cli {
     catch (\Exception $e) {
       $this->output->writeln("<error>" . $e->getMessage() . "</error>");
     }
-    return $fileContents;
+
+    // Return filecontent, if file is blank then return empty array.
+    return $fileContents ?? [];
   }
 
   /**
    * Returns an array of starter-kits defined in acms.yml file.
    */
   public function getStarterKits(): array {
-    $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
-    return $fileContent['starter_kits'] ?? [];
+    $starterkits = [];
+    $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
+    $starterkits = $defaultStarterkits['starter_kits'];
+    // Check if user defined starterkit file exist in root directory.
+    if ($this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
+      $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
+      // Check if starter_kits existis else assign empty array.
+      $userDefinedStarterkits = $userDefinedStarterkits['starter_kits'] ?? [];
+      // Merge default and user defined starterkits.
+      $starterkits = array_merge($starterkits, $userDefinedStarterkits);
+    }
+
+    // Return starterkit list.
+    return $starterkits;
   }
 
   /**
