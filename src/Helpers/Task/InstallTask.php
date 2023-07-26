@@ -298,12 +298,6 @@ class InstallTask {
       ]);
     }
 
-    // Add user selected starter-kit to state.
-    $command = array_merge([
-      "state:set",
-      "acquia_cms.starter_kit",
-    ], [$this->bundle]);
-    $this->drushCommand->prepare($command)->run();
     // Add user selected starter-kit to config.
     $command = array_merge([
       "config:set",
