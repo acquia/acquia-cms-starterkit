@@ -11,7 +11,7 @@ sites:
       - acquia_cms_toolbar
       - acquia_cms_tour
       - acquia_cms_video
-    starter_kit: acquia_cms_existing_site
+    starter_kit: acquia_cms_enterprise_low_code
     themes:
       admin: acquia_claro
       default: cohesion_theme

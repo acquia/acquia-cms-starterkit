@@ -225,12 +225,6 @@ class InstallTask {
 
     $this->siteInstall->execute($siteInstallArgs);
 
-    // Add user selected starter-kit to state.
-    $command = array_merge([
-      "state:set",
-      "acquia_cms.starter_kit",
-    ], [$this->bundle]);
-    $this->drushCommand->prepare($command)->run();
     $bundleModules = $this->buildInformation['modules'] ?? [];
     // Get User password from shared factory or from option argument.
     $password = $siteInstallArgs['account-pass'] ?? SharedFactory::getData('password');
@@ -303,6 +297,15 @@ class InstallTask {
         '--env-file' => $isNextjsAppEnvFile,
       ]);
     }
+
+    // Add user selected starter-kit to config.
+    $command = array_merge([
+      "config:set",
+      "acquia_cms_common.settings",
+      "starter_kit_name",
+      "--yes",
+    ], [$this->bundle]);
+    $this->drushCommand->prepare($command)->run();
   }
 
   /**
