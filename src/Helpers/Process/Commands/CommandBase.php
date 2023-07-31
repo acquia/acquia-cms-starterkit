@@ -167,22 +167,25 @@ class CommandBase implements CommandInterface {
    *   Returns an array of command to execute.
    */
   protected function getCommand(array $commands): array {
-    preg_match("/[^\/]+$/", $this->getBaseCommand(), $baseCommand);
-    $this->command = $baseCommand ? $baseCommand[0] : '';
-    // Use symfony executable finder object to look into
-    // global and application command to execute.
-    $executableFinder = new ExecutableFinder();
-    $this->command = $executableFinder->find($this->command, NULL, [
-      $this->rootDir . '/vendor/bin',
-      $this->rootDir . '/bin',
-    ]);
-    if (!$this->command) {
-      throw new \RuntimeException("Could not find command executable.");
-    }
+    $this->command = $this->getBaseCommand();
+    if (!is_executable($this->command)) {
+      preg_match("/[^\/]+$/", $this->command, $baseCommand);
+      $this->command = $baseCommand ? $baseCommand[0] : '';
+      // Use symfony executable finder object to look into
+      // global and application command to execute.
+      $executableFinder = new ExecutableFinder();
+      $this->command = $executableFinder->find($this->command, NULL, [
+        $this->rootDir . '/vendor/bin',
+        $this->rootDir . '/bin',
+      ]);
+      if (!$this->command) {
+        throw new \RuntimeException("Could not find command executable.");
+      }
 
-    // This is done so that if command exists in the root directory,
-    // so use relative path (instead of absolute path).
-    $this->command = str_replace($this->rootDir, ".", $this->command);
+      // This is done so that if command exists in the root directory,
+      // so use relative path (instead of absolute path).
+      $this->command = str_replace($this->rootDir, ".", $this->command);
+    }
 
     return array_merge(
       [$this->command],

@@ -51,7 +51,7 @@ class DownloadModules {
     if (!isset($composerContents->require->{'drush/drush'})) {
       $this->composerCommand->prepare([
         "require",
-        "drush/drush:^10.3 || ^11",
+        "drush/drush:^11 || ^12",
       ])->run();
     }
     if (!isset($composerContents->{'minimum-stability'}) || (isset($composerContents->{'minimum-stability'}) && $composerContents->{'minimum-stability'} != "dev")) {
