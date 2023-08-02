@@ -6,6 +6,7 @@ use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Exception\AcmsCliException;
 use AcquiaCMS\Cli\Helpers\InstallerQuestions;
+use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 use AcquiaCMS\Cli\Helpers\Task\InstallTask;
 use AcquiaCMS\Cli\Helpers\Task\Steps\AskQuestions;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
@@ -59,6 +60,13 @@ class SiteInstallCommand extends Command {
   protected $askQuestions;
 
   /**
+   * A drush command object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
+   */
+  public $drushCommand;
+
+  /**
    * Constructs an instance.
    *
    * @param \AcquiaCMS\Cli\Cli $cli
@@ -69,16 +77,20 @@ class SiteInstallCommand extends Command {
    *   Provides the AcquiaCMS InstallerQuestions class object.
    * @param \AcquiaCMS\Cli\Helpers\Task\Steps\AskQuestions $askQuestions
    *   Provides the AcquiaCMS AskQuestions class object.
+   * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush
+   *   Holds the drush command class object.
    */
   public function __construct(
     Cli $cli,
     InstallTask $installTask,
     InstallerQuestions $installerQuestions,
-    AskQuestions $askQuestions) {
+    AskQuestions $askQuestions,
+    Drush $drush) {
     $this->acquiaCmsCli = $cli;
     $this->installTask = $installTask;
     $this->installerQuestions = $installerQuestions;
     $this->askQuestions = $askQuestions;
+    $this->drushCommand = $drush;
     parent::__construct();
   }
 
@@ -120,6 +132,8 @@ class SiteInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
+    // Install time start.
+    $startTime = microtime(TRUE);
     try {
       $args = [];
       if (!$input->getOption('without-product-info')) {
@@ -141,6 +155,18 @@ class SiteInstallCommand extends Command {
       $output->writeln("<error>" . $e->getMessage() . "</error>");
       return StatusCodes::ERROR;
     }
+
+    // Install time end.
+    $endTime = microtime(TRUE);
+    // Convert microseconds to seconds.
+    $installTime = number_format($endTime - $startTime, 2);
+    // Add site installation time to state variable.
+    $command = array_merge([
+      "state:set",
+      "acquia_cms.site_install_time",
+    ], [$installTime]);
+    $this->drushCommand->prepare($command)->run();
+
     return StatusCodes::OK;
   }
 
