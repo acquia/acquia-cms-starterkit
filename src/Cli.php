@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli;
 
+use AcquiaCMS\Cli\Validation\StarterKitValidation;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -48,6 +49,13 @@ class Cli {
   protected $filesystem;
 
   /**
+   * Starter-kit validator.
+   *
+   * @var \AcquiaCMS\Cli\Validation\StarterKitValidation
+   */
+  protected $starterKitValidation;
+
+  /**
    * Constructs an object.
    *
    * @param string $project_dir
@@ -58,16 +66,20 @@ class Cli {
    *   Holds the symfony console output object.
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   A Symfony container class object.
+   * @param \AcquiaCMS\Cli\Validation\StarterKitValidation $starter_kit_validation
+   *   A service to validate starter-kit.
    */
   public function __construct(
     string $project_dir,
     string $root_dir,
     OutputInterface $output,
-    ContainerInterface $container) {
+    ContainerInterface $container,
+    StarterKitValidation $starter_kit_validation) {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->output = $output;
     $this->filesystem = $container->get(Filesystem::class);
+    $this->starterKitValidation = $starter_kit_validation;
   }
 
   /**
@@ -128,6 +140,7 @@ class Cli {
       $userDefinedStarterkits = $userDefinedStarterkits['starter_kits'] ?? [];
       // Merge default and user defined starterkits.
       $starterkits = array_merge($starterkits, $userDefinedStarterkits);
+      $this->starterKitValidation->validateStarterKit($starterkits);
     }
 
     // Return starterkit list.
