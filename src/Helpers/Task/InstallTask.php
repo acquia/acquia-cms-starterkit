@@ -257,8 +257,8 @@ class InstallTask {
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
 
-    $siteStudioApiKey = $args['keys']['SITESTUDIO_API_KEY'] ?? '';
-    $siteStudioOrgKey = $args['keys']['SITESTUDIO_ORG_KEY'] ?? '';
+    $siteStudioApiKey = $args['keys']['sitestudio-api-key'] ?? '';
+    $siteStudioOrgKey = $args['keys']['sitestudio-org-key'] ?? '';
     // Trigger Site Studio Package import, if acquia_cms_site_studio module
     // is there in active bundle.
     if (in_array('acquia_cms_site_studio', $modulesList)) {
@@ -283,14 +283,14 @@ class InstallTask {
       ]);
     }
 
-    $isNextjsApp = $args['keys']['nextjs_app'] ?? '';
+    $isNextjsApp = $args['keys']['nextjs-app'] ?? '';
     // Initialize: NextJs application, create consumer, create nextjs site,
     // write/display nextjs site environment variables.
     if ($isNextjsApp == "yes") {
       $this->print("Initiating NextJs App for the starter-kit:", 'headline');
-      $isNextjsAppSiteUrl = $args['keys']['nextjs_app_site_url'] ?? '';
-      $isNextjsAppSiteName = $args['keys']['nextjs_app_site_name'] ?? '';
-      $isNextjsAppEnvFile = $args['keys']['nextjs_app_env_file'] ?? '';
+      $isNextjsAppSiteUrl = $args['keys']['nextjs-app-site-url'] ?? '';
+      $isNextjsAppSiteName = $args['keys']['nextjs-app-site-name'] ?? '';
+      $isNextjsAppEnvFile = $args['keys']['nextjs-app-env-file'] ?? '';
       $this->initNextjsApp->execute([
         '--site-url' => $isNextjsAppSiteUrl,
         '--site-name' => $isNextjsAppSiteName,
