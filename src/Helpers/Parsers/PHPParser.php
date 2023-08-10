@@ -34,19 +34,19 @@ class PHPParser {
    */
   public static function parseQuestionExpression(string $input): array {
     $input = trim($input);
-    $pattern = '/\${?(\w+)}?(\s)(==|>|>=|<|<=|!=)(\s)(".*"|(\d+\.?\d+))/i';
+    $pattern = '/\${?([\-\w]+[\/]?)}?(\s)(==|>|>=|<|<=|!=)(\s)(".*"|(\d+\.?\d+))/i';
     preg_match($pattern, $input, $matches);
     if (empty($matches) || (isset($matches[0]) && $input != $matches[0])) {
       $errorMessages = [
         "Invalid Question expression: $input",
         '',
         "It should exactly match from one of the following pattern: ",
-        ' ${some_question_key} == "<some_string_value>". Ex: ${some_question_key} == "yes"',
-        ' ${some_question_key} != "<some_string_value>". Ex: ${some_question_key} != "yes"',
-        ' ${some_question_key} > <some_numeric_value>. Ex: ${some_question_key} > 10',
-        ' ${some_question_key} >= <some_numeric_value>. Ex: ${some_question_key} >= 10',
-        ' ${some_question_key} < <some_numeric_value>. Ex: ${some_question_key} < 10',
-        ' ${some_question_key} <= <some_numeric_value>. Ex: ${some_question_key} <= 10',
+        ' ${some-question-key} == "<some_string_value>". Ex: ${some-question-key} == "yes"',
+        ' ${some-question-key} != "<some_string_value>". Ex: ${some-question-key} != "yes"',
+        ' ${some-question-key} > <some_numeric_value>. Ex: ${some-question-key} > 10',
+        ' ${some-question-key} >= <some_numeric_value>. Ex: ${some-question-key} >= 10',
+        ' ${some-question-key} < <some_numeric_value>. Ex: ${some-question-key} < 10',
+        ' ${some-question-key} <= <some_numeric_value>. Ex: ${some-question-key} <= 10',
       ];
       throw new \RuntimeException(implode(PHP_EOL, $errorMessages));
     }

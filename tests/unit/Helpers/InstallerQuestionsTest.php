@@ -196,7 +196,7 @@ class InstallerQuestionsTest extends TestCase {
       [
         $dummyQuestion,
         [
-          'demo_content' => 'ALL',
+          'demo-content' => 'ALL',
         ],
         TRUE,
       ],
@@ -212,21 +212,21 @@ class InstallerQuestionsTest extends TestCase {
   public function providerDefaultValue(): array {
     return [
       [
-        CliTest::getContentModel()['content_model'],
+        CliTest::getContentModel()['content-model'],
         'no',
       ],
       [
-        CliTest::getSiteStudioApiKey()['SITESTUDIO_API_KEY'],
+        CliTest::getSiteStudioApiKey()['sitestudio-api-key'],
         'some_value',
-        'SITESTUDIO_API_KEY',
+        'sitestudio-api-key',
         [
-          'SITESTUDIO_API_KEY' => 'some_value',
+          'sitestudio-api-key' => 'some_value',
         ],
       ],
       [
-        CliTest::getGmapsKey()['GMAPS_KEY'],
+        CliTest::getGmapsKey()['gmaps-key'],
         '',
-        'GMAPS_KEYS',
+        'gmaps-key',
         [
           'SOME_RANDOM_VALUE' => 'some_value',
         ],

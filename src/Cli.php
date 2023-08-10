@@ -204,10 +204,10 @@ class Cli {
    *   Returns an array of altered starter-kit.
    */
   public function alterModulesAndThemes(array &$starterKit, array $userInputValues): array {
-    $isContentModel = $userInputValues['content_model'] ?? '';
-    $isDemoContent = $userInputValues['demo_content'] ?? '';
-    $isDamIntegration = $userInputValues['dam_integration'] ?? '';
-    $isGdprIntegration = $userInputValues['gdpr_integration'] ?? '';
+    $isContentModel = $userInputValues['content-model'] ?? '';
+    $isDemoContent = $userInputValues['demo-content'] ?? '';
+    $isDamIntegration = $userInputValues['dam-integration'] ?? '';
+    $isGdprIntegration = $userInputValues['gdpr-integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',

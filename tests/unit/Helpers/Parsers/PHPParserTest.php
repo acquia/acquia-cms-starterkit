@@ -24,7 +24,7 @@ class PHPParserTest extends TestCase {
    *
    * @dataProvider parseEnvVariablesDataProvider
    */
-  public function testPhpEnvVars(string $actual, string $expected, array $envVariables = []) :void {
+  public function testPhpEnvVars(string $actual, string $expected, array $envVariables = []): void {
     if ($envVariables) {
       foreach ($envVariables as $key => $value) {
         putenv("$key=$value");
@@ -36,7 +36,7 @@ class PHPParserTest extends TestCase {
   /**
    * @dataProvider parseValidQuestionExpression
    */
-  public function testParseValidQuestion(string $actual, array $expected, string $exception = NULL) :void {
+  public function testParseValidQuestion(string $actual, array $expected, string $exception = NULL): void {
     if ($exception) {
       $this->expectException($exception);
     }
@@ -49,10 +49,10 @@ class PHPParserTest extends TestCase {
   public function parseValidQuestionExpression(): array {
     return [
       [
-        '${site_studio} == "yes"',
+        '${site-studio} == "yes"',
         [
-          '${site_studio} == "yes"',
-          'site_studio',
+          '${site-studio} == "yes"',
+          'site-studio',
           ' ',
           '==',
           ' ',
@@ -60,10 +60,10 @@ class PHPParserTest extends TestCase {
         ],
       ],
       [
-        '${some_integer_value} == 10',
+        '${some-integer-value} == 10',
         [
-          '${some_integer_value} == 10',
-          'some_integer_value',
+          '${some-integer-value} == 10',
+          'some-integer-value',
           ' ',
           '==',
           ' ',
@@ -72,12 +72,12 @@ class PHPParserTest extends TestCase {
         ],
       ],
       [
-        '${some_value} == no',
+        '${some-value} == no',
         [],
         'RuntimeException',
       ],
       [
-        '${some_value} === yes',
+        '${some-value} === yes',
         [],
         'RuntimeException',
       ],

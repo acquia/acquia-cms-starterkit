@@ -208,17 +208,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for content_model Question.
+   * Returns the test data for content-model Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getContentModel(): array {
     return [
-      'content_model' => [
+      'content-model' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
-          'questions' => ['${demo_content} == "no"'],
+          'questions' => ['${demo-content} == "no"'],
         ],
         'question' => "Do you want to enable the content model (yes/no) ?",
         'allowed_values' => [
@@ -231,14 +231,14 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getDemoContent(): array {
     return [
-      'demo_content' => [
+      'demo-content' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
         ],
@@ -253,14 +253,14 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for dam_integration Question.
+   * Returns the test data for dam-integration Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getDamIntegration(): array {
     return [
-      'dam_integration' => [
+      'dam-integration' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
         ],
@@ -275,14 +275,14 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for dam_integration Question.
+   * Returns the test data for dam-integration Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getGdprIntegration(): array {
     return [
-      'gdpr_integration' => [
+      'gdpr-integration' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
         ],
@@ -297,14 +297,14 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsApp(): array {
     return [
-      'nextjs_app' => [
+      'nextjs-app' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_headless',
         ],
@@ -319,17 +319,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsAppSiteUrl(): array {
     return [
-      'nextjs_app_site_url' => [
+      'nextjs-app-site-url' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
+          'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Next.js site url",
         'default_value' => 'http://localhost:3000',
@@ -340,17 +340,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsAppSiteName(): array {
     return [
-      'nextjs_app_site_name' => [
+      'nextjs-app-site-name' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
+          'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Site Name",
         'default_value' => 'Headless Site',
@@ -361,17 +361,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsAppEvnFile(): array {
     return [
-      'nextjs_app_env_file' => [
+      'nextjs-app-env-file' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
+          'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the .env.local file path",
       ],
@@ -386,7 +386,7 @@ class CliTest extends TestCase {
    */
   public static function getSiteStudioApiKey(): array {
     return [
-      'SITESTUDIO_API_KEY' => [
+      'sitestudio-api-key' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code',
         ],
@@ -404,7 +404,7 @@ class CliTest extends TestCase {
    */
   public static function getSiteStudioOrgKey(): array {
     return [
-      'SITESTUDIO_ORG_KEY' => [
+      'sitestudio-org-key' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code',
         ],
@@ -422,7 +422,7 @@ class CliTest extends TestCase {
    */
   public static function getGmapsKey(): array {
     return [
-      'GMAPS_KEY' => [
+      'gmaps-key' => [
         'dependencies' => [
           'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
         ],
@@ -441,18 +441,18 @@ class CliTest extends TestCase {
         [
           $bundle,
           [
-            'demo_content' => 'yes',
+            'demo-content' => 'yes',
           ],
           [
             [
               "modules" => [
                 "require" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo-content'),
                 )),
                 "install" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo-content'),
                 )),
               ],
             ],
@@ -465,19 +465,19 @@ class CliTest extends TestCase {
         [
           $bundle,
           [
-            'content_model' => 'yes',
-            'demo_content' => 'no',
+            'content-model' => 'yes',
+            'demo-content' => 'no',
           ],
           [
             [
               "modules" => [
                 "require" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content-model'),
                 )),
                 "install" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content-model'),
                 )),
               ],
             ],
@@ -490,8 +490,8 @@ class CliTest extends TestCase {
         [
           $bundle,
           [
-            'content_model' => 'no',
-            'demo_content' => 'no',
+            'content-model' => 'no',
+            'demo-content' => 'no',
           ],
           [
             [
@@ -521,7 +521,7 @@ class CliTest extends TestCase {
    */
   public function getUpdatedModulesThemesArray(string $bundle, string $question_type = ''): array {
     switch ($question_type) :
-      case 'content_model':
+      case 'content-model':
         $packages = [
           "acquia_cms_article",
           "acquia_cms_page",
@@ -529,7 +529,7 @@ class CliTest extends TestCase {
         ];
         break;
 
-      case 'demo_content':
+      case 'demo-content':
         $packages = [
           "acquia_cms_article",
           "acquia_cms_page",
