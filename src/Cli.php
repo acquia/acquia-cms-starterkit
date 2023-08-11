@@ -240,4 +240,33 @@ class Cli {
     return $starterKit;
   }
 
+  /**
+   * Function to get options for acms starterkit questions.
+   *
+   * @param string $command_type
+   *   Must be build/install/both.
+   *
+   * @return array
+   *   List of options.
+   */
+  public function getOptions(string $command_type): array {
+    $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
+    $questions = $defaultStarterkits['questions'];
+    if ($command_type === 'build' || $command_type === 'install') {
+      $options = $questions[$command_type];
+    }
+    else {
+      $options = array_merge($questions['build'], $questions['install']);
+    }
+    $output = [];
+    foreach ($options as $key => $value) {
+      $output[$key] = [
+        'description' => $value['question'],
+        'default_value' => $value['default_value'] ?? '',
+      ];
+    }
+
+    return $output;
+  }
+
 }
