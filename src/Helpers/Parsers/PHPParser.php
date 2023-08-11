@@ -16,7 +16,7 @@ class PHPParser {
    * @return string
    *   Returns parsed string.
    */
-  public static function parseEnvVars(string $input) :string {
+  public static function parseEnvVars(string $input): string {
     $pattern = '/\${?(\w+)}?/i';
     return preg_replace_callback($pattern, function ($matches) {
       return isset($matches[1]) ? getenv($matches[1]) : '';

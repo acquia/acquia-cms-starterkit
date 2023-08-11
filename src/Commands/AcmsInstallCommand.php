@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli\Commands;
 
+use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Enum\StatusCodes;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Generic;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
@@ -23,8 +24,7 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class AcmsInstallCommand extends Command {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
+  use StatusMessageTrait, UserInputTrait;
 
   /**
    * A drush command object.
@@ -41,14 +41,24 @@ class AcmsInstallCommand extends Command {
   protected $filesystem;
 
   /**
+   * The AcquiaCMS Cli object.
+   *
+   * @var \AcquiaCMS\Cli\Cli
+   */
+  protected $acquiaCmsCli;
+
+  /**
    * Constructs an instance.
    *
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   A Symfony container class object.
+   * @param \AcquiaCMS\Cli\Cli $cli
+   *   Provides the AcquiaCMS Cli class object.
    */
-  public function __construct(ContainerInterface $container) {
+  public function __construct(ContainerInterface $container, Cli $cli) {
     $this->genericCommand = $container->get(Generic::class);
     $this->filesystem = $container->get(Filesystem::class);
+    $this->acquiaCmsCli = $cli;
     parent::__construct();
   }
 
@@ -56,12 +66,25 @@ class AcmsInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure() :void {
+    $defaultDefinitions = [
+      new InputArgument('name', NULL, "Name of the starter kit"),
+      new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
+    ];
+    $options = $this->acquiaCmsCli->getOptions('both');
+    $quOptions = [];
+    foreach ($options as $option => $value) {
+      // If default value is there.
+      if ($value['default_value']) {
+        $quOptions[] = new InputOption('enable-' . $option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+      }
+      else {
+        $quOptions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+      }
+    }
+    $finalDefinition = array_merge($defaultDefinitions, $quOptions);
     $this->setName("acms:install")
       ->setDescription("Use this command to setup & install site.")
-      ->setDefinition([
-        new InputArgument('name', NULL, "Name of the starter kit"),
-        new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
-      ])
+      ->setDefinition($finalDefinition)
       ->setHelp("The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.");
   }
 
