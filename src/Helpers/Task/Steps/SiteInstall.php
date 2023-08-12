@@ -71,7 +71,6 @@ class SiteInstall {
 
     // Remove without-product-info from argument as it is only used internally.
     unset($args['without-product-info']);
-
     // Iterate arguments i.e options to prepare for site install.
     foreach ($args as $key => $value) {
       if ($value != "true") {

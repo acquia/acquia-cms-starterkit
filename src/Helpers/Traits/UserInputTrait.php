@@ -22,4 +22,34 @@ trait UserInputTrait {
     return ($new_line) ? PHP_EOL . $message : $message;
   }
 
+  /**
+   * Get user input options.
+   *
+   * @param array $options
+   *   List of user and default inputs.
+   * @param string $command_type
+   *   Command type whether its build or install.
+   *
+   * @return array
+   *   Filter input options.
+   */
+  public function getInputOptions(array $options, string $command_type): array {
+    $output = [];
+    if ($command_type === 'install') {
+      $inputOptions = array_filter($options);
+    }
+    else {
+      $inputOptions = array_filter($options, function ($option) {
+        return $option === 'yes';
+      });
+    }
+
+    foreach ($inputOptions as $key => $value) {
+      $arg = str_replace('enable-', '', $key);
+      $output[$arg] = $value;
+    }
+
+    return $output;
+  }
+
 }
