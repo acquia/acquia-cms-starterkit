@@ -30,8 +30,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class AcmsBuildCommand extends Command {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
+  use StatusMessageTrait, UserInputTrait;
   /**
    * The AcquiaCMS BuildTask object.
    *
@@ -114,10 +113,9 @@ class AcmsBuildCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
     try {
-
       $name = $input->getArgument('name');
       $generate = $input->getOption('generate');
-      $site_uri = $input->getOption('uri');
+      $siteUri = $input->getOption('uri');
       $args = [];
       if ($name) {
         $this->validationOptions($name);
@@ -129,15 +127,23 @@ class AcmsBuildCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
-      $helper = $this->getHelper('question');
-      if ($helper instanceof QuestionHelper) {
-        $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $helper);
+      // Get input options for build process.
+      $getBuildArgs = $this->getInputOptions($input->getOptions(), 'build');
+      if (empty($getBuildArgs)) {
+        $helper = $this->getHelper('question');
+        if ($helper instanceof QuestionHelper) {
+          $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $helper);
+        }
       }
+      else {
+        $args['keys'] = $getBuildArgs;
+      }
+
       $this->buildTask->configure($input, $output, $name);
       if (!$generate) {
         $this->buildTask->run($args);
       }
-      $this->buildTask->createBuild($args, $site_uri);
+      $this->buildTask->createBuild($args, $siteUri);
       $this->postBuild($name, $output);
     }
     catch (AcmsCliException $e) {

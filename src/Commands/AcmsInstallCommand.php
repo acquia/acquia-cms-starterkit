@@ -65,7 +65,7 @@ class AcmsInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() :void {
+  protected function configure(): void {
     $defaultDefinitions = [
       new InputArgument('name', NULL, "Name of the starter kit"),
       new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
@@ -75,7 +75,11 @@ class AcmsInstallCommand extends Command {
     foreach ($options as $option => $value) {
       // If default value is there.
       if ($value['default_value']) {
-        $quOptions[] = new InputOption('enable-' . $option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        $optionArg = in_array($option, [
+          'nextjs-app-site-url',
+          'nextjs-app-site-name',
+        ]) ? $option : 'enable-' . $option;
+        $quOptions[] = new InputOption($optionArg, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
       }
       else {
         $quOptions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
@@ -91,33 +95,101 @@ class AcmsInstallCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function execute(InputInterface $input, OutputInterface $output) :int {
-    $build_command = $install_command = [];
-    $build_command[] = $input->getArgument('name');
-    if ($input->getOption('no-interaction')) {
-      $install_command[] = '--no-interaction';
-    }
-    $site_uri = $input->getOption('uri');
+  protected function execute(InputInterface $input, OutputInterface $output): int {
+    $buildCommand = $installCommand = [];
+    $siteUri = $input->getOption('uri');
+    $starterKitName = $input->getArgument('name');
+    // Default install command option and argument.
+    $installCommand = $input->getOption('no-interaction') ? [
+      '--uri=' . $siteUri,
+      '--no-interaction',
+    ] : ['--uri=' . $siteUri];
+    // Default build command option and argument.
+    $buildCommand = $starterKitName ? [
+      'acms:build',
+      $starterKitName,
+    ] : ['acms:build'];
+
     if ($this->filesystem->exists('./vendor/bin/acms')) {
       $this->genericCommand->setCommand('./vendor/bin/acms');
     }
     else {
       $this->genericCommand->setCommand('./bin/acms');
     }
-    $install_command = array_merge($install_command, ['--uri=' . $site_uri]);
-    $build_command = array_merge($build_command, $install_command);
-    $build_command = array_merge(['acms:build'], $build_command);
-    $install_command = array_merge([
+
+    // Final build command.
+    $buildCommand = array_merge($buildCommand, $installCommand);
+
+    // Final install command.
+    $installCommand = array_merge([
       'site:install',
       '--without-product-info',
-    ], $install_command);
+    ], $installCommand);
 
+    $filterArgs = array_filter($input->getOptions());
+    // Get questions arguments/options for build command.
+    $buildArgs = $this->getQuestionArgs('build', $filterArgs, $starterKitName);
     // Execute acms acms:build.
-    $this->genericCommand->prepare($build_command)->run();
+    $this->genericCommand->prepare(array_merge($buildCommand, $buildArgs))->run();
 
+    // Get questions arguments/options for install command.
+    $installArgs = $this->getQuestionArgs('install', $filterArgs, $starterKitName);
     // Execute acms site:install.
-    $this->genericCommand->prepare($install_command)->run();
+    $this->genericCommand->prepare(array_merge($installCommand, $installArgs))->run();
+
     return StatusCodes::OK;
+  }
+
+  /**
+   * Filter question options based on starterkit.
+   *
+   * @param string $command_type
+   *   Command type: install|build.
+   * @param array $args
+   *   List of input options.
+   * @param string|null $starterkit
+   *   Starterkit name.
+   *
+   * @return array
+   *   List of filtered options.
+   */
+  protected function getQuestionArgs(string $command_type, array $args, ?string $starterkit = '') {
+    // Get questions based on command type i.e install or build.
+    $getQuestions = $this->acquiaCmsCli->getInstallerQuestions($command_type);
+    $output = [];
+    // Iterate questions to prepare the object pass into
+    // install or build command.
+    foreach ($getQuestions as $key => $value) {
+      $dependencyStarterkit = $value['dependencies']['starter_kits'];
+      // Check whether starterkit name parse some questions from acms.yml.
+      if (!empty($starterkit) &&
+      ($dependencyStarterkit == $starterkit ||
+      strpos($dependencyStarterkit, substr($starterkit, 11)))) {
+        // Check whether input optins consists of NEXTJS related options
+        // then unset those options.
+        if (isset($value['default_value'])) {
+          if (strripos($starterkit, 'headless') && $args["enable-nextjs-app"] === "no") {
+            unset($args['nextjs-app-site-url']);
+            unset($args['nextjs-app-site-name']);
+          }
+          // Prepare key-value pair to render into respective commands.
+          $arg = 'enable-' . $key;
+          if (isset($args[$arg]) && $args[$arg] !== 'no') {
+            $output[] = "--$arg=$args[$arg]";
+          }
+          if (in_array($key, array_keys($args))) {
+            $output[] = "--$key=$args[$key]";
+          }
+        }
+        else {
+          if (in_array($key, array_keys($args))) {
+            $output[] = "--$key=$args[$key]";
+          }
+        }
+      }
+    }
+
+    return $output;
   }
 
 }

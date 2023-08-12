@@ -27,8 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SiteInstallCommand extends Command {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
+  use StatusMessageTrait, UserInputTrait;
 
   /**
    * The AcquiaCMS Cli object.
@@ -118,7 +117,8 @@ class SiteInstallCommand extends Command {
     foreach ($installQuestions as $option => $value) {
       // If default value is there.
       if ($value['default_value']) {
-        $quOptions[] = new InputOption('enable-' . $option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        $optionArg = $option === 'nextjs-app' ? 'enable-' . $option : $option;
+        $quOptions[] = new InputOption($optionArg, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
       }
       else {
         $quOptions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
@@ -143,16 +143,24 @@ class SiteInstallCommand extends Command {
         $this->acquiaCmsCli->printLogo();
         $this->acquiaCmsCli->printHeadline();
       }
-      $site_uri = $input->getOption('uri');
+      $siteUri = $input->getOption('uri');
       // Get starterkit name from build file.
-      [$starterkit_machine_name, $starterkit_name] = $this->installTask->getStarterKitName($site_uri);
-      $helper = $this->getHelper('question');
-      if ($helper instanceof QuestionHelper) {
-        $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkit_machine_name, 'install', $helper);
+      [$starterkitMachineName, $starterkitName] = $this->installTask->getStarterKitName($siteUri);
+      // Get user input options for install process.
+      $getInstallArgs = $this->getInputOptions($input->getOptions(), 'install');
+      if (empty($getInstallArgs)) {
+        $helper = $this->getHelper('question');
+        if ($helper instanceof QuestionHelper) {
+          $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkitMachineName, 'install', $helper);
+        }
       }
-      $this->installTask->configure($input, $output, $starterkit_machine_name, $site_uri);
+      else {
+        $args['keys'] = $getInstallArgs;
+      }
+
+      $this->installTask->configure($input, $output, $starterkitMachineName, $siteUri);
       $this->installTask->run($args);
-      $this->postSiteInstall($starterkit_name, $output);
+      $this->postSiteInstall($starterkitName, $output);
     }
     catch (AcmsCliException $e) {
       $output->writeln("<error>" . $e->getMessage() . "</error>");

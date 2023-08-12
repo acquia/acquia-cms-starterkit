@@ -173,7 +173,7 @@ class Cli {
   /**
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
-  public function getInstallerQuestions(string $question_type) :array {
+  public function getInstallerQuestions(string $question_type): array {
     $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
     return $fileContent['questions'][$question_type] ?? [];
   }
@@ -263,7 +263,54 @@ class Cli {
       $output[$key] = [
         'description' => $value['question'],
         'default_value' => $value['default_value'] ?? '',
+        'startekit_name' => $value['dependencies']['starter_kits'],
       ];
+    }
+
+    return $output;
+  }
+
+  /**
+   * Get question options based on starterkit.
+   *
+   * @param string $command_type
+   *   Command type: install|build.
+   * @param array $args
+   *   List of input options.
+   * @param string|null $starterkit
+   *   Starterkit name.
+   *
+   * @return array
+   *   List of filtered options.
+   */
+  public function filterOptionsByStarterKit(string $command_type, array $args, ?string $starterkit = ''): array {
+    $getQuestions = $this->getInstallerQuestions($command_type);
+    $output = [];
+    foreach ($getQuestions as $key => $value) {
+      $dependencyStarterkit = $value['dependencies']['starter_kits'];
+      if (!empty($starterkit) &&
+      ($dependencyStarterkit == $starterkit ||
+      strpos($dependencyStarterkit, substr($starterkit, 11)))) {
+
+        if (isset($value['default_value'])) {
+          if (strripos($starterkit, 'headless') && $args["enable-nextjs-app"] === "no") {
+            unset($args['nextjs-app-site-url']);
+            unset($args['nextjs-app-site-name']);
+          }
+          $arg = 'enable-' . $key;
+          if (isset($args[$arg]) && $args[$arg] !== 'no') {
+            $output[$arg] = $args[$arg];
+          }
+          else {
+            $output[$key] = $args[$key];
+          }
+        }
+        else {
+          if (in_array($key, array_keys($args))) {
+            $output[$key] = $args[$key];
+          }
+        }
+      }
     }
 
     return $output;

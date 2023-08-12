@@ -126,7 +126,7 @@ class BuildTask {
    * @poram Symfony\Component\Console\Command\Command $output
    *   The site:build Symfony console command object.
    */
-  public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
+  public function configure(InputInterface $input, OutputInterface $output, string $bundle): void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
@@ -138,7 +138,7 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function run(array $args) :void {
+  public function run(array $args): void {
     $installedDrupalVersion = $this->validateDrupal->execute();
     if (!$installedDrupalVersion) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
