@@ -297,12 +297,14 @@ class Cli {
             unset($args['nextjs-app-site-url']);
             unset($args['nextjs-app-site-name']);
           }
-          $arg = 'enable-' . $key;
-          if (isset($args[$arg]) && $args[$arg] !== 'no') {
-            $output[$arg] = $args[$arg];
-          }
           else {
-            $output[$key] = $args[$key];
+            $arg = 'enable-' . $key;
+            if (isset($args[$arg]) && $args[$arg] !== 'no') {
+              $output[$arg] = $args[$arg];
+            }
+            else {
+              $output[$key] = $args[$key];
+            }
           }
         }
         else {
