@@ -222,9 +222,9 @@ class InstallTask {
 
     // Get options based on starterkit.
     $starterKitInstallOptions = $this->acquiaCmsCli->filterOptionsByStarterKit('install', array_filter($this->input->getOptions()), $this->bundle);
+
     // Only options which is acceptable by drush.
     $filterArgs = $this->filterInputOptions(array_filter($this->input->getOptions()), $this->bundle);
-
     // Prepare site install command options.
     $siteInstallArgs = array_diff($filterArgs, $starterKitInstallOptions) + [
       'name' => $starterkitName,
@@ -360,6 +360,11 @@ class InstallTask {
   protected function filterInputOptions(array $options, string $starterkit): array {
     switch ($starterkit) {
       case 'acquia_cms_headless':
+        if ($options['enable-nextjs-app'] === 'no') {
+          unset($options['enable-nextjs-app']);
+          unset($options['nextjs-app-site-url']);
+          unset($options['nextjs-app-site-name']);
+        }
         unset($options['sitestudio-api-key']);
         unset($options['sitestudio-org-key']);
         break;
