@@ -97,7 +97,7 @@ class AcmsBuildCommand extends Command {
     $buildQuestions = $this->acquiaCmsCli->getOptions('build');
     // Iterate build questions to prepare for input option method.
     foreach ($buildQuestions as $option => $value) {
-      $definitions[] = new InputOption("enable-" . $option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+      $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
     }
     $this->setName("acms:build")
       ->setDescription("Use this command to build composer dependencies.")

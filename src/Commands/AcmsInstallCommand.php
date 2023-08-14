@@ -70,15 +70,12 @@ class AcmsInstallCommand extends Command {
       new InputArgument('name', NULL, "Name of the starter kit"),
       new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
     ];
+    $definitions = array_merge($definitions, $this->getDrushOptions());
     $options = $this->acquiaCmsCli->getOptions();
     foreach ($options as $option => $value) {
       // If default value is there.
       if ($value['default_value']) {
-        $optionArg = in_array($option, [
-          'nextjs-app-site-url',
-          'nextjs-app-site-name',
-        ]) ? $option : 'enable-' . $option;
-        $definitions[] = new InputOption($optionArg, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
       }
       else {
         $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
@@ -125,6 +122,7 @@ class AcmsInstallCommand extends Command {
     ], $installCommand);
 
     $filterArgs = array_filter($input->getOptions());
+
     // Get questions arguments/options for build command.
     $buildArgs = $this->getQuestionArgs('build', $filterArgs, $starterKitName);
     // Execute acms acms:build.
@@ -166,15 +164,12 @@ class AcmsInstallCommand extends Command {
         // Check whether input optins consists of NEXTJS related options
         // then unset those options.
         if (isset($value['default_value'])) {
-          if (strripos($starterkit, 'headless') && $args["enable-nextjs-app"] === "no") {
+          if (strripos($starterkit, 'headless') && $args["nextjs-app"] === "no") {
             unset($args['nextjs-app-site-url']);
             unset($args['nextjs-app-site-name']);
+            unset($args['nextjs-app-env-file']);
           }
           // Prepare key-value pair to render into respective commands.
-          $arg = 'enable-' . $key;
-          if (isset($args[$arg]) && $args[$arg] !== 'no') {
-            $output[] = "--$arg=$args[$arg]";
-          }
           if (in_array($key, array_keys($args))) {
             $output[] = "--$key=$args[$key]";
           }
