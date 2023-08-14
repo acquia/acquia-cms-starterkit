@@ -128,18 +128,31 @@ class Cli {
 
   /**
    * Returns an array of starter-kits defined in acms.yml file.
+   *
+   * @param string $type
+   *   The param to identify which data to return.
    */
-  public function getStarterKits(): array {
-    $starterkits = [];
+  public function getStarterKitsAndQuestions(string $type = ''): array {
     $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
     $starterkits = $defaultStarterkits['starter_kits'];
+    $questions = $defaultStarterkits['questions'];
     // Check if user defined starterkit file exist in root directory.
     if ($this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
-      $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
+      $userDefinedStarterkitsAndQuestions = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
       // Check if starter_kits existis else assign empty array.
-      $userDefinedStarterkits = $userDefinedStarterkits['starter_kits'] ?? [];
+      $userDefinedStarterkits = $userDefinedStarterkitsAndQuestions['starter_kits'] ?? [];
+      // Check if starter_kits existis else assign empty array.
+      $userDefinedQuestions = $userDefinedStarterkitsAndQuestions['questions'] ?? [];
       // Merge default and user defined starterkits.
       $starterkits = array_merge($starterkits, $userDefinedStarterkits);
+      // Merge default and user defined questions.
+      $questions = array_merge($questions, $userDefinedQuestions);
+    }
+    if ($type == 'starterkits') {
+      return $starterkits;
+    }
+    elseif ($type == 'questions') {
+      return $questions;
     }
 
     // Send each starterkit for validation.
@@ -147,7 +160,18 @@ class Cli {
     $this->starterKitValidation->validateStarterKits($schema, $starterkits);
 
     // Return starterkit list.
-    return $starterkits;
+    return [
+      'starter_kits' => $starterkits,
+      'questions' => $questions,
+    ];
+  }
+
+  /**
+   * Returns an array of starter-kits defined in acms.yml file.
+   */
+  public function getStarterKits(): array {
+    // Return starterkit list.
+    return $this->getStarterKitsAndQuestions('starterkits');
   }
 
   /**
@@ -249,16 +273,16 @@ class Cli {
    * @return array
    *   List of options.
    */
-  public function getOptions(string $command_type): array {
-    $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
-    $questions = $defaultStarterkits['questions'];
+  public function getOptions(string $command_type = ''): array {
+    $questions = $this->getStarterKitsAndQuestions("questions");
+    $options = $output = [];
+    // $questions = $starterkitsQuestions['questions'];
     if ($command_type === 'build' || $command_type === 'install') {
       $options = $questions[$command_type];
     }
     else {
       $options = array_merge($questions['build'], $questions['install']);
     }
-    $output = [];
     foreach ($options as $key => $value) {
       $output[$key] = [
         'description' => $value['question'],

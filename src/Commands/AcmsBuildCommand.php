@@ -88,23 +88,20 @@ class AcmsBuildCommand extends Command {
    */
   protected function configure(): void {
     // Default definitions.
-    $defaultDefinitions = [
+    $definitions = [
       new InputArgument('name', NULL, "Name of the starter kit"),
       new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
       new InputOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require."),
     ];
     // Get acquia CMS build questions.
     $buildQuestions = $this->acquiaCmsCli->getOptions('build');
-    $quOptions = [];
     // Iterate build questions to prepare for input option method.
     foreach ($buildQuestions as $option => $value) {
-      $quOptions[] = new InputOption("enable-" . $option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+      $definitions[] = new InputOption("enable-" . $option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
     }
-    // Merge default and question options.
-    $finalDefinition = array_merge($defaultDefinitions, $quOptions);
     $this->setName("acms:build")
       ->setDescription("Use this command to build composer dependencies.")
-      ->setDefinition($finalDefinition)
+      ->setDefinition($definitions)
       ->setHelp("The <info>acms:build</info> command to build composer dependencies & downloads it based on user selected use case.");
   }
 

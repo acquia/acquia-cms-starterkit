@@ -66,12 +66,11 @@ class AcmsInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure(): void {
-    $defaultDefinitions = [
+    $definitions = [
       new InputArgument('name', NULL, "Name of the starter kit"),
       new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
     ];
-    $options = $this->acquiaCmsCli->getOptions('both');
-    $quOptions = [];
+    $options = $this->acquiaCmsCli->getOptions();
     foreach ($options as $option => $value) {
       // If default value is there.
       if ($value['default_value']) {
@@ -79,16 +78,15 @@ class AcmsInstallCommand extends Command {
           'nextjs-app-site-url',
           'nextjs-app-site-name',
         ]) ? $option : 'enable-' . $option;
-        $quOptions[] = new InputOption($optionArg, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        $definitions[] = new InputOption($optionArg, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
       }
       else {
-        $quOptions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
       }
     }
-    $finalDefinition = array_merge($defaultDefinitions, $quOptions);
     $this->setName("acms:install")
       ->setDescription("Use this command to setup & install site.")
-      ->setDefinition($finalDefinition)
+      ->setDefinition($definitions)
       ->setHelp("The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.");
   }
 
