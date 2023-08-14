@@ -37,7 +37,6 @@ trait UserInputTrait {
    *   Filter input options.
    */
   public function getInputOptions(array $options, string $command_type): array {
-    $output = [];
     if ($command_type === 'install') {
       $inputOptions = array_filter($options);
     }
@@ -47,12 +46,7 @@ trait UserInputTrait {
       });
     }
 
-    foreach ($inputOptions as $key => $value) {
-      $arg = str_replace('enable-', '', $key);
-      $output[$arg] = $value;
-    }
-
-    return $output;
+    return $inputOptions;
   }
 
   /**

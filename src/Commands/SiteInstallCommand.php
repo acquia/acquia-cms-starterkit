@@ -92,8 +92,7 @@ class SiteInstallCommand extends Command {
     foreach ($installQuestions as $option => $value) {
       // If default value is there.
       if ($value['default_value']) {
-        $optionArg = $option === 'nextjs-app' ? 'enable-' . $option : $option;
-        $definitions[] = new InputOption($optionArg, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
       }
       else {
         $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
