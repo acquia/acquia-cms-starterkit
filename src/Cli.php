@@ -198,8 +198,8 @@ class Cli {
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
   public function getInstallerQuestions(string $question_type): array {
-    $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
-    return $fileContent['questions'][$question_type] ?? [];
+    $fileContent = $this->getStarterKitsAndQuestions('questions');
+    return $fileContent[$question_type] ?? [];
   }
 
   /**
@@ -320,6 +320,7 @@ class Cli {
           if (strripos($starterkit, 'headless') && $args["enable-nextjs-app"] === "no") {
             unset($args['nextjs-app-site-url']);
             unset($args['nextjs-app-site-name']);
+            unset($args['nextjs-app-env-file']);
           }
           else {
             $arg = 'enable-' . $key;
