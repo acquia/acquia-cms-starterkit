@@ -52,6 +52,7 @@ class AskQuestions {
    * Providing input to user, asking to provide key.
    */
   public function askKeysQuestions(
+    array $getBuildArgs,
     InputInterface $input,
     OutputInterface $output,
     string $bundle,
@@ -60,7 +61,6 @@ class AskQuestions {
     // Get all questions for user selected use-case defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions($question_type), $bundle);
     $processedQuestions = $this->installerQuestions->process($questions);
-
     // Initialize the value with default answer for question, so that
     // if any question is dependent on other question which is skipped,
     // we can use the value for that question to make sure the cli
@@ -68,15 +68,15 @@ class AskQuestions {
     // @see AcquiaCMS\Cli\Helpers::shouldAskQuestion().
     $userInputValues = $processedQuestions['default'];
     foreach ($questions as $key => $question) {
-      $envVar = $this->installerQuestions->getEnvValue($question, $key);
-      if (empty($envVar)) {
+      $providedValue = $getBuildArgs[$key] ?? $this->installerQuestions->getEnvValue($question, $key);
+      if (empty($providedValue)) {
         if ($this->installerQuestions->shouldAskQuestion($question, $userInputValues)) {
 
           $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output, $helper);
         }
       }
       else {
-        $userInputValues[$key] = $envVar;
+        $userInputValues[$key] = $providedValue;
       }
     }
 

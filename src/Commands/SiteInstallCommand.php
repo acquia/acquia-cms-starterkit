@@ -120,16 +120,10 @@ class SiteInstallCommand extends Command {
       [$starterkitMachineName, $starterkitName] = $this->installTask->getStarterKitName($siteUri);
       // Get user input options for install process.
       $getInstallArgs = $this->getInputOptions($input->getOptions(), 'install');
-      if (empty($getInstallArgs)) {
-        $helper = $this->getHelper('question');
-        if ($helper instanceof QuestionHelper) {
-          $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkitMachineName, 'install', $helper);
-        }
+      $helper = $this->getHelper('question');
+      if ($helper instanceof QuestionHelper) {
+        $args['keys'] = $this->askQuestions->askKeysQuestions($getInstallArgs, $input, $output, $starterkitMachineName, 'install', $helper);
       }
-      else {
-        $args['keys'] = $getInstallArgs;
-      }
-
       $this->installTask->configure($input, $output, $starterkitMachineName, $siteUri);
       $this->installTask->run($args);
       $this->postSiteInstall($starterkitName, $output);
