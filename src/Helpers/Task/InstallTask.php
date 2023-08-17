@@ -11,6 +11,7 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class InstallTask {
 
-  use StatusMessageTrait;
+  use StatusMessageTrait, UserInputTrait;
 
   /**
    * Holds the Acquia CMS cli object.
@@ -220,13 +221,10 @@ class InstallTask {
       $starterkitName = $this->starterKits[$this->bundle]['name'];
     }
 
-    // Get options based on starterkit.
-    $starterKitInstallOptions = $this->acquiaCmsCli->filterOptionsByStarterKit('install', array_filter($this->input->getOptions()), $this->bundle);
-
     // Only options which is acceptable by drush.
-    $filterArgs = $this->filterInputOptions(array_filter($this->input->getOptions()), $this->bundle);
+    $filterArgs = $this->filterInputOptions(array_filter($this->input->getOptions()));
     // Prepare site install command options.
-    $siteInstallArgs = array_diff($filterArgs, $starterKitInstallOptions) + [
+    $siteInstallArgs = $filterArgs + [
       'name' => $starterkitName,
     ];
     $this->siteInstall->execute($siteInstallArgs);
@@ -344,47 +342,6 @@ class InstallTask {
       $this->buildInformation['starter_kit'],
       $starter_kit_name,
     ];
-  }
-
-  /**
-   * Filter input install options.
-   *
-   * @param array $options
-   *   Install input options.
-   * @param string $starterkit
-   *   Starter kit name.
-   *
-   * @return array
-   *   Filtered input options.
-   */
-  protected function filterInputOptions(array $options, string $starterkit): array {
-    switch ($starterkit) {
-      case 'acquia_cms_headless':
-        if ($options['enable-nextjs-app'] === 'no') {
-          unset($options['enable-nextjs-app']);
-          unset($options['nextjs-app-site-url']);
-          unset($options['nextjs-app-site-name']);
-        }
-        unset($options['sitestudio-api-key']);
-        unset($options['sitestudio-org-key']);
-        break;
-
-      case 'acquia_cms_enterprise_low_code':
-        unset($options['enable-nextjs-app']);
-        unset($options['nextjs-app-site-url']);
-        unset($options['nextjs-app-site-name']);
-        break;
-
-      case 'acquia_cms_community':
-        unset($options['enable-nextjs-app']);
-        unset($options['nextjs-app-site-url']);
-        unset($options['nextjs-app-site-name']);
-        unset($options['sitestudio-api-key']);
-        unset($options['sitestudio-org-key']);
-        break;
-    }
-
-    return $options;
   }
 
 }

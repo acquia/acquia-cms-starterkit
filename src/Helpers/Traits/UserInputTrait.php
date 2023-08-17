@@ -79,4 +79,60 @@ trait UserInputTrait {
     ];
   }
 
+  /**
+   * Filter input install options.
+   *
+   * @param array $options
+   *   Install input options.
+   * @param string|null $starterkit
+   *   Starter kit name.
+   *
+   * @return array
+   *   Filtered input options.
+   */
+  public function filterInputOptions(array $options, ?string $starterkit = ''): array {
+    switch ($starterkit) {
+      case 'acquia_cms_headless':
+        if ($options['nextjs-app'] === 'no') {
+          unset($options['nextjs-app']);
+          unset($options['nextjs-app-site-url']);
+          unset($options['nextjs-app-site-name']);
+        }
+        unset($options['sitestudio-api-key']);
+        unset($options['sitestudio-org-key']);
+        break;
+
+      case 'acquia_cms_enterprise_low_code':
+        unset($options['nextjs-app']);
+        unset($options['nextjs-app-site-url']);
+        unset($options['nextjs-app-site-name']);
+        break;
+
+      case 'acquia_cms_community':
+        unset($options['nextjs-app']);
+        unset($options['nextjs-app-site-url']);
+        unset($options['nextjs-app-site-name']);
+        unset($options['sitestudio-api-key']);
+        unset($options['sitestudio-org-key']);
+        break;
+
+      default:
+        unset($options['demo-content']);
+        unset($options['content-model']);
+        unset($options['dam-integration']);
+        unset($options['gdpr-integration']);
+        unset($options['nextjs-app']);
+        unset($options['nextjs-app-site-url']);
+        unset($options['nextjs-app-site-name']);
+        unset($options['sitestudio-api-key']);
+        unset($options['sitestudio-org-key']);
+        unset($options['without-product-info']);
+        unset($options['no-interaction']);
+        unset($options['uri']);
+        break;
+    }
+
+    return $options;
+  }
+
 }

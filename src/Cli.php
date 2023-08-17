@@ -3,6 +3,7 @@
 namespace AcquiaCMS\Cli;
 
 use AcquiaCMS\Cli\Validation\StarterKitValidation;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -12,6 +13,8 @@ use Symfony\Component\Yaml\Yaml;
  * Provides the object for an Acquia CMS starter-kit cli.
  */
 class Cli {
+
+  use UserInputTrait;
 
   /**
    * A message that gets displayed when running any starter-kit cli command.
@@ -137,7 +140,8 @@ class Cli {
     $starterkits = $defaultStarterkits['starter_kits'];
     $questions = $defaultStarterkits['questions'];
     // Check if user defined starterkit file exist in root directory.
-    if ($this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
+    if (($this->rootDirectory != $this->projectDirectory) &&
+    $this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
       $userDefinedStarterkitsAndQuestions = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
       // Check if starter_kits existis else assign empty array.
       $userDefinedStarterkits = $userDefinedStarterkitsAndQuestions['starter_kits'] ?? [];
@@ -164,14 +168,6 @@ class Cli {
       'starter_kits' => $starterkits,
       'questions' => $questions,
     ];
-  }
-
-  /**
-   * Returns an array of starter-kits defined in acms.yml file.
-   */
-  public function getStarterKits(): array {
-    // Return starterkit list.
-    return $this->getStarterKitsAndQuestions('starterkits');
   }
 
   /**
@@ -295,7 +291,7 @@ class Cli {
   }
 
   /**
-   * Get question options based on starterkit.
+   * Filter question options based on starterkit.
    *
    * @param string $command_type
    *   Command type: install|build.
@@ -308,35 +304,43 @@ class Cli {
    *   List of filtered options.
    */
   public function filterOptionsByStarterKit(string $command_type, array $args, ?string $starterkit = ''): array {
+    // Get questions based on command type i.e install or build.
     $getQuestions = $this->getInstallerQuestions($command_type);
     $output = [];
-    foreach ($getQuestions as $key => $value) {
-      $dependencyStarterkit = $value['dependencies']['starter_kits'];
-      if (!empty($starterkit) &&
-      ($dependencyStarterkit == $starterkit ||
-      strpos($dependencyStarterkit, substr($starterkit, 11)))) {
-
-        if (isset($value['default_value'])) {
-          if (strripos($starterkit, 'headless') && $args["enable-nextjs-app"] === "no") {
-            unset($args['nextjs-app-site-url']);
-            unset($args['nextjs-app-site-name']);
-            unset($args['nextjs-app-env-file']);
+    // Iterate questions to prepare the object pass into
+    // install or build command.
+    if (!empty($starterkit)) {
+      foreach ($getQuestions as $key => $value) {
+        $dependencyStarterkit = $value['dependencies']['starter_kits'];
+        // Check whether starterkit name parse some questions from acms.yml.
+        if (($dependencyStarterkit == $starterkit ||
+        strpos($dependencyStarterkit, substr($starterkit, 11)))) {
+          // Check whether input optins consists of NEXTJS related options
+          // then unset those options.
+          if (isset($value['default_value'])) {
+            if (strripos($starterkit, 'headless') && $args["nextjs-app"] === "no") {
+              unset($args['nextjs-app-site-url']);
+              unset($args['nextjs-app-site-name']);
+              unset($args['nextjs-app-env-file']);
+            }
+            // Prepare key-value pair to render into respective commands.
+            if (in_array($key, array_keys($args))) {
+              $output[] = "--$key=$args[$key]";
+            }
           }
           else {
-            $arg = 'enable-' . $key;
-            if (isset($args[$arg]) && $args[$arg] !== 'no') {
-              $output[$arg] = $args[$arg];
-            }
-            else {
-              $output[$key] = $args[$key];
+            if (in_array($key, array_keys($args))) {
+              $output[] = "--$key=$args[$key]";
             }
           }
         }
-        else {
-          if (in_array($key, array_keys($args))) {
-            $output[$key] = $args[$key];
-          }
-        }
+      }
+    }
+
+    // Prepare pattern for drush options as install command eligible for this.
+    if ($command_type === 'install') {
+      foreach ($this->filterInputOptions($args) as $key => $value) {
+        $output[] = $key == 'yes' ? "--$key" : "--$key=$value";
       }
     }
 
