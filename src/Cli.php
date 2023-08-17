@@ -140,7 +140,11 @@ class Cli {
       $userDefinedStarterkits = $userDefinedStarterkits['starter_kits'] ?? [];
       // Merge default and user defined starterkits.
       $starterkits = array_merge($starterkits, $userDefinedStarterkits);
-      $this->starterKitValidation->validateStarterKit($starterkits);
+    }
+
+    // Send each starterkit for validation.
+    foreach ($starterkits as $starterkit) {
+      $this->starterKitValidation->validateStarterKitSchema($starterkit);
     }
 
     // Return starterkit list.

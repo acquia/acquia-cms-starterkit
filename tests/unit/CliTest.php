@@ -75,8 +75,11 @@ class CliTest extends TestCase {
    * Tests starter-kit validation.
    */
   public function testValidateStarterKit(): void {
-    $starterKit = $this->getAcmsFileContents()['starter_kits'];
-    $output = $this->starterKitValidation->validateStarterKit($starterKit);
+    $starterKits = $this->getAcmsFileContents()['starter_kits'];
+    $output = [];
+    foreach ($starterKits as $starterKit) {
+      $output = $this->starterKitValidation->validateStarterKitSchema($starterKit);
+    }
     $this->assertIsArray($output);
   }
 
