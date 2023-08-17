@@ -151,7 +151,7 @@ class AcmsBuildCommand extends Command {
    *   A name of the user selected use-case.
    */
   protected function validationOptions(string $name): bool {
-    $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
+    $starterKits = array_keys($this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits'));
     if (!in_array($name, $starterKits)) {
       throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
     }
@@ -164,7 +164,7 @@ class AcmsBuildCommand extends Command {
   protected function askBundleQuestion(InputInterface $input, OutputInterface $output): string {
     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');
-    $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
+    $bundles = array_keys($this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits'));
     $this->renderStarterKits($output);
     $starterKit = "acquia_cms_enterprise_low_code";
     $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
@@ -189,7 +189,7 @@ class AcmsBuildCommand extends Command {
   protected function renderStarterKits(OutputInterface $output): void {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
-    $starter_kits = $this->acquiaCmsCli->getStarterKits();
+    $starter_kits = $this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits');
     $total = count($starter_kits);
     $key = 0;
     foreach ($starter_kits as $id => $starter_kit) {

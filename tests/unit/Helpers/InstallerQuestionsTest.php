@@ -97,7 +97,7 @@ class InstallerQuestionsTest extends TestCase {
    *
    * @dataProvider providerBundleBuild
    */
-  public function testGetQuestionsForBundleBuild(string $bundle, array $questions) :void {
+  public function testGetQuestionsForBundleBuild(string $bundle, array $questions): void {
     $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsBuildQuestions, $bundle));
   }
 
@@ -111,7 +111,7 @@ class InstallerQuestionsTest extends TestCase {
    *
    * @dataProvider providerBundleInstall
    */
-  public function testGetQuestionsForBundleInstall(string $bundle, array $questions) :void {
+  public function testGetQuestionsForBundleInstall(string $bundle, array $questions): void {
     $this->assertEquals($questions, $this->installerQuestions->getQuestions($this->acmsInstallQuestions, $bundle));
   }
 
@@ -129,7 +129,7 @@ class InstallerQuestionsTest extends TestCase {
    *
    * @dataProvider providerDefaultValue
    */
-  public function testQuestionDefaultValue(array $actual, string $expected, string $key = '', array $envVariables = []) :void {
+  public function testQuestionDefaultValue(array $actual, string $expected, string $key = '', array $envVariables = []): void {
     if ($envVariables) {
       foreach ($envVariables as $envVariable => $value) {
         putenv("$envVariable=$value");
@@ -152,7 +152,7 @@ class InstallerQuestionsTest extends TestCase {
    *
    * @dataProvider dataShouldAskQuestion
    */
-  public function testShouldAskQuestion(array $question, array $userInputValues, bool $expected, string $exception = '') : void {
+  public function testShouldAskQuestion(array $question, array $userInputValues, bool $expected, string $exception = ''): void {
     if ($exception) {
       $this->expectExceptionMessageMatches($exception);
     }
@@ -231,7 +231,7 @@ class InstallerQuestionsTest extends TestCase {
    * @return array[]
    *   Sets of arguments to pass to the test method.
    */
-  public function providerBundleBuild() :array {
+  public function providerBundleBuild(): array {
     return [
       [
         'acquia_cms_enterprise_low_code',
@@ -268,7 +268,7 @@ class InstallerQuestionsTest extends TestCase {
    * @return array[]
    *   Sets of arguments to pass to the test method.
    */
-  public function providerBundleInstall() :array {
+  public function providerBundleInstall(): array {
     return [
       [
         'acquia_cms_enterprise_low_code',

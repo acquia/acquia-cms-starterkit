@@ -124,65 +124,16 @@ class AcmsInstallCommand extends Command {
     $filterArgs = array_filter($input->getOptions());
 
     // Get questions arguments/options for build command.
-    $buildArgs = $this->getQuestionArgs('build', $filterArgs, $starterKitName);
+    $buildArgs = $this->acquiaCmsCli->filterOptionsByStarterKit('build', $filterArgs, $starterKitName);
     // Execute acms acms:build.
     $this->genericCommand->prepare(array_merge($buildCommand, $buildArgs))->run();
 
     // Get questions arguments/options for install command.
-    $installArgs = $this->getQuestionArgs('install', $filterArgs, $starterKitName);
+    $installArgs = $this->acquiaCmsCli->filterOptionsByStarterKit('install', $filterArgs, $starterKitName);
     // Execute acms site:install.
     $this->genericCommand->prepare(array_merge($installCommand, $installArgs))->run();
 
     return StatusCodes::OK;
-  }
-
-  /**
-   * Filter question options based on starterkit.
-   *
-   * @param string $command_type
-   *   Command type: install|build.
-   * @param array $args
-   *   List of input options.
-   * @param string|null $starterkit
-   *   Starterkit name.
-   *
-   * @return array
-   *   List of filtered options.
-   */
-  protected function getQuestionArgs(string $command_type, array $args, ?string $starterkit = '') {
-    // Get questions based on command type i.e install or build.
-    $getQuestions = $this->acquiaCmsCli->getInstallerQuestions($command_type);
-    $output = [];
-    // Iterate questions to prepare the object pass into
-    // install or build command.
-    foreach ($getQuestions as $key => $value) {
-      $dependencyStarterkit = $value['dependencies']['starter_kits'];
-      // Check whether starterkit name parse some questions from acms.yml.
-      if (!empty($starterkit) &&
-      ($dependencyStarterkit == $starterkit ||
-      strpos($dependencyStarterkit, substr($starterkit, 11)))) {
-        // Check whether input optins consists of NEXTJS related options
-        // then unset those options.
-        if (isset($value['default_value'])) {
-          if (strripos($starterkit, 'headless') && $args["nextjs-app"] === "no") {
-            unset($args['nextjs-app-site-url']);
-            unset($args['nextjs-app-site-name']);
-            unset($args['nextjs-app-env-file']);
-          }
-          // Prepare key-value pair to render into respective commands.
-          if (in_array($key, array_keys($args))) {
-            $output[] = "--$key=$args[$key]";
-          }
-        }
-        else {
-          if (in_array($key, array_keys($args))) {
-            $output[] = "--$key=$args[$key]";
-          }
-        }
-      }
-    }
-
-    return $output;
   }
 
 }
