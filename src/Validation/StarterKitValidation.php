@@ -29,76 +29,59 @@ class StarterKitValidation {
   }
 
   /**
-   * Schema for starter-kit.
+   * Loop each starter-kit and send it for validation.
    */
-  public function validateStarterKitSchema(array &$starterkit): array {
-    $schema = [
-      'name' => [
-        'type' => 'string',
-        'is_required' => TRUE,
-      ],
-      'description' => [
-        'type' => 'string',
-        'is_required' => TRUE,
-      ],
-      'modules' => [
-        'require' => [
-          'type' => 'array',
-          'is_required' => FALSE,
-        ],
-        'install' => [
-          'type' => 'array',
-          'is_required' => FALSE,
-        ],
-        'type' => 'array',
-        'is_required' => FALSE,
-      ],
-      'themes' => [
-        'require' => [
-          'type' => 'array',
-          'is_required' => FALSE,
-        ],
-        'install' => [
-          'type' => 'array',
-          'is_required' => FALSE,
-        ],
-        'admin' => [
-          'type' => 'string',
-          'is_required' => FALSE,
-        ],
-        'default' => [
-          'type' => 'string',
-          'is_required' => FALSE,
-        ],
-        'type' => 'array',
-        'is_required' => FALSE,
-      ],
-    ];
-    $this->validateStarterKit($schema, $starterkit);
+  public function validateStarterKits(array $schema, array &$starterkits): void {
+    foreach ($starterkits as $starterkit) {
+      $this->validateStarterKit($schema, $starterkit);
+    }
+  }
 
-    return $schema;
+  /**
+   * Validates array for starter-kit.
+   */
+  public function validateArray($schema, $starterkit, $key): void {
+    if ($schema['is_required'] ?
+      ((!isset($starterkit) || empty($starterkit))  && !is_array($starterkit)) :
+      (empty($starterkit) || !is_array($starterkit))) {
+      $required = $schema['is_required'] ? 'is mandatory and ' : '';
+      throw new AcmsCliException($this->arrayfield . ' => ' . $key . ' field ' . $required . 'should be in array format, in ' . $this->starterKitName . ' starterkit.');
+    }
+  }
+
+  /**
+   * Validates string for starter-kit.
+   */
+  public function validateString($schema, $starterkit, $key): void {
+    if ($schema['is_required'] ?
+      ((!isset($starterkit) || empty($starterkit))  && !is_string($starterkit)) :
+      (empty($starterkit) || !is_string($starterkit))) {
+      $required = $schema['is_required'] ? 'is mandatory and ' : '';
+      throw new AcmsCliException($key . ' field ' . $required . 'should be in string format, in starterkit.');
+    }
   }
 
   /**
    * Validates each key value for starter-kit.
    */
-  public function validateStarterKit(array $schema, $starterkit): array {
+  public function validateStarterKit(array $schema, $starterkit): void {
     foreach ($schema as $key => $value) {
-      if (is_array($schema[$key]) && $schema[$key]['type'] === 'array') {
+      if ($schema[$key]['type'] == 'arrays' && isset($schema[$key]['next_level_validation'])) {
+        unset($schema[$key]['type']);
+        unset($schema[$key]['is_required']);
+        unset($schema[$key]['next_level_validation']);
+        $this->validateArray($schema[$key], $starterkit[$key], $key);
         $this->validateStarterKit($schema[$key], $starterkit[$key]);
       }
       else {
         switch ($schema[$key]['type']) {
-          case 'array':
-            if (isset($starterkit[$key]) && !is_array($starterkit[$key])) {
-              throw new AcmsCliException($key . ' should be in array format.');
-            }
+          case 'arrays':
+            $this->validateArray($schema[$key], $starterkit[$key], $key);
             break;
 
-          case 'string':
-            if (isset($starterkit[$key]) && !is_string($starterkit[$key])) {
-              throw new AcmsCliException($key . ' field is mandatory and should be in string format.');
-            }
+          case 'strings':
+            $this->arrayfield = '';
+            $this->validateString($schema[$key], $starterkit[$key], $key);
             break;
 
           case 'default':
@@ -106,8 +89,6 @@ class StarterKitValidation {
         }
       }
     }
-
-    return $starterkit;
   }
 
 }

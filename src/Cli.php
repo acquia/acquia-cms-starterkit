@@ -143,9 +143,8 @@ class Cli {
     }
 
     // Send each starterkit for validation.
-    foreach ($starterkits as $starterkit) {
-      $this->starterKitValidation->validateStarterKitSchema($starterkit);
-    }
+    $schema = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/starterkit.schema.yml');
+    $this->starterKitValidation->validateStarterKits($schema['starterkit'], $starterkits);
 
     // Return starterkit list.
     return $starterkits;
