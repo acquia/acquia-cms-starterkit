@@ -29,71 +29,85 @@ class StarterKitValidation {
   }
 
   /**
+   * Schema for starter-kit.
+   */
+  public function validateStarterKitSchema(array &$starterkit): array {
+    $schema = [
+      'name' => [
+        'type' => 'string',
+        'is_required' => TRUE,
+      ],
+      'description' => [
+        'type' => 'string',
+        'is_required' => TRUE,
+      ],
+      'modules' => [
+        'require' => [
+          'type' => 'array',
+          'is_required' => FALSE,
+        ],
+        'install' => [
+          'type' => 'array',
+          'is_required' => FALSE,
+        ],
+        'type' => 'array',
+        'is_required' => FALSE,
+      ],
+      'themes' => [
+        'require' => [
+          'type' => 'array',
+          'is_required' => FALSE,
+        ],
+        'install' => [
+          'type' => 'array',
+          'is_required' => FALSE,
+        ],
+        'admin' => [
+          'type' => 'string',
+          'is_required' => FALSE,
+        ],
+        'default' => [
+          'type' => 'string',
+          'is_required' => FALSE,
+        ],
+        'type' => 'array',
+        'is_required' => FALSE,
+      ],
+    ];
+    $this->validateStarterKit($schema, $starterkit);
+
+    return $schema;
+  }
+
+  /**
    * Validates each key value for starter-kit.
    */
-  public function validateStarterKit(array &$starterkits): array {
-    foreach ($starterkits as $key => $starterkit) {
-      // Validate starterkit name.
-      if (empty($starterkit['name']) || !is_string($starterkit['name'])) {
-        throw new AcmsCliException('Name field is mandatory and should be in string format, in ' . $key . ' starterkit.');
+  public function validateStarterKit(array $schema, $starterkit): array {
+    foreach ($schema as $key => $value) {
+      if (is_array($schema[$key]) && $schema[$key]['type'] === 'array') {
+        $this->validateStarterKit($schema[$key], $starterkit[$key]);
       }
+      else {
+        switch ($schema[$key]['type']) {
+          case 'array':
+            if (isset($starterkit[$key]) && !is_array($starterkit[$key])) {
+              throw new AcmsCliException($key . ' should be in array format.');
+            }
+            break;
 
-      // Validate starterkit description.
-      if (empty($starterkit['description']) || !is_string($starterkit['description'])) {
-        throw new AcmsCliException('Description field is mandatory and should be in string format, in ' . $key . ' starterkit.');
-      }
+          case 'string':
+            if (isset($starterkit[$key]) && !is_string($starterkit[$key])) {
+              throw new AcmsCliException($key . ' field is mandatory and should be in string format.');
+            }
+            break;
 
-      // Validate modules section.
-      if (array_key_exists('modules', $starterkit) && !isset($starterkit['modules'])) {
-        throw new AcmsCliException('Modules field/section is not in array format, in ' . $key . ' starterkit.');
-      }
-
-      // Validate modules require section.
-      if (isset($starterkit['modules']) &&
-      (array_key_exists('require', $starterkit['modules']) &&
-      (!isset($starterkit['modules']['require']) || !is_array($starterkit['modules']['require'])))) {
-        throw new AcmsCliException('Modules require field/section is not in array format, in ' . $key . ' starterkit.');
-      }
-
-      // Validate modules install section.
-      if (isset($starterkit['modules']) &&
-      (array_key_exists('install', $starterkit['modules']) &&
-      (!isset($starterkit['modules']['install']) || !is_array($starterkit['modules']['install'])))) {
-        throw new AcmsCliException('Modules install field/section is not in array format, in ' . $key . ' starterkit.');
-      }
-
-      // Validate themes section.
-      if (array_key_exists('themes', $starterkit) && !isset($starterkit['themes'])) {
-        throw new AcmsCliException('Themes field/section is not in array format, in ' . $key . ' starterkit.');
-      }
-
-      // Validate themes require section.
-      if (isset($starterkit['themes']) &&
-      (array_key_exists('require', $starterkit['themes']) &&
-      (!isset($starterkit['themes']['require']) || !is_array($starterkit['themes']['require'])))) {
-        throw new AcmsCliException('Themes require field/section is not in array format, in ' . $key . ' starterkit.');
-      }
-
-      // Validate themes install section.
-      if (isset($starterkit['themes']) &&
-      (array_key_exists('install', $starterkit['themes']) &&
-      (!isset($starterkit['themes']['install']) || !is_array($starterkit['themes']['install'])))) {
-        throw new AcmsCliException('Themes install field/section is not in array format, in ' . $key . ' starterkit.');
-      }
-
-      // Validate themes admin section.
-      if (isset($starterkit['themes']) &&
-      (array_key_exists('admin', $starterkit['themes']) && !is_string($starterkit['themes']['admin']))) {
-        throw new AcmsCliException('Themes admin field/section is not set or doesnt contain string value, in ' . $key . ' starterkit.');
-      }
-
-      // Validate themes default section.
-      if (!is_string($starterkit['themes']['default'])) {
-        throw new AcmsCliException('Themes default field/section is not set or doesnt contain string value, in ' . $key . ' starterkit.');
+          case 'default':
+            throw new AcmsCliException('starterkit is not defined properly kindly fix your acms.yml file.');
+        }
       }
     }
 
-    return $starterkits;
+    return $starterkit;
   }
 
 }
