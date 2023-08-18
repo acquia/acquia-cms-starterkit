@@ -75,8 +75,8 @@ class CliTest extends TestCase {
    * Tests starter-kit validation.
    */
   public function testValidateStarterKit(): void {
-    $starterKits = $this->getAcmsFileContents()['starter_kits'];
-    $schema = $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/starterkit.schema.yml');
+    $starterKits = $this->getAcmsFileContents();
+    $schema = $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/schema.json');
     $this->starterKitValidation->validateStarterKits($schema, $starterKits);
     $this->assertIsArray($starterKits);
   }

@@ -1,0 +1,41 @@
+{
+  "type": "array",
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "required": true
+    },
+    "modules": {
+      "type": "array",
+      "properties": {
+        "require": {
+          "type": "array"
+        },
+        "install": {
+          "type": "array"
+        }
+      }
+    },
+    "themes": {
+      "type": "array",
+      "properties": {
+        "require": {
+          "type": "array"
+        },
+        "install": {
+          "type": "array"
+        },
+        "admin": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

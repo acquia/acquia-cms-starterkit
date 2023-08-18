@@ -2,7 +2,7 @@
 
 namespace AcquiaCMS\Cli\Validation;
 
-use AcquiaCMS\Cli\Exception\AcmsCliException;
+use JsonSchema\Validator;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -38,56 +38,18 @@ class StarterKitValidation {
   }
 
   /**
-   * Validates array for starter-kit.
+   * Validates starter-kit.
    */
-  public function validateArray($schema, $starterkit, $key): void {
-    if ($schema['is_required'] ?
-      ((!isset($starterkit) || empty($starterkit))  && !is_array($starterkit)) :
-      (empty($starterkit) || !is_array($starterkit))) {
-      $required = $schema['is_required'] ? 'is mandatory and ' : '';
-      throw new AcmsCliException($this->arrayfield . ' => ' . $key . ' field ' . $required . 'should be in array format, in ' . $this->starterKitName . ' starterkit.');
-    }
-  }
-
-  /**
-   * Validates string for starter-kit.
-   */
-  public function validateString($schema, $starterkit, $key): void {
-    if ($schema['is_required'] ?
-      ((!isset($starterkit) || empty($starterkit))  && !is_string($starterkit)) :
-      (empty($starterkit) || !is_string($starterkit))) {
-      $required = $schema['is_required'] ? 'is mandatory and ' : '';
-      throw new AcmsCliException($key . ' field ' . $required . 'should be in string format, in starterkit.');
-    }
-  }
-
-  /**
-   * Validates each key value for starter-kit.
-   */
-  public function validateStarterKit(array $schema, $starterkit): void {
-    foreach ($schema as $key => $value) {
-      if ($schema[$key]['type'] == 'arrays' && isset($schema[$key]['next_level_validation'])) {
-        unset($schema[$key]['type']);
-        unset($schema[$key]['is_required']);
-        unset($schema[$key]['next_level_validation']);
-        $this->validateArray($schema[$key], $starterkit[$key], $key);
-        $this->validateStarterKit($schema[$key], $starterkit[$key]);
+  public function validateStarterKit(array $schema, array $starterkit): void {
+    $validator = new Validator();
+    $validator->validate($starterkit, $schema);
+    if (!$validator->isValid()) {
+      $errors = [];
+      foreach ($validator->getErrors() as $key => $error) {
+        $errors[] = "Property " . $error['property'] . " " . $error['constraint'] . " " . $error['message'];
+        $this->output->writeln("<error>" . $errors[$key] . "</error>");
       }
-      else {
-        switch ($schema[$key]['type']) {
-          case 'arrays':
-            $this->validateArray($schema[$key], $starterkit[$key], $key);
-            break;
-
-          case 'strings':
-            $this->arrayfield = '';
-            $this->validateString($schema[$key], $starterkit[$key], $key);
-            break;
-
-          case 'default':
-            throw new AcmsCliException('starterkit is not defined properly kindly fix your acms.yml file.');
-        }
-      }
+      exit;
     }
   }
 
