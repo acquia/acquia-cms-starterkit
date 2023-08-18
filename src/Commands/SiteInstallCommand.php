@@ -13,6 +13,7 @@ use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -84,20 +85,30 @@ class SiteInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure(): void {
-    // Default definitions.
-    $definitions = $this->getDrushOptions();
-    // Get acquia CMS install questions.
-    $installQuestions = $this->acquiaCmsCli->getOptions('install');
-    // Iterate install questions to prepare for input option method.
-    foreach ($installQuestions as $option => $value) {
-      // If default value is there.
-      if ($value['default_value']) {
-        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+    // Command Arguments.
+    $definitions = [
+      new InputArgument('profile', InputArgument::IS_ARRAY,
+        "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
+      "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
+    ];
+    // Options of drush and acms install.
+    $options = array_merge($this->getDrushOptions(), $this->acquiaCmsCli->getOptions('install'));
+    // Prepare command options.
+    foreach ($options as $option => $value) {
+      if (isset($value['default_value']) && $value['default_value'] === 'none') {
+        $definitions[] = new InputOption($option, $value['alias'] ?? '', InputOption::VALUE_NONE, $value['description']);
       }
       else {
-        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+        // If default value is there.
+        if ($value['default_value']) {
+          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        }
+        else {
+          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+        }
       }
     }
+
     $this->setName("site:install")
       ->setDescription("A wrapper command for drush site:install command.")
       ->setDefinition($definitions)
@@ -119,10 +130,10 @@ class SiteInstallCommand extends Command {
       // Get starterkit name from build file.
       [$starterkitMachineName, $starterkitName] = $this->installTask->getStarterKitName($siteUri);
       // Get user input options for install process.
-      $getInstallArgs = $this->getInputOptions($input->getOptions(), 'install');
+      $installOptions = $this->getInputOptions($input->getOptions(), 'install');
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
-        $args['keys'] = $this->askQuestions->askKeysQuestions($getInstallArgs, $input, $output, $starterkitMachineName, 'install', $helper);
+        $args['keys'] = $this->askQuestions->askKeysQuestions($installOptions, $input, $output, $starterkitMachineName, 'install', $helper);
       }
       $this->installTask->configure($input, $output, $starterkitMachineName, $siteUri);
       $this->installTask->run($args);

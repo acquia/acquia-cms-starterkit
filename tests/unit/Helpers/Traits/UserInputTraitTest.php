@@ -10,8 +10,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 class UserInputTraitTest extends TestCase {
 
-  use UserInputTrait;
-  use ProphecyTrait;
+  use UserInputTrait, ProphecyTrait;
 
   /**
    * Tests the method style() of trait: StatusMessageTrait.
@@ -23,7 +22,7 @@ class UserInputTraitTest extends TestCase {
    *
    * @dataProvider styleQuestionDataProvider
    */
-  public function testStyle(array $actual, string $expected) :void {
+  public function testStyle(array $actual, string $expected): void {
     $this->assertEquals($this->styleQuestion(...$actual), $expected);
   }
 
@@ -33,7 +32,7 @@ class UserInputTraitTest extends TestCase {
    * @return array[]
    *   Returns an array of actual/expected data.
    */
-  public function styleQuestionDataProvider() :array {
+  public function styleQuestionDataProvider(): array {
     return [
       [
         ['Please enter the Site Studio API Key', 'inter-abcd-47d4kf7'],

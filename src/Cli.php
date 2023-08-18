@@ -256,7 +256,6 @@ class Cli {
   public function getOptions(string $command_type = ''): array {
     $questions = $this->getStarterKitsAndQuestions("questions");
     $options = $output = [];
-    // $questions = $starterkitsQuestions['questions'];
     if ($command_type === 'build' || $command_type === 'install') {
       $options = $questions[$command_type];
     }
@@ -291,37 +290,34 @@ class Cli {
     // Get questions based on command type i.e install or build.
     $getQuestions = $this->getInstallerQuestions($command_type);
     $output = [];
-    // Iterate questions to prepare the object pass into
-    // install or build command.
     if (!empty($starterkit)) {
+      // Filter options based on starter-kit.
+      $options = $this->filterInputOptions($args, $starterkit);
+      // Iterate questions to prepare the object pass into
+      // install or build command.
       foreach ($getQuestions as $key => $value) {
         $dependencyStarterkit = $value['dependencies']['starter_kits'];
         // Check whether starterkit name parse some questions from acms.yml.
         if (($dependencyStarterkit == $starterkit ||
         strpos($dependencyStarterkit, substr($starterkit, 11)))) {
-          // Check whether input optins consists of NEXTJS related options
-          // then unset those options.
+          // Default value of questions like no, site url & site name.
           if (isset($value['default_value'])) {
-            if (strripos($starterkit, 'headless') && $args["nextjs-app"] === "no") {
-              unset($args['nextjs-app-site-url']);
-              unset($args['nextjs-app-site-name']);
-              unset($args['nextjs-app-env-file']);
-            }
             // Prepare key-value pair to render into respective commands.
-            if (in_array($key, array_keys($args))) {
-              $output[] = "--$key=$args[$key]";
+            if (in_array($key, array_keys($options)) && $options[$key] !== 'no') {
+              $output[] = "--$key=$options[$key]";
             }
           }
           else {
-            if (in_array($key, array_keys($args))) {
-              $output[] = "--$key=$args[$key]";
+            // User input values like keys of site-studio org, api and gmap.
+            if (in_array($key, array_keys($options))) {
+              $output[] = "--$key=$options[$key]";
             }
           }
         }
       }
     }
 
-    // Prepare pattern for drush options as install command eligible for this.
+    // Prepare pattern for drush options for site install.
     if ($command_type === 'install') {
       foreach ($this->filterInputOptions($args) as $key => $value) {
         $output[] = $key == 'yes' ? "--$key" : "--$key=$value";

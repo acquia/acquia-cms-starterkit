@@ -66,21 +66,31 @@ class AcmsInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure(): void {
+    // Command Arguments.
     $definitions = [
       new InputArgument('name', NULL, "Name of the starter kit"),
-      new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
+      new InputArgument('profile', InputArgument::IS_ARRAY,
+        "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
+      "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
     ];
-    $definitions = array_merge($definitions, $this->getDrushOptions());
-    $options = $this->acquiaCmsCli->getOptions();
+    // Options of drush and acms install + build.
+    $options = array_merge($this->getDrushOptions(), $this->acquiaCmsCli->getOptions());
+    // Prepare command options.
     foreach ($options as $option => $value) {
-      // If default value is there.
-      if ($value['default_value']) {
-        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+      if (isset($value['default_value']) && $value['default_value'] === 'none') {
+        $definitions[] = new InputOption($option, $value['alias'] ?? '', InputOption::VALUE_NONE, $value['description']);
       }
       else {
-        $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+        // If default value is there.
+        if ($value['default_value']) {
+          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+        }
+        else {
+          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+        }
       }
     }
+
     $this->setName("acms:install")
       ->setDescription("Use this command to setup & install site.")
       ->setDefinition($definitions)

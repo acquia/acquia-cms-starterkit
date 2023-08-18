@@ -75,7 +75,7 @@ class CliTest extends TestCase {
   /**
    * An array of default contents for acms/acms.yml file.
    */
-  protected function getAcmsFileContents() :array {
+  protected function getAcmsFileContents(): array {
     return [
       "starter_kits" => [
         "acquia_cms_enterprise_low_code" => [

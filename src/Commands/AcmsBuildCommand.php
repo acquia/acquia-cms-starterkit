@@ -125,10 +125,10 @@ class AcmsBuildCommand extends Command {
         $name = $this->askBundleQuestion($input, $output);
       }
       // Get input options for build process.
-      $getBuildArgs = $this->getInputOptions($input->getOptions(), 'build');
+      $buildOptions = $this->getInputOptions($input->getOptions(), 'build');
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
-        $args['keys'] = $this->askQuestions->askKeysQuestions($getBuildArgs, $input, $output, $name, 'build', $helper);
+        $args['keys'] = $this->askQuestions->askKeysQuestions($buildOptions, $input, $output, $name, 'build', $helper);
       }
       $this->buildTask->configure($input, $output, $name);
       if (!$generate) {
