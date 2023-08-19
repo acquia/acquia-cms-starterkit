@@ -3,13 +3,14 @@
 namespace tests;
 
 use AcquiaCMS\Cli\Cli;
-use AcquiaCMS\Cli\Validation\StarterKitValidation;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CliTest extends TestCase {
-  use ProphecyTrait;
+
+  use ProphecyTrait, UserInputTrait;
 
   /**
    * Holds the symfony console output object.
@@ -48,6 +49,20 @@ class CliTest extends TestCase {
   protected $starterKitValidation;
 
   /**
+   * An array of build questions defined in acms.yml file.
+   *
+   * @var array
+   */
+  protected $buildOptions;
+
+  /**
+   * An array of install questions defined in acms.yml file.
+   *
+   * @var array
+   */
+  protected $installOptions;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -58,6 +73,8 @@ class CliTest extends TestCase {
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
     $this->starterKitValidation = new StarterKitValidation();
     $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container, $this->starterKitValidation);
+    $this->buildOptions = $this->acquiaCli->getInstallerQuestions('build');
+    $this->installOptions = $this->acquiaCli->getInstallerQuestions('install');
   }
 
   /**
@@ -65,7 +82,7 @@ class CliTest extends TestCase {
    *
    * @test
    */
-  public function testExecute() :void {
+  public function testExecute(): void {
     $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
     $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml'));
@@ -542,7 +559,142 @@ class CliTest extends TestCase {
         $packages = [];
         break;
     endswitch;
+
     return $packages;
+  }
+
+  /**
+   * Test acquia cms commands for install and build.
+   *
+   * @param string $command
+   *   Command type install or build.
+   * @param string $starter_kit
+   *   Starter kit name.
+   * @param array $options
+   *   List of command options.
+   * @param array $expected
+   *   Expected result.
+   *
+   * @dataProvider dataProviderAcmsCommands
+   */
+  public function testAcmsCommands(string $command, string $starter_kit, array $options, array $expected): void {
+    $this->assertSame($this->acquiaCli->filterOptionsByStarterKit($command, $options, $starter_kit), $expected);
+  }
+
+  /**
+   * Provides an array of Acquia CMS command options.
+   *
+   * @return array
+   *   Test data for acms command and expected.
+   */
+  public function dataProviderAcmsCommands(): array {
+    return [
+      [
+        "build",
+        "acquia_cms_enterprise_low_code",
+        [
+          "demo-content" => "yes",
+          "gdpr-integration" => "yes",
+          "site-studio-api-key" => "random-value-1234",
+          "site-studio-org-key" => "org-123454a",
+          "account-pass" => "Admin123",
+          "site-name" => "Low code site",
+        ],
+        [
+          "--demo-content=yes",
+          "--gdpr-integration=yes",
+        ],
+      ],
+      [
+        "install",
+        "acquia_cms_enterprise_low_code",
+        [
+          "demo-content" => "yes",
+          "gdpr-integration" => "yes",
+          "site-studio-api-key" => "random-value-1234",
+          "site-studio-org-key" => "org-123454a",
+          "account-pass" => "Admin123",
+          "site-name" => "Low code site",
+        ],
+        [
+          "--site-studio-api-key=random-value-1234",
+          "--site-studio-org-key=org-123454a",
+          "--account-pass=Admin123",
+          "--site-name=Low code site",
+        ],
+      ],
+      [
+        "build",
+        "acquia_cms_community",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "gdpr-integration" => "yes",
+          "gmaps-key" => "Abcdef1234",
+          "account-pass" => "Admin123",
+          "site-name" => "Community site",
+        ],
+        [
+          "--content-model=yes",
+          "--dam-integration=yes",
+          "--gdpr-integration=yes",
+        ],
+      ],
+      [
+        "install",
+        "acquia_cms_community",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "gdpr-integration" => "yes",
+          "gmaps-key" => "Abcdef1234",
+          "account-pass" => "Admin123",
+          "site-name" => "Community site",
+        ],
+        [
+          "--gmaps-key=Abcdef1234",
+          "--account-pass=Admin123",
+          "--site-name=Community site",
+        ],
+      ],
+      [
+        "build",
+        "acquia_cms_headless",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "nextjs-app" => "yes",
+          "nextjs-app-site-url" => "http://localhost:3000",
+          "nextjs-app-site-name" => "Headless Site",
+          "account-pass" => "Admin123",
+          "site-name" => "My Headless site",
+        ],
+        [
+          "--content-model=yes",
+          "--dam-integration=yes",
+        ],
+      ],
+      [
+        "install",
+        "acquia_cms_headless",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "nextjs-app" => "yes",
+          "nextjs-app-site-url" => "http://localhost:3000",
+          "nextjs-app-site-name" => "Headless Site",
+          "account-pass" => "Admin123",
+          "site-name" => "My Headless site",
+        ],
+        [
+          "--nextjs-app=yes",
+          "--nextjs-app-site-url=http://localhost:3000",
+          "--nextjs-app-site-name=Headless Site",
+          "--account-pass=Admin123",
+          "--site-name=My Headless site",
+        ],
+      ],
+    ];
   }
 
 }
