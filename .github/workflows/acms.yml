@@ -66,7 +66,7 @@ jobs:
       connector-id: ${{ secrets.CONNECTOR_ID }}
       gmaps-key: ${{ secrets.GMAPS_KEY }}
       search-uuid: ${{ secrets.SEARCH_UUID }}
-      sit-api-key: ${{ secrets.SITESTUDIO_API_KEY }}
+      sitestudio-api-key: ${{ secrets.SITESTUDIO_API_KEY }}
       sitestudio-org-key: ${{ secrets.SITESTUDIO_ORG_KEY }}
       gdpr-integration: ${{ matrix.gdpr-integration }}
       CI: TRUE

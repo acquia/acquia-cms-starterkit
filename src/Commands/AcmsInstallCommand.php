@@ -10,7 +10,6 @@ use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -68,32 +67,17 @@ class AcmsInstallCommand extends Command {
   protected function configure(): void {
     // Command Arguments.
     $definitions = [
-      new InputArgument('name', NULL, "Name of the starter kit"),
+      new InputArgument('name', InputArgument::OPTIONAL, "Name of the starter kit"),
       new InputArgument('profile', InputArgument::IS_ARRAY,
         "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
       "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
     ];
     // Options of drush and acms install + build.
     $options = array_merge($this->getDrushOptions(), $this->acquiaCmsCli->getOptions());
-    // Prepare command options.
-    foreach ($options as $option => $value) {
-      if (isset($value['default_value']) && $value['default_value'] === 'none') {
-        $definitions[] = new InputOption($option, $value['alias'] ?? '', InputOption::VALUE_NONE, $value['description']);
-      }
-      else {
-        // If default value is there.
-        if ($value['default_value']) {
-          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
-        }
-        else {
-          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
-        }
-      }
-    }
-
     $this->setName("acms:install")
       ->setDescription("Use this command to setup & install site.")
-      ->setDefinition($definitions)
+      // Prepare command options.
+      ->setDefinition(array_merge($definitions, $this->configureOptions($options)))
       ->setHelp("The <info>acms:install</info> command downloads & setup Drupal site based on user selected use case.");
   }
 
