@@ -45,8 +45,7 @@ class InstallerQuestions {
   public function filterByStarterKit(array $question, string $bundle): bool {
     $isValid = TRUE;
     if (isset($question['dependencies']['starter_kits'])) {
-      $starterKits = array_map('trim', explode('||', $question['dependencies']['starter_kits']));
-      if (!in_array($bundle, $starterKits)) {
+      if (!in_array($bundle, $question['dependencies']['starter_kits'])) {
         $isValid = FALSE;
       }
     }

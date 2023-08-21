@@ -216,7 +216,11 @@ class CliTest extends TestCase {
     return [
       'content-model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_headless',
+            'acquia_cms_community',
+          ],
           'questions' => ['${demo-content} == "no"'],
         ],
         'question' => "Do you want to enable the content model (yes/no) ?",
@@ -239,7 +243,11 @@ class CliTest extends TestCase {
     return [
       'demo-content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_headless',
+            'acquia_cms_community',
+          ],
         ],
         'question' => "Do you want to enable demo content (yes/no) ?",
         'allowed_values' => [
@@ -261,7 +269,11 @@ class CliTest extends TestCase {
     return [
       'dam-integration' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_headless',
+            'acquia_cms_community',
+          ],
         ],
         'question' => "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?",
         'allowed_values' => [
@@ -283,7 +295,10 @@ class CliTest extends TestCase {
     return [
       'gdpr-integration' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_community',
+          ],
         ],
         'question' => "Would you like to add GDPR functionality to the site (Yes/No) ?",
         'allowed_values' => [
@@ -305,7 +320,7 @@ class CliTest extends TestCase {
     return [
       'nextjs-app' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
+          'starter_kits' => ['acquia_cms_headless'],
         ],
         'question' => "Would you like to preconfigure a next.js site (yes/no) ?",
         'allowed_values' => [
@@ -327,7 +342,7 @@ class CliTest extends TestCase {
     return [
       'nextjs-app-site-url' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
+          'starter_kits' => ['acquia_cms_headless'],
           'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Next.js site url",
@@ -348,7 +363,7 @@ class CliTest extends TestCase {
     return [
       'nextjs-app-site-name' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
+          'starter_kits' => ['acquia_cms_headless'],
           'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Site Name",
@@ -369,7 +384,7 @@ class CliTest extends TestCase {
     return [
       'nextjs-app-env-file' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
+          'starter_kits' => ['acquia_cms_headless'],
           'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the .env.local file path",
@@ -387,7 +402,7 @@ class CliTest extends TestCase {
     return [
       'sitestudio-api-key' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
+          'starter_kits' => ['acquia_cms_enterprise_low_code'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -405,7 +420,7 @@ class CliTest extends TestCase {
     return [
       'sitestudio-org-key' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
+          'starter_kits' => ['acquia_cms_enterprise_low_code'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -423,7 +438,11 @@ class CliTest extends TestCase {
     return [
       'gmaps-key' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_community',
+            'acquia_cms_headless',
+          ],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
@@ -434,7 +453,7 @@ class CliTest extends TestCase {
   /**
    * Function to return data provider for method: alterModulesAndThemes().
    */
-  public function alterModuleThemesDataProvider() :array {
+  public function alterModuleThemesDataProvider(): array {
     foreach (['acquia_cms_enterprise_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
       $returnArray = [
         [
@@ -577,8 +596,8 @@ class CliTest extends TestCase {
         [
           "demo-content" => "yes",
           "gdpr-integration" => "yes",
-          "site-studio-api-key" => "random-value-1234",
-          "site-studio-org-key" => "org-123454a",
+          "sitestudio-api-key" => "random-value-1234",
+          "sitestudio-org-key" => "org-123454a",
           "account-pass" => "Admin123",
           "site-name" => "Low code site",
         ],
@@ -593,16 +612,16 @@ class CliTest extends TestCase {
         [
           "demo-content" => "yes",
           "gdpr-integration" => "yes",
-          "site-studio-api-key" => "random-value-1234",
-          "site-studio-org-key" => "org-123454a",
+          "sitestudio-api-key" => "random-value-1234",
+          "sitestudio-org-key" => "org-123454a",
           "account-pass" => "Admin123",
           "site-name" => "Low code site",
         ],
         [
-          "--site-studio-api-key=random-value-1234",
-          "--site-studio-org-key=org-123454a",
           "--account-pass=Admin123",
           "--site-name=Low code site",
+          "--sitestudio-api-key=random-value-1234",
+          "--sitestudio-org-key=org-123454a",
         ],
       ],
       [
@@ -634,9 +653,9 @@ class CliTest extends TestCase {
           "site-name" => "Community site",
         ],
         [
-          "--gmaps-key=Abcdef1234",
           "--account-pass=Admin123",
           "--site-name=Community site",
+          "--gmaps-key=Abcdef1234",
         ],
       ],
       [
@@ -669,11 +688,11 @@ class CliTest extends TestCase {
           "site-name" => "My Headless site",
         ],
         [
+          "--account-pass=Admin123",
+          "--site-name=My Headless site",
           "--nextjs-app=yes",
           "--nextjs-app-site-url=http://localhost:3000",
           "--nextjs-app-site-name=Headless Site",
-          "--account-pass=Admin123",
-          "--site-name=My Headless site",
         ],
       ],
     ];

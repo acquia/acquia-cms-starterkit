@@ -2,6 +2,8 @@
 
 namespace AcquiaCMS\Cli\Helpers\Traits;
 
+use Symfony\Component\Console\Input\InputOption;
+
 /**
  * Provides the trait for user input questions.
  */
@@ -34,10 +36,17 @@ trait UserInputTrait {
    *   Filter input options.
    */
   public function getInputOptions(array $options, string $command_type): array {
-    return $command_type === 'install' ? array_filter($options) :
+    $output = $question = [];
+    $question = $command_type === 'install' ? array_filter($options) :
     array_filter($options, function ($option) {
-      return $option === 'yes';
+      return $option === TRUE;
     });
+    // Prepare command to ask questions.
+    foreach ($question as $key => $value) {
+      $output[$key] = ($value === TRUE) ? 'yes' : $value;
+    }
+
+    return $output;
   }
 
   /**
@@ -95,7 +104,7 @@ trait UserInputTrait {
       ],
       'existing-config' => [
         'description' => "Configuration from <info>sync</info> directory should be imported during installation.",
-        'default_value' => 'none',
+        'default_value' => 'no',
       ],
       'uri' => [
         'description' => "Multisite uri to setup drupal site.",
@@ -104,26 +113,26 @@ trait UserInputTrait {
       ],
       'yes' => [
         'description' => "Equivalent to --no-interaction.",
-        'default_value' => 'none',
+        'default_value' => 'no',
         'alias' => "y",
       ],
       'no' => [
         'description' => "Cancels at any confirmation prompt.",
-        'default_value' => 'none',
+        'default_value' => 'no',
       ],
       'hide-command' => [
         'description' => "Hide Command. Doesn't show the command executed on terminal.",
-        'default_value' => 'none',
+        'default_value' => 'no',
         'alias' => "hide",
       ],
       'display-command' => [
         'description' => "Display Command. Doesn't show the command executed on terminal.",
-        'default_value' => 'none',
+        'default_value' => 'no',
         'alias' => "d",
       ],
       'without-product-info' => [
         'description' => "Doesn't show the product logo and headline.",
-        'default_value' => "none",
+        'default_value' => "no",
         'alias' => "wpi",
       ],
     ];
@@ -135,58 +144,60 @@ trait UserInputTrait {
    *
    * @param array $options
    *   Install input options.
-   * @param string|null $starterkit
-   *   Starter kit name.
+   * @param bool $format
+   *   TRUE/FALSE.
    *
    * @return array
    *   Filtered input options.
    */
-  public function filterInputOptions(array $options, ?string $starterkit = ''): array {
-    switch ($starterkit) {
-      case 'acquia_cms_headless':
-        if ($options['nextjs-app'] === 'no') {
-          unset($options['nextjs-app']);
-          unset($options['nextjs-app-site-url']);
-          unset($options['nextjs-app-site-name']);
-          unset($options['nextjs-app-env-file']);
+  public function filterDrushOptions(array $options, bool $format = FALSE): array {
+    $drushOptions = array_keys($this->getDrushOptions());
+    unset($options['hide-command']);
+    unset($options['display-command']);
+    unset($options['existing-config']);
+    unset($options['no']);
+    unset($options['without-product-info']);
+    unset($options['no-interaction']);
+    unset($options['uri']);
+    $output = [];
+    foreach ($options as $key => $value) {
+      if (in_array($key, $drushOptions)) {
+        if ($format) {
+          $output[] = ($key == 'yes' || $value === 'no') ? "--$key" : "--$key=$value";
         }
-        unset($options['sitestudio-api-key']);
-        unset($options['sitestudio-org-key']);
-        break;
-
-      case 'acquia_cms_enterprise_low_code':
-        unset($options['nextjs-app']);
-        unset($options['nextjs-app-site-url']);
-        unset($options['nextjs-app-site-name']);
-        break;
-
-      case 'acquia_cms_community':
-        unset($options['nextjs-app']);
-        unset($options['nextjs-app-site-url']);
-        unset($options['nextjs-app-site-name']);
-        unset($options['sitestudio-api-key']);
-        unset($options['sitestudio-org-key']);
-        break;
-
-      default:
-        unset($options['demo-content']);
-        unset($options['content-model']);
-        unset($options['dam-integration']);
-        unset($options['gdpr-integration']);
-        unset($options['nextjs-app']);
-        unset($options['nextjs-app-site-url']);
-        unset($options['nextjs-app-site-name']);
-        unset($options['nextjs-app-env-file']);
-        unset($options['sitestudio-api-key']);
-        unset($options['sitestudio-org-key']);
-        unset($options['gmaps-key']);
-        unset($options['without-product-info']);
-        unset($options['no-interaction']);
-        unset($options['uri']);
-        break;
+        else {
+          $output[$key] = $value;
+        }
+      }
     }
 
-    return $options;
+    return $output;
+  }
+
+  /**
+   * Function for acms commands options to configure.
+   *
+   * @param array $options
+   *   List of input options or/and questions.
+   *
+   * @return array
+   *   Console command configure list.
+   */
+  public function configureOptions(array $options): array {
+    $output = [];
+    // Prepare command options.
+    foreach ($options as $option => $value) {
+      if (isset($value['default_value']) && $value['default_value'] === 'no') {
+        $output[] = new InputOption($option, $value['alias'] ?? '', InputOption::VALUE_NONE, $value['description']);
+      }
+      else {
+        $output[] = $value['default_value'] ?
+        new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']) :
+        new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
+      }
+    }
+
+    return $output;
   }
 
 }

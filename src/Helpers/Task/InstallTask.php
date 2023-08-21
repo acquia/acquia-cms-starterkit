@@ -222,7 +222,8 @@ class InstallTask {
     }
 
     // Only options which is acceptable by drush.
-    $filterArgs = $this->filterInputOptions(array_filter($this->input->getOptions()));
+    $filterArgs = $this->filterDrushOptions(array_filter($this->input->getOptions()));
+
     // Prepare site install command options.
     $siteInstallArgs = $filterArgs + [
       'name' => $starterkitName,

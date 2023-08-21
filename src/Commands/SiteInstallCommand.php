@@ -15,7 +15,6 @@ use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -87,31 +86,16 @@ class SiteInstallCommand extends Command {
   protected function configure(): void {
     // Command Arguments.
     $definitions = [
-      new InputArgument('profile', InputArgument::IS_ARRAY,
-        "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
+      new InputArgument('profile', InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
+      "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
       "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
     ];
     // Options of drush and acms install.
     $options = array_merge($this->getDrushOptions(), $this->acquiaCmsCli->getOptions('install'));
-    // Prepare command options.
-    foreach ($options as $option => $value) {
-      if (isset($value['default_value']) && $value['default_value'] === 'none') {
-        $definitions[] = new InputOption($option, $value['alias'] ?? '', InputOption::VALUE_NONE, $value['description']);
-      }
-      else {
-        // If default value is there.
-        if ($value['default_value']) {
-          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
-        }
-        else {
-          $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description']);
-        }
-      }
-    }
-
     $this->setName("site:install")
       ->setDescription("A wrapper command for drush site:install command.")
-      ->setDefinition($definitions)
+      // Prepare command options.
+      ->setDefinition(array_merge($definitions, $this->configureOptions($options)))
       ->setAliases(['site-install', 'si'])
       ->setHelp("The <info>site:install</info> command install Drupal along with modules/themes/configuration/profile.");
   }

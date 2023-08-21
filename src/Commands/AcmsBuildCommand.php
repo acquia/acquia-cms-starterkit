@@ -87,22 +87,20 @@ class AcmsBuildCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure(): void {
-    // Default definitions.
-    $definitions = [
-      new InputArgument('name', NULL, "Name of the starter kit"),
-      new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
-      new InputOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require."),
-    ];
+    $this->setName("acms:build")
+      ->setDescription("Use this command to build composer dependencies.")
+      ->addArgument('name', InputArgument::OPTIONAL, "Name of the starter kit")
+      ->addOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default')
+      ->addOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require.");
+
     // Get acquia CMS build questions.
     $buildQuestions = $this->acquiaCmsCli->getOptions('build');
     // Iterate build questions to prepare for input option method.
     foreach ($buildQuestions as $option => $value) {
-      $definitions[] = new InputOption($option, '', InputOption::VALUE_OPTIONAL, $value['description'], $value['default_value']);
+      $this->addOption($option, '', InputOption::VALUE_NONE, $value['description']);
     }
-    $this->setName("acms:build")
-      ->setDescription("Use this command to build composer dependencies.")
-      ->setDefinition($definitions)
-      ->setHelp("The <info>acms:build</info> command to build composer dependencies & downloads it based on user selected use case.");
+
+    $this->setHelp("The <info>acms:build</info> command to build composer dependencies & downloads it based on user selected use case.");
   }
 
   /**
@@ -126,6 +124,7 @@ class AcmsBuildCommand extends Command {
       }
       // Get input options for build process.
       $buildOptions = $this->getInputOptions($input->getOptions(), 'build');
+
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
         $args['keys'] = $this->askQuestions->askKeysQuestions($buildOptions, $input, $output, $name, 'build', $helper);
