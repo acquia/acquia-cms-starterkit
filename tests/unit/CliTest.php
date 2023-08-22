@@ -56,7 +56,7 @@ class CliTest extends TestCase {
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
-    $this->starterKitValidation = new StarterKitValidation($output);
+    $this->starterKitValidation = new StarterKitValidation();
     $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container, $this->starterKitValidation);
   }
 
