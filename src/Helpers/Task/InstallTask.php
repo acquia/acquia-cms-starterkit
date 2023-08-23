@@ -220,14 +220,23 @@ class InstallTask {
     if (isset($this->starterKits[$this->bundle])) {
       $starterkitName = $this->starterKits[$this->bundle]['name'];
     }
+    $options = array_filter($this->input->getOptions());
+    $installArgs = [];
+    if (array_key_exists('no-interaction', $options) &&
+    $options['no-interaction'] === TRUE) {
+      $installArgs = [
+        'name' => $starterkitName,
+        'no-interaction' => TRUE,
+      ];
+    }
 
     // Only options which is acceptable by drush.
-    $filterArgs = $this->filterDrushOptions(array_filter($this->input->getOptions()));
-
-    // Prepare site install command options.
-    $siteInstallArgs = $filterArgs + [
+    $filterArgs = $this->filterDrushOptions($options);
+    $installArgs = !empty($installArgs) ? $installArgs : [
       'name' => $starterkitName,
     ];
+    // Prepare site install command options.
+    $siteInstallArgs = $filterArgs + $installArgs;
     $this->siteInstall->execute($siteInstallArgs);
 
     $bundleModules = $this->buildInformation['modules'] ?? [];
@@ -243,6 +252,25 @@ class InstallTask {
       unset($modulesList[$key]);
       $isDemoContent = TRUE;
     }
+    // For site studio configuration import, keys needs to be transformed.
+    // sitestudio-api-key => SITESTUDIO_API_KEY
+    // sitestudio-org-key => SITESTUDIO_ORG_KEY
+    // Called in hook acquia_cms_site_studio_install()
+    $siteStudioApiKey = $args['keys']['sitestudio-api-key'] ?? '';
+    if (array_key_exists('sitestudio-api-key', $args['keys'])) {
+      $args['keys']['SITESTUDIO_API_KEY'] = $siteStudioApiKey;
+      unset($args['keys']['sitestudio-api-key']);
+    }
+    $siteStudioOrgKey = $args['keys']['sitestudio-org-key'] ?? '';
+    if (array_key_exists('sitestudio-org-key', $args['keys'])) {
+      $args['keys']['SITESTUDIO_ORG_KEY'] = $siteStudioOrgKey;
+      unset($args['keys']['sitestudio-org-key']);
+    }
+    if (array_key_exists('gmaps-key', $args['keys'])) {
+      $args['keys']['GMAPS_KEY'] = $args['keys']['gmaps-key'];
+      unset($args['keys']['gmaps-key']);
+    }
+
     // Enable modules.
     $this->enableModules->execute([
       'modules' => $modulesList,
@@ -262,8 +290,6 @@ class InstallTask {
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
 
-    $siteStudioApiKey = $args['keys']['sitestudio-api-key'] ?? '';
-    $siteStudioOrgKey = $args['keys']['sitestudio-org-key'] ?? '';
     // Trigger Site Studio Package import, if acquia_cms_site_studio module
     // is there in active bundle.
     if (in_array('acquia_cms_site_studio', $modulesList)) {

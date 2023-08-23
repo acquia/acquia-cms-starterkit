@@ -290,28 +290,33 @@ class Cli {
     // Get questions based on command type i.e install or build.
     $getQuestions = $this->getInstallerQuestions($command_type);
     $output = [];
-    if (!empty($starterkit)) {
-      // Iterate questions to prepare the object pass into
-      // install or build command.
-      foreach ($getQuestions as $key => $value) {
-        // Check whether starterkit name parse some questions from acms.yml.
-        if (in_array($starterkit, $value['dependencies']['starter_kits'])) {
-          // Default value of questions like no, site url & site name.
-          if (isset($value['default_value'])) {
-            // Prepare key-value pair to render into respective commands.
-            if (in_array($key, array_keys($args)) && $args[$key] !== 'no') {
-              $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
-            }
+    // Iterate questions to prepare the object pass into
+    // install or build command.
+    foreach ($getQuestions as $key => $value) {
+      // Check whether starterkit name parse some questions from acms.yml.
+      if (!empty($starterkit) &&
+      in_array($starterkit, $value['dependencies']['starter_kits'])) {
+        // Default value of questions like no, site url & site name.
+        if (isset($value['default_value'])) {
+          // Prepare key-value pair to render into respective commands.
+          if (in_array($key, array_keys($args)) && $args[$key] !== 'no') {
+            $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
           }
-          else {
-            // User input values like keys of site-studio org, api and gmap.
-            if (in_array($key, array_keys($args))) {
-              $output[] = "--$key=$args[$key]";
-            }
+        }
+        else {
+          // User input values like keys of site-studio org, api and gmap.
+          if (in_array($key, array_keys($args))) {
+            $output[] = "--$key=$args[$key]";
           }
         }
       }
+      else {
+        if (in_array($key, array_keys($args))) {
+          $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
+        }
+      }
     }
+
     // Prepare pattern for drush options for site install.
     if ($command_type === 'install') {
       $output = array_merge($this->filterDrushOptions($args, TRUE), $output);
