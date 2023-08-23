@@ -11,12 +11,21 @@ use JsonSchema\Validator;
 class StarterKitValidation {
 
   /**
-   * Loop each starter-kit and send it for validation.
+   * Loop each starter-kit for validation.
+   *
+   * @param array $schema
+   *   Schema json to validate starter-kit.
+   * @param array $starterkits
+   *   List of starter-kits.
    */
   public function validateStarterKits(array $schema, array &$starterkits): void {
     $errorMessage = '';
     foreach ($starterkits as $name => $starterkit) {
-      $errorMessage .= $this->validateStarterKit($schema, $starterkit, $name);
+      $validator = new Validator();
+      $validator->validate($starterkit, $schema);
+      if (!$validator->isValid()) {
+        $errorMessage .= $this->prepareErrorMessage($validator->getErrors(), $name);
+      }
     }
     if ($errorMessage) {
       throw new AcmsCliException($errorMessage);
@@ -24,19 +33,22 @@ class StarterKitValidation {
   }
 
   /**
-   * Validates starter-kit.
+   * Prepare error message for starter-kit.
+   *
+   * @param array $validator
+   *   Error message array.
+   * @param string $name
+   *   Starter-kit name.
+   *
+   * @return string
+   *   Error message format.
    */
-  public function validateStarterKit(array $schema, array $starterkit, string $name): string {
-    $validator = new Validator();
-    $validator->validate($starterkit, $schema);
-    if (!$validator->isValid()) {
-      $errors = '';
-      foreach ($validator->getErrors() as $error) {
-        $errors .= " * " . $error['message'] . " in '" . $error['property'] . "' property type." . "\n";
-      }
-      return "- " . $name . ':' . "\n" . $errors . "\n";
+  public function prepareErrorMessage(array $validator, string $name): string {
+    $errors = '';
+    foreach ($validator as $error) {
+      $errors .= " * " . $error['message'] . " in '" . $error['property'] . "' property type." . "\n";
     }
-    return '';
+    return "- " . $name . ':' . "\n" . $errors . "\n";
   }
 
 }
