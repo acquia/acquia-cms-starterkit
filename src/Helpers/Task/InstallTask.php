@@ -175,7 +175,6 @@ class InstallTask {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->acquiaCmsCli = $cli;
-    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->drushCommand = $container->get(Drush::class);
     $this->enableModules = $container->get(EnableModules::class);
     $this->enableThemes = $container->get(EnableThemes::class);
@@ -216,6 +215,7 @@ class InstallTask {
   public function run(array $args): void {
     $this->print("Installing Site:", 'headline');
     $starterkitName = 'Existing Site';
+    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     if (isset($this->starterKits[$this->bundle])) {
       $starterkitName = $this->starterKits[$this->bundle]['name'];
     }
@@ -333,7 +333,7 @@ class InstallTask {
     $starter_kit_name = 'Existing Site';
     $this->buildInformation = $this->acquiaCmsCli->getBuildInformtaion($site_uri);
     if ($this->buildInformation['starter_kit'] != 'acquia_cms_existing_site') {
-      $starter_kit_name = $this->starterKits[$this->buildInformation['starter_kit']]['name'];
+      $starter_kit_name = $this->acquiaCmsCli->getStarterKits()[$this->buildInformation['starter_kit']]['name'];
     }
     return [
       $this->buildInformation['starter_kit'],
