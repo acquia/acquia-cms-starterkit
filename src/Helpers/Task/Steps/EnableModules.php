@@ -33,7 +33,7 @@ class EnableModules {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :int {
+  public function execute(array $args = []): int {
     $modules = $args['modules'];
     $command = array_merge(["en", "--yes"], $modules);
     $this->drushCommand->prepare($command)->run($args['keys']);

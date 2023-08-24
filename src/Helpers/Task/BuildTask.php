@@ -110,7 +110,7 @@ class BuildTask {
   public function __construct(string $root_dir, Cli $cli, ContainerInterface $container) {
     $this->projectDir = $root_dir;
     $this->acquiaCmsCli = $cli;
-    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
+    $this->starterKits = $this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits');
     $this->validateDrupal = $container->get(ValidateDrupal::class);
     $this->downloadDrupal = $container->get(DownloadDrupal::class);
     $this->downloadModules = $container->get(DownloadModules::class);
@@ -127,7 +127,7 @@ class BuildTask {
    * @poram Symfony\Component\Console\Command\Command $output
    *   The site:build Symfony console command object.
    */
-  public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
+  public function configure(InputInterface $input, OutputInterface $output, string $bundle): void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
@@ -139,7 +139,7 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function run(array $args) :void {
+  public function run(array $args): void {
     $installedDrupalVersion = $this->validateDrupal->execute();
     if (!$installedDrupalVersion) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
@@ -163,7 +163,7 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  protected function buildModulesAndThemes(array $args) :void {
+  protected function buildModulesAndThemes(array $args): void {
     $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
   }
 

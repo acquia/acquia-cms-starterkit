@@ -30,8 +30,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class AcmsBuildCommand extends Command {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
+  use StatusMessageTrait, UserInputTrait;
   /**
    * The AcquiaCMS BuildTask object.
    *
@@ -87,15 +86,21 @@ class AcmsBuildCommand extends Command {
   /**
    * {@inheritdoc}
    */
-  protected function configure() :void {
+  protected function configure(): void {
     $this->setName("acms:build")
       ->setDescription("Use this command to build composer dependencies.")
-      ->setDefinition([
-        new InputArgument('name', NULL, "Name of the starter kit"),
-        new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
-        new InputOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require."),
-      ])
-      ->setHelp("The <info>acms:build</info> command to build composer dependencies & downloads it based on user selected use case.");
+      ->addArgument('name', InputArgument::OPTIONAL, "Name of the starter kit")
+      ->addOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default')
+      ->addOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require.");
+
+    // Get acquia CMS build questions.
+    $buildQuestions = $this->acquiaCmsCli->getOptions('build');
+    // Iterate build questions to prepare for input option method.
+    foreach ($buildQuestions as $option => $value) {
+      $this->addOption($option, '', InputOption::VALUE_NONE, $value['description']);
+    }
+
+    $this->setHelp("The <info>acms:build</info> command to build composer dependencies & downloads it based on user selected use case.");
   }
 
   /**
@@ -105,7 +110,7 @@ class AcmsBuildCommand extends Command {
     try {
       $name = $input->getArgument('name');
       $generate = $input->getOption('generate');
-      $site_uri = $input->getOption('uri');
+      $siteUri = $input->getOption('uri');
       $args = [];
       if ($name) {
         $this->validationOptions($name);
@@ -117,15 +122,18 @@ class AcmsBuildCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
+      // Get input options for build process.
+      $buildOptions = $this->getInputOptions($input->getOptions(), 'build');
+
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
-        $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $name, 'build', $helper);
+        $args['keys'] = $this->askQuestions->askKeysQuestions($buildOptions, $input, $output, $name, 'build', $helper);
       }
       $this->buildTask->configure($input, $output, $name);
       if (!$generate) {
         $this->buildTask->run($args);
       }
-      $this->buildTask->createBuild($args, $site_uri);
+      $this->buildTask->createBuild($args, $siteUri);
       $this->postBuild($name, $output);
     }
     catch (AcmsCliException $e) {
@@ -142,7 +150,7 @@ class AcmsBuildCommand extends Command {
    *   A name of the user selected use-case.
    */
   protected function validationOptions(string $name): bool {
-    $starterKits = array_keys($this->acquiaCmsCli->getStarterKits());
+    $starterKits = array_keys($this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits'));
     if (!in_array($name, $starterKits)) {
       throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
     }
@@ -155,7 +163,7 @@ class AcmsBuildCommand extends Command {
   protected function askBundleQuestion(InputInterface $input, OutputInterface $output): string {
     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');
-    $bundles = array_keys($this->acquiaCmsCli->getStarterKits());
+    $bundles = array_keys($this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits'));
     $this->renderStarterKits($output);
     $starterKit = "acquia_cms_enterprise_low_code";
     $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
@@ -180,7 +188,7 @@ class AcmsBuildCommand extends Command {
   protected function renderStarterKits(OutputInterface $output): void {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
-    $starter_kits = $this->acquiaCmsCli->getStarterKits();
+    $starter_kits = $this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits');
     $total = count($starter_kits);
     $key = 0;
     foreach ($starter_kits as $id => $starter_kit) {

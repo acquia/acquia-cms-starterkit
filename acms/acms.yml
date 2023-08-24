@@ -81,9 +81,12 @@ starter_kits:
       default: olivero
 questions:
   build:
-    demo_content:
+    demo-content:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community
+        starter_kits:
+          - acquia_cms_enterprise_low_code
+          - acquia_cms_headless
+          - acquia_cms_community
       question: "Do you want to enable demo content (yes/no) ?"
       allowed_values:
         options:
@@ -91,11 +94,14 @@ questions:
           - no
       default_value: "no"
       skip_on_value: false
-    content_model:
+    content-model:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community
+        starter_kits:
+          - acquia_cms_enterprise_low_code
+          - acquia_cms_headless
+          - acquia_cms_community
         questions:
-          - ${demo_content} == "no"
+          - ${demo-content} == "no"
       question: "Do you want to enable the content model (yes/no) ?"
       allowed_values:
         options:
@@ -103,9 +109,12 @@ questions:
           - no
       default_value: "no"
       skip_on_value: false
-    dam_integration:
+    dam-integration:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community
+        starter_kits:
+          - acquia_cms_enterprise_low_code
+          - acquia_cms_headless
+          - acquia_cms_community
       question: "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?"
       allowed_values:
         options:
@@ -113,9 +122,11 @@ questions:
           - no
       skip_on_value: false
       default_value: "no"
-    gdpr_integration:
+    gdpr-integration:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community
+        starter_kits:
+          - acquia_cms_enterprise_low_code
+          - acquia_cms_community
       question: "Would you like to add GDPR functionality to the site (Yes/No) ?"
       allowed_values:
         options:
@@ -124,9 +135,10 @@ questions:
       default_value: "no"
       skip_on_value: false
   install:
-    nextjs_app:
+    nextjs-app:
       dependencies:
-        starter_kits: acquia_cms_headless
+        starter_kits:
+          - acquia_cms_headless
       question: "Would you like to preconfigure a next.js site (yes/no) ?"
       allowed_values:
         options:
@@ -134,51 +146,59 @@ questions:
           - no
       skip_on_value: false
       default_value: "no"
-    nextjs_app_site_url:
+    nextjs-app-site-url:
       dependencies:
-        starter_kits: acquia_cms_headless
+        starter_kits:
+          - acquia_cms_headless
         questions:
-          - ${nextjs_app} == "yes"
+          - ${nextjs-app} == "yes"
       question: "Please provide the Next.js site url"
       default_value: "http://localhost:3000"
       skip_on_value: false
       warning: |-
         The site url is not set. Using default: 'http://localhost:3000'.
         You can set the site url later from: /admin/config/services/next.
-    nextjs_app_site_name:
+    nextjs-app-site-name:
       dependencies:
-        starter_kits: acquia_cms_headless
+        starter_kits:
+          - acquia_cms_headless
         questions:
-          - ${nextjs_app} == "yes"
+          - ${nextjs-app} == "yes"
       question: "Please provide the Site Name"
       skip_on_value: false
       default_value: "Headless Site"
       warning: |-
         The Site Name is not set. Site Name is set to 'Headless Site'.
         You can set the site url later from: /admin/config/services/next.
-    nextjs_app_env_file:
+    nextjs-app-env-file:
       dependencies:
-        starter_kits: acquia_cms_headless
+        starter_kits:
+          - acquia_cms_headless
         questions:
-          - ${nextjs_app} == "yes"
+          - ${nextjs-app} == "yes"
       question: "Please provide the .env.local file path"
-    GMAPS_KEY:
+    gmaps-key:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless
+        starter_kits:
+          - acquia_cms_enterprise_low_code
+          - acquia_cms_community
+          - acquia_cms_headless
       question: "Please provide the Google Maps API Key"
       warning: |-
         The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
         You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
-    SITESTUDIO_API_KEY:
+    sitestudio-api-key:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code
+        starter_kits:
+          - acquia_cms_enterprise_low_code
       question: "Please provide the Site Studio API Key"
       warning: |-
         The Site Studio API key is not set. The Site Studio packages won't get imported.
         You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
-    SITESTUDIO_ORG_KEY:
+    sitestudio-org-key:
       dependencies:
-        starter_kits: acquia_cms_enterprise_low_code
+        starter_kits:
+          - acquia_cms_enterprise_low_code
       question: "Please provide the Site Studio Organization Key"
       warning: |-
         The Site Studio Organization key is not set. The Site Studio packages won't get imported.

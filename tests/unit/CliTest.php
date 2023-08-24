@@ -3,12 +3,14 @@
 namespace tests;
 
 use AcquiaCMS\Cli\Cli;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CliTest extends TestCase {
-  use ProphecyTrait;
+
+  use ProphecyTrait, UserInputTrait;
 
   /**
    * Holds the symfony console output object.
@@ -40,6 +42,20 @@ class CliTest extends TestCase {
   protected $acquiaCli;
 
   /**
+   * An array of build questions defined in acms.yml file.
+   *
+   * @var array
+   */
+  protected $buildOptions;
+
+  /**
+   * An array of install questions defined in acms.yml file.
+   *
+   * @var array
+   */
+  protected $installOptions;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -49,6 +65,8 @@ class CliTest extends TestCase {
     $this->rootDirectory = $this->projectDirectory;
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
     $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container);
+    $this->buildOptions = $this->acquiaCli->getInstallerQuestions('build');
+    $this->installOptions = $this->acquiaCli->getInstallerQuestions('install');
   }
 
   /**
@@ -56,7 +74,7 @@ class CliTest extends TestCase {
    *
    * @test
    */
-  public function testExecute() :void {
+  public function testExecute(): void {
     $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
     $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml'));
@@ -75,7 +93,7 @@ class CliTest extends TestCase {
   /**
    * An array of default contents for acms/acms.yml file.
    */
-  protected function getAcmsFileContents() :array {
+  protected function getAcmsFileContents(): array {
     return [
       "starter_kits" => [
         "acquia_cms_enterprise_low_code" => [
@@ -189,17 +207,21 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for content_model Question.
+   * Returns the test data for content-model Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getContentModel(): array {
     return [
-      'content_model' => [
+      'content-model' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
-          'questions' => ['${demo_content} == "no"'],
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_headless',
+            'acquia_cms_community',
+          ],
+          'questions' => ['${demo-content} == "no"'],
         ],
         'question' => "Do you want to enable the content model (yes/no) ?",
         'allowed_values' => [
@@ -212,16 +234,20 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getDemoContent(): array {
     return [
-      'demo_content' => [
+      'demo-content' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_headless',
+            'acquia_cms_community',
+          ],
         ],
         'question' => "Do you want to enable demo content (yes/no) ?",
         'allowed_values' => [
@@ -234,16 +260,20 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for dam_integration Question.
+   * Returns the test data for dam-integration Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getDamIntegration(): array {
     return [
-      'dam_integration' => [
+      'dam-integration' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_headless || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_headless',
+            'acquia_cms_community',
+          ],
         ],
         'question' => "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?",
         'allowed_values' => [
@@ -256,16 +286,19 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for dam_integration Question.
+   * Returns the test data for dam-integration Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getGdprIntegration(): array {
     return [
-      'gdpr_integration' => [
+      'gdpr-integration' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_community',
+          ],
         ],
         'question' => "Would you like to add GDPR functionality to the site (Yes/No) ?",
         'allowed_values' => [
@@ -278,16 +311,16 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsApp(): array {
     return [
-      'nextjs_app' => [
+      'nextjs-app' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
+          'starter_kits' => ['acquia_cms_headless'],
         ],
         'question' => "Would you like to preconfigure a next.js site (yes/no) ?",
         'allowed_values' => [
@@ -300,17 +333,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsAppSiteUrl(): array {
     return [
-      'nextjs_app_site_url' => [
+      'nextjs-app-site-url' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
+          'starter_kits' => ['acquia_cms_headless'],
+          'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Next.js site url",
         'default_value' => 'http://localhost:3000',
@@ -321,17 +354,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsAppSiteName(): array {
     return [
-      'nextjs_app_site_name' => [
+      'nextjs-app-site-name' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
+          'starter_kits' => ['acquia_cms_headless'],
+          'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Site Name",
         'default_value' => 'Headless Site',
@@ -342,17 +375,17 @@ class CliTest extends TestCase {
   }
 
   /**
-   * Returns the test data for demo_content Question.
+   * Returns the test data for demo-content Question.
    *
    * @return array[]
    *   Returns an array of question.
    */
   public static function getNextjsAppEvnFile(): array {
     return [
-      'nextjs_app_env_file' => [
+      'nextjs-app-env-file' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_headless',
-          'questions' => ['${nextjs_app} == "yes"'],
+          'starter_kits' => ['acquia_cms_headless'],
+          'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the .env.local file path",
       ],
@@ -367,9 +400,9 @@ class CliTest extends TestCase {
    */
   public static function getSiteStudioApiKey(): array {
     return [
-      'SITESTUDIO_API_KEY' => [
+      'sitestudio-api-key' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
+          'starter_kits' => ['acquia_cms_enterprise_low_code'],
         ],
         'question' => "Please provide the Site Studio API Key",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -385,9 +418,9 @@ class CliTest extends TestCase {
    */
   public static function getSiteStudioOrgKey(): array {
     return [
-      'SITESTUDIO_ORG_KEY' => [
+      'sitestudio-org-key' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code',
+          'starter_kits' => ['acquia_cms_enterprise_low_code'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
@@ -403,9 +436,13 @@ class CliTest extends TestCase {
    */
   public static function getGmapsKey(): array {
     return [
-      'GMAPS_KEY' => [
+      'gmaps-key' => [
         'dependencies' => [
-          'starter_kits' => 'acquia_cms_enterprise_low_code || acquia_cms_community || acquia_cms_headless',
+          'starter_kits' => [
+            'acquia_cms_enterprise_low_code',
+            'acquia_cms_community',
+            'acquia_cms_headless',
+          ],
         ],
         'question' => "Please provide the Google Maps API Key",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
@@ -416,24 +453,24 @@ class CliTest extends TestCase {
   /**
    * Function to return data provider for method: alterModulesAndThemes().
    */
-  public function alterModuleThemesDataProvider() :array {
+  public function alterModuleThemesDataProvider(): array {
     foreach (['acquia_cms_enterprise_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
       $returnArray = [
         [
           $bundle,
           [
-            'demo_content' => 'yes',
+            'demo-content' => 'yes',
           ],
           [
             [
               "modules" => [
                 "require" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo-content'),
                 )),
                 "install" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'demo-content'),
                 )),
               ],
             ],
@@ -446,19 +483,19 @@ class CliTest extends TestCase {
         [
           $bundle,
           [
-            'content_model' => 'yes',
-            'demo_content' => 'no',
+            'content-model' => 'yes',
+            'demo-content' => 'no',
           ],
           [
             [
               "modules" => [
                 "require" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content-model'),
                 )),
                 "install" => array_unique(array_merge(
                   $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  $this->getUpdatedModulesThemesArray($bundle, 'content-model'),
                 )),
               ],
             ],
@@ -471,8 +508,8 @@ class CliTest extends TestCase {
         [
           $bundle,
           [
-            'content_model' => 'no',
-            'demo_content' => 'no',
+            'content-model' => 'no',
+            'demo-content' => 'no',
           ],
           [
             [
@@ -502,7 +539,7 @@ class CliTest extends TestCase {
    */
   public function getUpdatedModulesThemesArray(string $bundle, string $question_type = ''): array {
     switch ($question_type) :
-      case 'content_model':
+      case 'content-model':
         $packages = [
           "acquia_cms_article",
           "acquia_cms_page",
@@ -510,7 +547,7 @@ class CliTest extends TestCase {
         ];
         break;
 
-      case 'demo_content':
+      case 'demo-content':
         $packages = [
           "acquia_cms_article",
           "acquia_cms_page",
@@ -523,7 +560,142 @@ class CliTest extends TestCase {
         $packages = [];
         break;
     endswitch;
+
     return $packages;
+  }
+
+  /**
+   * Test acquia cms commands for install and build.
+   *
+   * @param string $command
+   *   Command type install or build.
+   * @param string $starter_kit
+   *   Starter kit name.
+   * @param array $options
+   *   List of command options.
+   * @param array $expected
+   *   Expected result.
+   *
+   * @dataProvider dataProviderAcmsCommands
+   */
+  public function testAcmsCommands(string $command, string $starter_kit, array $options, array $expected): void {
+    $this->assertSame($this->acquiaCli->filterOptionsByStarterKit($command, $options, $starter_kit), $expected);
+  }
+
+  /**
+   * Provides an array of Acquia CMS command options.
+   *
+   * @return array
+   *   Test data for acms command and expected.
+   */
+  public function dataProviderAcmsCommands(): array {
+    return [
+      [
+        "build",
+        "acquia_cms_enterprise_low_code",
+        [
+          "demo-content" => "yes",
+          "gdpr-integration" => "yes",
+          "sitestudio-api-key" => "random-value-1234",
+          "sitestudio-org-key" => "org-123454a",
+          "account-pass" => "Admin123",
+          "site-name" => "Low code site",
+        ],
+        [
+          "--demo-content=yes",
+          "--gdpr-integration=yes",
+        ],
+      ],
+      [
+        "install",
+        "acquia_cms_enterprise_low_code",
+        [
+          "demo-content" => "yes",
+          "gdpr-integration" => "yes",
+          "sitestudio-api-key" => "random-value-1234",
+          "sitestudio-org-key" => "org-123454a",
+          "account-pass" => "Admin123",
+          "site-name" => "Low code site",
+        ],
+        [
+          "--account-pass=Admin123",
+          "--site-name=Low code site",
+          "--sitestudio-api-key=random-value-1234",
+          "--sitestudio-org-key=org-123454a",
+        ],
+      ],
+      [
+        "build",
+        "acquia_cms_community",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "gdpr-integration" => "yes",
+          "gmaps-key" => "Abcdef1234",
+          "account-pass" => "Admin123",
+          "site-name" => "Community site",
+        ],
+        [
+          "--content-model=yes",
+          "--dam-integration=yes",
+          "--gdpr-integration=yes",
+        ],
+      ],
+      [
+        "install",
+        "acquia_cms_community",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "gdpr-integration" => "yes",
+          "gmaps-key" => "Abcdef1234",
+          "account-pass" => "Admin123",
+          "site-name" => "Community site",
+        ],
+        [
+          "--account-pass=Admin123",
+          "--site-name=Community site",
+          "--gmaps-key=Abcdef1234",
+        ],
+      ],
+      [
+        "build",
+        "acquia_cms_headless",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "nextjs-app" => "yes",
+          "nextjs-app-site-url" => "http://localhost:3000",
+          "nextjs-app-site-name" => "Headless Site",
+          "account-pass" => "Admin123",
+          "site-name" => "My Headless site",
+        ],
+        [
+          "--content-model=yes",
+          "--dam-integration=yes",
+        ],
+      ],
+      [
+        "install",
+        "acquia_cms_headless",
+        [
+          "content-model" => "yes",
+          "dam-integration" => "yes",
+          "nextjs-app" => "yes",
+          "nextjs-app-site-url" => "http://localhost:3000",
+          "nextjs-app-site-name" => "Headless Site",
+          "account-pass" => "Admin123",
+          "site-name" => "My Headless site",
+        ],
+        [
+          "--account-pass=Admin123",
+          "--site-name=My Headless site",
+          "--nextjs-app=yes",
+          "--nextjs-app-site-url=http://localhost:3000",
+          "--nextjs-app-site-name=Headless Site",
+        ],
+      ],
+    ];
   }
 
 }

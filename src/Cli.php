@@ -2,6 +2,7 @@
 
 namespace AcquiaCMS\Cli;
 
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -11,6 +12,8 @@ use Symfony\Component\Yaml\Yaml;
  * Provides the object for an Acquia CMS starter-kit cli.
  */
 class Cli {
+
+  use UserInputTrait;
 
   /**
    * A message that gets displayed when running any starter-kit cli command.
@@ -116,22 +119,39 @@ class Cli {
 
   /**
    * Returns an array of starter-kits defined in acms.yml file.
+   *
+   * @param string $type
+   *   The param to identify which data to return.
    */
-  public function getStarterKits(): array {
-    $starterkits = [];
+  public function getStarterKitsAndQuestions(string $type = ''): array {
     $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
     $starterkits = $defaultStarterkits['starter_kits'];
+    $questions = $defaultStarterkits['questions'];
     // Check if user defined starterkit file exist in root directory.
-    if ($this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
-      $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
+    if (($this->rootDirectory != $this->projectDirectory) &&
+    $this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
+      $userDefinedStarterkitsAndQuestions = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
       // Check if starter_kits existis else assign empty array.
-      $userDefinedStarterkits = $userDefinedStarterkits['starter_kits'] ?? [];
+      $userDefinedStarterkits = $userDefinedStarterkitsAndQuestions['starter_kits'] ?? [];
+      // Check if starter_kits existis else assign empty array.
+      $userDefinedQuestions = $userDefinedStarterkitsAndQuestions['questions'] ?? [];
       // Merge default and user defined starterkits.
       $starterkits = array_merge($starterkits, $userDefinedStarterkits);
+      // Merge default and user defined questions.
+      $questions = array_merge($questions, $userDefinedQuestions);
+    }
+    if ($type == 'starterkits') {
+      return $starterkits;
+    }
+    elseif ($type == 'questions') {
+      return $questions;
     }
 
     // Return starterkit list.
-    return $starterkits;
+    return [
+      'starter_kits' => $starterkits,
+      'questions' => $questions,
+    ];
   }
 
   /**
@@ -157,9 +177,9 @@ class Cli {
   /**
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
-  public function getInstallerQuestions(string $question_type) :array {
-    $fileContent = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
-    return $fileContent['questions'][$question_type] ?? [];
+  public function getInstallerQuestions(string $question_type): array {
+    $fileContent = $this->getStarterKitsAndQuestions('questions');
+    return $fileContent[$question_type] ?? [];
   }
 
   /**
@@ -188,10 +208,10 @@ class Cli {
    *   Returns an array of altered starter-kit.
    */
   public function alterModulesAndThemes(array &$starterKit, array $userInputValues): array {
-    $isContentModel = $userInputValues['content_model'] ?? '';
-    $isDemoContent = $userInputValues['demo_content'] ?? '';
-    $isDamIntegration = $userInputValues['dam_integration'] ?? '';
-    $isGdprIntegration = $userInputValues['gdpr_integration'] ?? '';
+    $isContentModel = $userInputValues['content-model'] ?? '';
+    $isDemoContent = $userInputValues['demo-content'] ?? '';
+    $isDamIntegration = $userInputValues['dam-integration'] ?? '';
+    $isGdprIntegration = $userInputValues['gdpr-integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',
@@ -222,6 +242,87 @@ class Cli {
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
     return $starterKit;
+  }
+
+  /**
+   * Function to get options for acms starterkit questions.
+   *
+   * @param string $command_type
+   *   Must be build/install/both.
+   *
+   * @return array
+   *   List of options.
+   */
+  public function getOptions(string $command_type = ''): array {
+    $questions = $this->getStarterKitsAndQuestions("questions");
+    $options = $output = [];
+
+    // Store options data on the basis of
+    // command type i.e build/install.
+    $options = $command_type ? $questions[$command_type] :
+    array_merge($questions['build'], $questions['install']);
+
+    // Prepare configure options for acms commands.
+    foreach ($options as $key => $value) {
+      $output[$key] = [
+        'description' => $value['question'],
+        'default_value' => $value['default_value'] ?? '',
+      ];
+    }
+
+    return $output;
+  }
+
+  /**
+   * Filter question options based on starterkit.
+   *
+   * @param string $command_type
+   *   Command type: install|build.
+   * @param array $args
+   *   List of input options.
+   * @param string|null $starterkit
+   *   Starterkit name.
+   *
+   * @return array
+   *   List of filtered options.
+   */
+  public function filterOptionsByStarterKit(string $command_type, array $args, ?string $starterkit = ''): array {
+    // Get questions based on command type i.e install or build.
+    $getQuestions = $this->getInstallerQuestions($command_type);
+    $output = [];
+    // Iterate questions to prepare the object pass into
+    // install or build command.
+    foreach ($getQuestions as $key => $value) {
+      // Check whether starterkit name parse some questions from acms.yml.
+      if (!empty($starterkit) &&
+      in_array($starterkit, $value['dependencies']['starter_kits'])) {
+        // Default value of questions like no, site url & site name.
+        if (isset($value['default_value'])) {
+          // Prepare key-value pair to render into respective commands.
+          if (in_array($key, array_keys($args)) && $args[$key] !== 'no') {
+            $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
+          }
+        }
+        else {
+          // User input values like keys of site-studio org, api and gmap.
+          if (in_array($key, array_keys($args))) {
+            $output[] = "--$key=$args[$key]";
+          }
+        }
+      }
+      else {
+        if (in_array($key, array_keys($args))) {
+          $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
+        }
+      }
+    }
+
+    // Prepare pattern for drush options for site install.
+    if ($command_type === 'install') {
+      $output = array_merge($this->filterDrushOptions($args, TRUE), $output);
+    }
+
+    return $output;
   }
 
 }
