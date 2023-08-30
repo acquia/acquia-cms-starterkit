@@ -242,6 +242,7 @@ class CliTest extends TestCase {
           'questions' => ['${demo-content} == "no"'],
         ],
         'question' => "Do you want to enable the content model (yes/no) ?",
+        'help_text' => "Enable Content Model.",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -268,6 +269,7 @@ class CliTest extends TestCase {
           ],
         ],
         'question' => "Do you want to enable demo content (yes/no) ?",
+        'help_text' => "Enable Demo Content.",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -294,6 +296,7 @@ class CliTest extends TestCase {
           ],
         ],
         'question' => "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?",
+        'help_text' => "Integrate Acquia DAM.",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -319,6 +322,7 @@ class CliTest extends TestCase {
           ],
         ],
         'question' => "Would you like to add GDPR functionality to the site (Yes/No) ?",
+        'help_text' => "Integrate GDPR Compliances.",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -341,6 +345,7 @@ class CliTest extends TestCase {
           'starter_kits' => ['acquia_cms_headless'],
         ],
         'question' => "Would you like to preconfigure a next.js site (yes/no) ?",
+        'help_text' => "Pre-configure NextJS site.",
         'allowed_values' => [
           'options' => ['yes', 'no'],
         ],
@@ -364,6 +369,7 @@ class CliTest extends TestCase {
           'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Next.js site url",
+        'help_text' => "NextJS Site URL.",
         'default_value' => 'http://localhost:3000',
         'skip_on_value' => FALSE,
         'warning' => "The site url is not set. Using default: 'http://localhost:3000'.\nYou can set the site url later from: /admin/config/services/next.",
@@ -385,6 +391,7 @@ class CliTest extends TestCase {
           'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the Site Name",
+        'help_text' => "NextJS Site Name.",
         'default_value' => 'Headless Site',
         'skip_on_value' => FALSE,
         'warning' => "The Site Name is not set. Site Name is set to 'Headless Site'.\nYou can set the site url later from: /admin/config/services/next.",
@@ -406,6 +413,7 @@ class CliTest extends TestCase {
           'questions' => ['${nextjs-app} == "yes"'],
         ],
         'question' => "Please provide the .env.local file path",
+        'help_text' => "NextJS env file path.",
       ],
     ];
   }
@@ -423,6 +431,7 @@ class CliTest extends TestCase {
           'starter_kits' => ['acquia_cms_enterprise_low_code'],
         ],
         'question' => "Please provide the Site Studio API Key",
+        'help_text' => "Site Studio API key.",
         'warning' => "The Site Studio API key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
     ];
@@ -441,6 +450,7 @@ class CliTest extends TestCase {
           'starter_kits' => ['acquia_cms_enterprise_low_code'],
         ],
         'question' => "Please provide the Site Studio Organization Key",
+        'help_text' => "Site Studio Organisation key.",
         'warning' => "The Site Studio Organization key is not set. The Site Studio packages won't get imported.\nYou can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.",
       ],
     ];
@@ -463,6 +473,7 @@ class CliTest extends TestCase {
           ],
         ],
         'question' => "Please provide the Google Maps API Key",
+        'help_text' => "Google Maps key.",
         'warning' => "The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.\nYou can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.",
       ],
     ];
