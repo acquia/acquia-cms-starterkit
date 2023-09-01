@@ -135,39 +135,24 @@ class Cli {
    * @param string $type
    *   The param to identify which data to return.
    */
-  public function getStarterKitsAndQuestions(string $type = ''): array {
+  public function getStarterKitsData(string $type = ''): array {
     $defaultStarterkits = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml');
-    $starterkits = $defaultStarterkits['starter_kits'];
-    $questions = $defaultStarterkits['questions'];
-    // Check if user defined starterkit file exist in root directory.
-    if (($this->rootDirectory != $this->projectDirectory) &&
-    $this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
-      $userDefinedStarterkitsAndQuestions = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
-      // Check if starter_kits existis else assign empty array.
-      $userDefinedStarterkits = $userDefinedStarterkitsAndQuestions['starter_kits'] ?? [];
-      // Check if starter_kits existis else assign empty array.
-      $userDefinedQuestions = $userDefinedStarterkitsAndQuestions['questions'] ?? [];
-      // Merge default and user defined starterkits.
-      $starterkits = array_merge($starterkits, $userDefinedStarterkits);
-      // Merge default and user defined questions.
-      $questions = array_merge($questions, $userDefinedQuestions);
-    }
-    if ($type == 'starterkits') {
-      return $starterkits;
-    }
-    elseif ($type == 'questions') {
-      return $questions;
+    $starterKitData = [];
+    if ($type) {
+      $starterKitData = $defaultStarterkits[$type];
+      if (($this->rootDirectory != $this->projectDirectory) &&
+      $this->filesystem->exists($this->rootDirectory . '/acms/acms.yml')) {
+        $userDefinedStarterkits = $this->getAcquiaCmsFile($this->rootDirectory . '/acms/acms.yml');
+        $userDefinedStarterKitData = $userDefinedStarterkits[$type] ?? [];
+        $starterKitData = array_merge($starterKitData, $userDefinedStarterKitData);
+      }
     }
 
     // Send each starterkit for validation.
     $schema = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/schema.json');
     $this->starterKitValidation->validateStarterKits($schema, $starterkits);
 
-    // Return starterkit list.
-    return [
-      'starter_kits' => $starterkits,
-      'questions' => $questions,
-    ];
+    return $starterKitData ?? $defaultStarterkits;
   }
 
   /**
@@ -194,7 +179,7 @@ class Cli {
    * Returns an array of questions for setting keys defined in acms.yml file.
    */
   public function getInstallerQuestions(string $question_type): array {
-    $fileContent = $this->getStarterKitsAndQuestions('questions');
+    $fileContent = $this->getStarterKitsData('questions');
     return $fileContent[$question_type] ?? [];
   }
 
@@ -270,18 +255,24 @@ class Cli {
    *   List of options.
    */
   public function getOptions(string $command_type = ''): array {
-    $questions = $this->getStarterKitsAndQuestions("questions");
+    $questions = $this->getStarterKitsData("questions");
     $options = $output = [];
 
     // Store options data on the basis of
     // command type i.e build/install.
     $options = $command_type ? $questions[$command_type] :
     array_merge($questions['build'], $questions['install']);
-
     // Prepare configure options for acms commands.
     foreach ($options as $key => $value) {
+      if (in_array($key, [
+        'nextjs-app-site-url',
+        'nextjs-app-site-name',
+      ])) {
+        $value['default_value'] = '';
+      }
+
       $output[$key] = [
-        'description' => $value['question'],
+        'description' => $value['help_text'],
         'default_value' => $value['default_value'] ?? '',
       ];
     }

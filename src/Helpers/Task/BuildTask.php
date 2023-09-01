@@ -153,7 +153,7 @@ class BuildTask {
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
     $this->buildModulesAndThemes($args);
-    $this->downloadModules->execute($this->acquiaCmsCli->getStarterKits()[$this->bundle]);
+    $this->downloadModules->execute($this->acquiaCmsCli->getStarterKitsData()[$this->bundle]);
   }
 
   /**
@@ -163,7 +163,7 @@ class BuildTask {
    *   An array of params argument to pass.
    */
   protected function buildModulesAndThemes(array $args) :void {
-    $this->acquiaCmsCli->alterModulesAndThemes($this->acquiaCmsCli->getStarterKits()[$this->bundle], $args['keys']);
+    $this->acquiaCmsCli->alterModulesAndThemes($this->acquiaCmsCli->getStarterKitsData()[$this->bundle], $args['keys']);
   }
 
   /**
@@ -177,7 +177,7 @@ class BuildTask {
   public function createBuild(array $args, string $site) :void {
     $build_path = $this->projectDir . '/acms';
     $this->buildModulesAndThemes($args);
-    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
+    $this->starterKits = $this->acquiaCmsCli->getStarterKitsData();
     $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
     $installed_themes = $this->starterKits[$this->bundle]['themes'];
 

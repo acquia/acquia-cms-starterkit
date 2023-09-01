@@ -89,7 +89,7 @@ class AcmsInstallCommand extends Command {
     $siteUri = $input->getOption('uri');
     $starterKitName = $input->getArgument('name');
     // Default install command option and argument.
-    $installCommand = $input->getOption('no-interaction') ? [
+    $installCommand = ($input->getOption('no-interaction') || $input->getOption('yes')) ? [
       '--uri=' . $siteUri,
       '--no-interaction',
     ] : ['--uri=' . $siteUri];
