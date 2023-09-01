@@ -110,7 +110,7 @@ class BuildTask {
   public function __construct(string $root_dir, Cli $cli, ContainerInterface $container) {
     $this->projectDir = $root_dir;
     $this->acquiaCmsCli = $cli;
-    $this->starterKits = $this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits');
+    $this->starterKits = $this->acquiaCmsCli->getStarterKitsData('starter_kits');
     $this->validateDrupal = $container->get(ValidateDrupal::class);
     $this->downloadDrupal = $container->get(DownloadDrupal::class);
     $this->downloadModules = $container->get(DownloadModules::class);

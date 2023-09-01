@@ -89,7 +89,7 @@ class AcmsBuildCommand extends Command {
   protected function configure(): void {
     $this->setName("acms:build")
       ->setDescription("Use this command to build composer dependencies.")
-      ->addArgument('name', InputArgument::OPTIONAL, "Name of the starter kit")
+      ->addArgument('name', InputArgument::OPTIONAL, "Name of the Starter Kit.")
       ->addOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default')
       ->addOption('generate', 'ge', InputOption::VALUE_NONE, "Create build.yml file without running composer install/require.");
 
@@ -150,7 +150,7 @@ class AcmsBuildCommand extends Command {
    *   A name of the user selected use-case.
    */
   protected function validationOptions(string $name): bool {
-    $starterKits = array_keys($this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits'));
+    $starterKits = array_keys($this->acquiaCmsCli->getStarterKitsData('starter_kits'));
     if (!in_array($name, $starterKits)) {
       throw new InvalidArgumentException("Invalid starter kit. It should be from one of the following: " . implode(", ", $starterKits) . ".");
     }
@@ -163,7 +163,7 @@ class AcmsBuildCommand extends Command {
   protected function askBundleQuestion(InputInterface $input, OutputInterface $output): string {
     /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
     $helper = $this->getHelper('question');
-    $bundles = array_keys($this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits'));
+    $bundles = array_keys($this->acquiaCmsCli->getStarterKitsData('starter_kits'));
     $this->renderStarterKits($output);
     $starterKit = "acquia_cms_enterprise_low_code";
     $question = new Question($this->styleQuestion("Please choose bundle from one of the above use case", $starterKit), $starterKit);
@@ -188,7 +188,7 @@ class AcmsBuildCommand extends Command {
   protected function renderStarterKits(OutputInterface $output): void {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
-    $starter_kits = $this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits');
+    $starter_kits = $this->acquiaCmsCli->getStarterKitsData('starter_kits');
     $total = count($starter_kits);
     $key = 0;
     foreach ($starter_kits as $id => $starter_kit) {

@@ -176,7 +176,7 @@ class InstallTask {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->acquiaCmsCli = $cli;
-    $this->starterKits = $this->acquiaCmsCli->getStarterKitsAndQuestions('starterkits');
+    $this->starterKits = $this->acquiaCmsCli->getStarterKitsData('starter_kits');
     $this->drushCommand = $container->get(Drush::class);
     $this->enableModules = $container->get(EnableModules::class);
     $this->enableThemes = $container->get(EnableThemes::class);
