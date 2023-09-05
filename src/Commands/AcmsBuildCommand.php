@@ -122,9 +122,13 @@ class AcmsBuildCommand extends Command {
         $this->acquiaCmsCli->printHeadline();
         $name = $this->askBundleQuestion($input, $output);
       }
-      // Get input options for build process.
-      $buildOptions = $this->getInputOptions($input->getOptions(), 'build');
 
+      // Get input options for build process.
+      $options = array_filter($input->getOptions());
+      $envOptions = $this->acquiaCmsCli->envOptions($options, 'build');
+      $options = !empty($envOptions) ?
+      array_merge($options, $envOptions) : $options;
+      $buildOptions = $this->getInputOptions($options, 'build');
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
         $args['keys'] = $this->askQuestions->askKeysQuestions($buildOptions, $input, $output, $name, 'build', $helper);

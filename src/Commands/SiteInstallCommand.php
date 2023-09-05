@@ -114,7 +114,12 @@ class SiteInstallCommand extends Command {
       // Get starterkit name from build file.
       [$starterkitMachineName, $starterkitName] = $this->installTask->getStarterKitName($siteUri);
       // Get user input options for install process.
-      $installOptions = $this->getInputOptions($input->getOptions(), 'install');
+      $options = array_filter($input->getOptions());
+      $envOptions = $this->acquiaCmsCli->envOptions($options, 'install');
+      $options = !empty($envOptions) ?
+      array_merge($options, $envOptions) : $options;
+      $installOptions = $this->getInputOptions($options, 'install');
+
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
         $args['keys'] = $this->askQuestions->askKeysQuestions($installOptions, $input, $output, $starterkitMachineName, 'install', $helper);

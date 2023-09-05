@@ -116,12 +116,17 @@ class AcmsInstallCommand extends Command {
     ], $installCommand);
 
     $filterArgs = array_filter($input->getOptions());
+    $envOptions = $this->acquiaCmsCli->envOptions($filterArgs);
+    $filterArgs = !empty($envOptions) ?
+    array_merge($filterArgs, $envOptions) : $filterArgs;
 
     // Get questions arguments/options for build command.
     $buildArgs = $this->acquiaCmsCli->filterOptionsByStarterKit('build', $filterArgs, $starterKitName);
     // Execute acms acms:build.
     $this->genericCommand->prepare(array_merge($buildCommand, $buildArgs))->run();
-
+    // Get build information if starterkit set from the prompt.
+    $buildInfo = $this->acquiaCmsCli->getBuildInformtaion($siteUri);
+    $starterKitName = $starterKitName ?? $buildInfo['starter_kit'];
     // Get questions arguments/options for install command.
     $installArgs = $this->acquiaCmsCli->filterOptionsByStarterKit('install', $filterArgs, $starterKitName);
     // Execute acms site:install.
