@@ -233,7 +233,7 @@ class Cli {
    * Function to get options for acms starterkit questions.
    *
    * @param string $command_type
-   *   Must be build/install/both.
+   *   Build/install.
    *
    * @return array
    *   List of options.
@@ -281,6 +281,10 @@ class Cli {
     // Get questions based on command type i.e install or build.
     $getQuestions = $this->getInstallerQuestions($command_type);
     $output = [];
+    $options = [
+      'with-starterkit' => [],
+      'without-starterkit' => [],
+    ];
     // Iterate questions to prepare the object pass into
     // install or build command.
     foreach ($getQuestions as $key => $value) {
@@ -291,26 +295,54 @@ class Cli {
         if (isset($value['default_value'])) {
           // Prepare key-value pair to render into respective commands.
           if (in_array($key, array_keys($args)) && $args[$key] !== 'no') {
-            $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
+            $options['with-starterkit'][] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
           }
         }
         else {
           // User input values like keys of site-studio org, api and gmap.
           if (in_array($key, array_keys($args))) {
-            $output[] = "--$key=$args[$key]";
+            $options['with-starterkit'][] = "--$key=$args[$key]";
           }
         }
       }
       else {
         if (in_array($key, array_keys($args))) {
-          $output[] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
+          $options['without-starterkit'][] = ($args[$key] == 'true') ? "--$key" : "--$key=$args[$key]";
         }
       }
     }
 
-    // Prepare pattern for drush options for site install.
-    if ($command_type === 'install') {
-      $output = array_merge($this->filterDrushOptions($args, TRUE), $output);
+    $output = !empty($starterkit) ? $options['with-starterkit'] : $options['without-starterkit'];
+
+    // Command options.
+    return $command_type === 'install' ?
+    array_merge($this->filterDrushOptions($args, TRUE), $output) : $output;
+
+  }
+
+  /**
+   * Environment variable options for starterkit.
+   *
+   * @param array $args
+   *   User input arguments and options.
+   * @param string $command_type
+   *   Command type build/install.
+   *
+   * @return array
+   *   List of options for command.
+   */
+  public function envOptions(array $args, string $command_type = ''): array {
+    $options = array_keys($this->getOptions($command_type));
+    $output = [];
+    foreach ($options as $option) {
+      $envValue = getenv(str_replace("-", "_", strtoupper($option)));
+      if ($envValue && $envValue !== "no") {
+        $output[$option] = $envValue === 'yes' ? TRUE : $envValue;
+      }
+      if (array_key_exists($option, $args)) {
+        $output[$option] = $args[$option];
+      }
+
     }
 
     return $output;
