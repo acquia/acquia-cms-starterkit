@@ -131,7 +131,8 @@ class InstallerQuestions {
    *   Returns the default value for question.
    */
   public function getEnvValue(array $question, string $key = ""): string {
-    return trim(PHPParser::parseEnvVars(!empty(getenv($key)) ? getenv($key) : ''));
+    $env = getenv(str_replace("-", "_", strtoupper($key)));
+    return trim(PHPParser::parseEnvVars(!empty($env) ? $env : ''));
   }
 
   /**

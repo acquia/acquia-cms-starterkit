@@ -211,15 +211,15 @@ class InstallerQuestionsTest extends TestCase {
         'some_value',
         'sitestudio-api-key',
         [
-          'sitestudio-api-key' => 'some_value',
+          'SITESTUDIO_API_KEY' => 'some_value',
         ],
       ],
       [
         CliTest::getGmapsKey()['gmaps-key'],
-        '',
+        'some_value',
         'gmaps-key',
         [
-          'SOME_RANDOM_VALUE' => 'some_value',
+          'GMAPS_KEY' => 'some_value',
         ],
       ],
     ];
