@@ -44,7 +44,7 @@ class DownloadModules {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function execute(array $args = []) :int {
+  public function execute(array $args = []): int {
     $composerContents = $this->acquiaCmsCli->getRootComposer();
     $composerContents = json_decode($composerContents);
     $composerContentsExtra = $composerContents->{'extra'};
@@ -124,6 +124,7 @@ class DownloadModules {
     $packages = JsonParser::downloadPackages($packages);
     $inputArgument = array_merge(["require", "-W"], $packages);
     $this->composerCommand->prepare($inputArgument)->run();
+
     return $this->composerCommand->prepare(["update", "--lock"])->run();
   }
 

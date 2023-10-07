@@ -32,7 +32,7 @@ class BuildTask {
    *
    * @var mixed
    */
-  protected $starterKits;
+  protected $starterKitsData;
 
   /**
    * Holds the Validate Drupal step object.
@@ -130,6 +130,7 @@ class BuildTask {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
+    $this->starterKitsData = $this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->bundle];
   }
 
   /**
@@ -153,7 +154,7 @@ class BuildTask {
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
     $this->buildModulesAndThemes($args);
-    $this->downloadModules->execute($this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->bundle]);
+    $this->downloadModules->execute($this->starterKitsData);
   }
 
   /**
@@ -163,7 +164,7 @@ class BuildTask {
    *   An array of params argument to pass.
    */
   protected function buildModulesAndThemes(array $args): void {
-    $this->acquiaCmsCli->alterModulesAndThemes($this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->bundle], $args['keys']);
+    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKitsData, $args['keys']);
   }
 
   /**
@@ -177,9 +178,8 @@ class BuildTask {
   public function createBuild(array $args, string $site): void {
     $build_path = $this->projectDir . '/acms';
     $this->buildModulesAndThemes($args);
-    $this->starterKits = $this->acquiaCmsCli->getStarterKitsData('starter_kits');
-    $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
-    $installed_themes = $this->starterKits[$this->bundle]['themes'];
+    $installed_modules = $this->starterKitsData['modules']['install'];
+    $installed_themes = $this->starterKitsData['themes'];
 
     // Build array structure for build.yml.
     $build_content = [

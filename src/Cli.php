@@ -246,6 +246,7 @@ class Cli {
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
+
     return $starterKit;
   }
 
