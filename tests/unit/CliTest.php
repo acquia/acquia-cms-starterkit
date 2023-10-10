@@ -4,6 +4,7 @@ namespace tests;
 
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
+use AcquiaCMS\Cli\Validation\StarterKitValidation;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;

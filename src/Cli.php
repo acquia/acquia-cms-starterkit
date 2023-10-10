@@ -2,8 +2,8 @@
 
 namespace AcquiaCMS\Cli;
 
-use AcquiaCMS\Cli\Validation\StarterKitValidation;
 use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
+use AcquiaCMS\Cli\Validation\StarterKitValidation;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -148,11 +148,15 @@ class Cli {
       }
     }
 
-    // Send each starterkit for validation.
-    $schema = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/schema.json');
-    $this->starterKitValidation->validateStarterKits($schema, $starterkits);
+    $starterKits = $starterKitData ?? $defaultStarterkits;
 
-    return $starterKitData ?? $defaultStarterkits;
+    // Send each starterkit for validation.
+    if ($type === 'starter_kits') {
+      $schema = $this->getAcquiaCmsFile($this->projectDirectory . '/acms/schema.json');
+      $this->starterKitValidation->validateStarterKits($schema, $starterKits);
+    }
+
+    return $starterKits;
   }
 
   /**
@@ -242,6 +246,7 @@ class Cli {
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
+
     return $starterKit;
   }
 

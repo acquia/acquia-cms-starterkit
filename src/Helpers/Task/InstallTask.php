@@ -35,7 +35,7 @@ class InstallTask {
    *
    * @var mixed
    */
-  protected $starterKits;
+  protected $starterKitsData;
 
   /**
    * Holds the Validate Drupal step object.
@@ -205,6 +205,7 @@ class InstallTask {
     $this->input = $input;
     $this->output = $output;
     $this->siteUri = $site_uri;
+    $this->starterKitsData = $this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->bundle];
   }
 
   /**
@@ -216,9 +217,8 @@ class InstallTask {
   public function run(array $args): void {
     $this->print("Installing Site:", 'headline');
     $starterkitName = 'Existing Site';
-    $this->starterKits = $this->acquiaCmsCli->getStarterKitsData();
-    if (isset($this->starterKits[$this->bundle])) {
-      $starterkitName = $this->starterKits[$this->bundle]['name'];
+    if (isset($this->starterKitsData)) {
+      $starterkitName = $this->starterKitsData['name'];
     }
     $options = array_filter($this->input->getOptions());
     $installArgs = [];
@@ -360,14 +360,15 @@ class InstallTask {
    *   Returns the starterkit name, machine name.
    */
   public function getStarterKitName(string $site_uri): array {
-    $starter_kit_name = 'Existing Site';
+    $starterKitName = 'Existing Site';
     $this->buildInformation = $this->acquiaCmsCli->getBuildInformtaion($site_uri);
     if ($this->buildInformation['starter_kit'] != 'acquia_cms_existing_site') {
-      $starter_kit_name = $this->acquiaCmsCli->getStarterKitsData()[$this->buildInformation['starter_kit']]['name'];
+      $starterKitName = $this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->buildInformation['starter_kit']]['name'];
     }
+
     return [
       $this->buildInformation['starter_kit'],
-      $starter_kit_name,
+      $starterKitName,
     ];
   }
 
