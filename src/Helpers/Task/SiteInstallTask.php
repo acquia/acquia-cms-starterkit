@@ -128,10 +128,10 @@ class SiteInstallTask {
     $this->enableThemes->execute([
       'themes' => [
         'install' => [
-          'acquia_claro',
+          'gin',
           'cohesion_theme',
         ],
-        'admin' => 'acquia_claro',
+        'admin' => 'gin',
         'default' => 'cohesion_theme',
       ],
       'starter_kit' => 'acquia_cms_existing_site',
