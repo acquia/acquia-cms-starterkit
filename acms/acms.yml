@@ -23,10 +23,10 @@ starter_kits:
         - acquia_cms_toolbar
     themes:
       require:
-        - acquia_claro
+        - gin
       install:
-        - acquia_claro
-      admin: acquia_claro
+        - gin
+      admin: gin
       default: cohesion_theme
   acquia_cms_community:
     name: "Acquia CMS Community"
@@ -48,10 +48,10 @@ starter_kits:
         - acquia_cms_toolbar
     themes:
       require:
-        - acquia_claro
+        - gin
       install:
-        - acquia_claro
-      admin: acquia_claro
+        - gin
+      admin: gin
       default: olivero
   acquia_cms_headless:
     name: "Acquia CMS Headless"
@@ -74,10 +74,10 @@ starter_kits:
         - consumer_image_styles
     themes:
       require:
-        - acquia_claro
+        - gin
       install:
-        - acquia_claro
-      admin: acquia_claro
+        - gin
+      admin: gin
       default: olivero
 questions:
   build:

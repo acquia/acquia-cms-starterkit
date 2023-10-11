@@ -13,5 +13,5 @@ sites:
       - acquia_cms_video
     starter_kit: acquia_cms_enterprise_low_code
     themes:
-      admin: acquia_claro
+      admin: gin
       default: cohesion_theme
