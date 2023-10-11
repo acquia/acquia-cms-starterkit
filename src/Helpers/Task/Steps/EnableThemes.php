@@ -54,7 +54,7 @@ class EnableThemes {
       ], [$args['themes']['admin']]);
       $this->drushCommand->prepare($command)->run();
 
-      // Use admin theme as acquia_claro.
+      // Use admin theme as on node add/edit page.
       $command = array_merge([
         "config:set",
         "node.settings",
