@@ -3,8 +3,7 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Helpers\FileSystem\FileLoader;
-use AcquiaCMS\Cli\Helpers\InstallQuestions;
+use AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
 use Symfony\Component\Console\Command\Command;
@@ -17,17 +16,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "setup_nextjs_task",
- *   weight = 9,
+ *   weight = 60,
  * )
  */
 class SetupNextJSSiteTask extends BaseTask {
 
   /**
-   * Holds the file-loader service object.
+   * Holds the starter_kit_manager service object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader
+   * @var \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface
    */
-  protected $fileLoader;
+  protected $starterKitManager;
 
   /**
    * Holds the drush command object.
@@ -37,26 +36,16 @@ class SetupNextJSSiteTask extends BaseTask {
   protected $drushCommand;
 
   /**
-   * Holds the install_questions service object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\InstallQuestions
-   */
-  protected $questions;
-
-  /**
    * Constructs the task object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\InstallQuestions $questions
-   *   An install_questions service object.
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush_command
    *   A drush command object.
-   * @param \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader $fileLoader
-   *   A file loader service object.
+   * @param \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface $starter_kit_manager
+   *   The starter_kit_manager service object.
    */
-  public function __construct(InstallQuestions $questions, Drush $drush_command, FileLoader $fileLoader) {
-    $this->fileLoader = $fileLoader;
+  public function __construct(Drush $drush_command, StarterKitManagerInterface $starter_kit_manager) {
+    $this->starterKitManager = $starter_kit_manager;
     $this->drushCommand = $drush_command;
-    $this->questions = $questions;
   }
 
   /**
@@ -64,9 +53,8 @@ class SetupNextJSSiteTask extends BaseTask {
    */
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
-      $container->get('install_questions'),
       $container->get('drush_command'),
-      $container->get('file_loader'),
+      $container->get('starter_kit_manager'),
     );
   }
 
@@ -74,8 +62,9 @@ class SetupNextJSSiteTask extends BaseTask {
    * {@inheritdoc}
    */
   public function preExecute(InputInterface $input, OutputInterface $output): int {
-    $isDemoContent = $this->questions->getAnswer("nextjs_app");
-    if ($isDemoContent != "yes") {
+    $installUserResponse = $this->starterKitManager->getAnswers("install");
+    $isNextJsApp = $installUserResponse["nextjs-app"] ?? "";
+    if ($isNextJsApp != "yes") {
       return StatusCode::SKIP;
     }
     $output->writeln($this->style("Initiating NextJs App for the starter-kit:", 'headline'));
@@ -86,18 +75,19 @@ class SetupNextJSSiteTask extends BaseTask {
    * {@inheritdoc}
    */
   public function execute(InputInterface $input, OutputInterface $output): int {
-    $site_url = $this->questions->getAnswer("nextjs_app_site_url");
-    $site_name = $this->questions->getAnswer("nextjs_app_site_name");
-    $env_file = $this->questions->getAnswer("nextjs_app_env_file");
+    $installUserResponse = $this->starterKitManager->getAnswers("install");
+    $site_url = $installUserResponse["nextjs-app-site-url"] ?? "";
+    $site_name = $installUserResponse["nextjs-app-site-name"] ?? "";
+    $env_file = $installUserResponse["nextjs-app-env-file"] ?? "";
     $command = ["acms:headless:new-nextjs"];
     if ($site_url) {
       $command = array_merge($command, ["--site-url=" . $site_url]);
     }
     if ($site_name) {
-      $command = array_merge($command, ["--site-name=" . $site_url]);
+      $command = array_merge($command, ["--site-name=" . $site_name]);
     }
     if ($env_file) {
-      $command = array_merge($command, ["--env-file=" . $site_url]);
+      $command = array_merge($command, ["--env-file=" . $env_file]);
     }
     $this->drushCommand->prepare($command)->run();
     return StatusCode::OK;

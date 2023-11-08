@@ -3,8 +3,8 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
+use AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface;
 use AcquiaCMS\Cli\Helpers\FileSystem\FileLoader;
-use AcquiaCMS\Cli\Helpers\InstallQuestions;
 use AcquiaCMS\Cli\Helpers\Parsers\JsonParser;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Composer;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
@@ -18,10 +18,25 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "download_packages_task",
- *   weight = 3,
+ *   weight = 25,
  * )
  */
 class DownloadPackagesTask extends BaseTask {
+
+  /**
+   * Holds the starter_kit_manager service object.
+   *
+   * @var \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface
+   */
+  protected $starterKitManager;
+
+  /**
+   * Holds the composer command service object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Composer
+   */
+  protected $composerCommand;
+
 
   /**
    * Holds the file_loader service object.
@@ -31,33 +46,28 @@ class DownloadPackagesTask extends BaseTask {
   protected $fileLoader;
 
   /**
-   * Holds the composer command service object.
+   * The JSON data object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Composer
+   * @var array
    */
-  protected $composerCommand;
-
-  /**
-   * Holds the install_questions service object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\InstallQuestions
-   */
-  protected $questions;
+  protected $rootComposer;
 
   /**
    * Creates the task object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\InstallQuestions $questions
-   *   The install_questions service object.
+   * @param \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface $starter_kit_manager
+   *   The starter_kit_manager service object.
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Composer $composer_command
    *   The composer command service object.
    * @param \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader $fileLoader
    *   The file_loader service object.
+   * @param string $projectDir
+   *   The project root directory.
    */
-  public function __construct(InstallQuestions $questions, Composer $composer_command, FileLoader $fileLoader) {
-    $this->fileLoader = $fileLoader;
+  public function __construct(StarterKitManagerInterface $starter_kit_manager, Composer $composer_command, FileLoader $fileLoader, string $projectDir) {
+    $this->starterKitManager = $starter_kit_manager;
     $this->composerCommand = $composer_command;
-    $this->questions = $questions;
+    $this->rootComposer = $fileLoader->load("$projectDir/composer.json");
   }
 
   /**
@@ -65,9 +75,10 @@ class DownloadPackagesTask extends BaseTask {
    */
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
-      $container->get('install_questions'),
+      $container->get('starter_kit_manager'),
       $container->get('composer_command'),
       $container->get('file_loader'),
+      $container->getParameter('app.base_dir')
     );
   }
 
@@ -83,16 +94,19 @@ class DownloadPackagesTask extends BaseTask {
    * {@inheritdoc}
    */
   public function execute(InputInterface $input, OutputInterface $output): int {
-    $selected_starter_kit = $this->questions->getAnswer("starter_kit");
-    $modulesToRequire = $this->fileLoader->getModules($selected_starter_kit);
-    $modulesToRequire = $modulesToRequire['require'] ?? [];
-    $themesToRequire = $this->fileLoader->getThemes($selected_starter_kit);
-    $themesToRequire = $themesToRequire['require'] ?? [];
+    $selectedStarterKit = $this->starterKitManager->selectedStarterKit();
+    $modules = $selectedStarterKit->getModules();
+    $themes = $selectedStarterKit->getThemes();
+
     $packagesToRequire = [];
-    if ($modulesToRequire) {
-      $packagesToRequire = JsonParser::downloadPackages(array_merge($modulesToRequire, $themesToRequire));
+    if (isset($modules['require'])) {
+      $packagesToRequire = array_merge($packagesToRequire, $modules['require']);
     }
-    $rootComposer = $this->fileLoader->getRootComposer();
+    if (isset($themes['require'])) {
+      $packagesToRequire = array_merge($packagesToRequire, $themes['require']);
+    }
+    $packagesToRequire = JsonParser::downloadPackages($packagesToRequire);
+    $rootComposer = $this->rootComposer;
     $hasDrush = $rootComposer["require"]["drush/drush"] ?? "";
     $hasMinimStability = $rootComposer["minimum-stability"] ?? "";
     $hasPreferStable = $rootComposer["prefer-stable"] ?? "";
@@ -100,7 +114,7 @@ class DownloadPackagesTask extends BaseTask {
     if (!$hasDrush) {
       $this->composerCommand->prepare([
         "require",
-        "drush/drush:^10.3 || ^11",
+        "drush/drush:^11 || ^12",
       ])->run();
     }
     if ($hasMinimStability && $hasMinimStability != "dev") {

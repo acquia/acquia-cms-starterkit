@@ -1,0 +1,54 @@
+<?php
+
+namespace AcquiaCMS\Cli;
+
+/**
+ * Provides the object for an Acquia CMS starter-kit cli.
+ */
+class SharedService {
+
+  private static $instance;
+
+  protected $data = [];
+
+  /**
+   * The SharedService constructor should be private to prevent direct
+   * construction calls with the `new` operator.
+   */
+  protected function __construct() {}
+
+  /**
+   * @return SharedService
+   */
+  public static function getInstance(): SharedService {
+    if (!isset(self::$instance)) {
+      self::$instance = new static();
+    }
+    return self::$instance;
+  }
+
+  /**
+   * @throws \Exception
+   */
+  public function getData(string $key) {
+    if (isset($this->sharedData[$key])) {
+      return $this->data[$key];
+    }
+    throw new \Exception("Shared data not present for the key: `${key}`.");
+  }
+
+  /**
+   *
+   */
+  public function setData(string $key, $value) {
+    $this->data[$key] = $value;
+  }
+
+  /**
+   *
+   */
+  public function list(): array {
+    return $this->data;
+  }
+
+}

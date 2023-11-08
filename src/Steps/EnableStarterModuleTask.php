@@ -3,8 +3,7 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Helpers\FileSystem\FileLoader;
-use AcquiaCMS\Cli\Helpers\InstallQuestions;
+use AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
 use Symfony\Component\Console\Command\Command;
@@ -17,46 +16,36 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "enable_starter_module_task",
- *   weight = 8,
+ *   weight = 55,
  * )
  */
 class EnableStarterModuleTask extends BaseTask {
 
   /**
-   * Holds the file_loader service object.
+   * Holds the starter_kit_manager service object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader
+   * @var \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface
    */
-  protected $fileLoader;
+  protected $starterKitManager;
 
   /**
-   * Holds the composer command service object.
+   * Holds the drush command object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
    */
   protected $drushCommand;
 
   /**
-   * Holds the install_questions service object.
+   * Constructs the task object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\InstallQuestions
-   */
-  protected $questions;
-
-  /**
-   * Creates the task object.
-   *
-   * @param \AcquiaCMS\Cli\Helpers\InstallQuestions $questions
-   *   The install_questions service object.
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush_command
-   *   The composer command service object.
-   * @param \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader $fileLoader
-   *   The file_loader service object.
+   *   A drush command object.
+   * @param \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface $starter_kit_manager
+   *   The starter_kit_manager service object.
    */
-  public function __construct(InstallQuestions $questions, Drush $drush_command, FileLoader $fileLoader) {
-    $this->fileLoader = $fileLoader;
+  public function __construct(Drush $drush_command, StarterKitManagerInterface $starter_kit_manager) {
+    $this->starterKitManager = $starter_kit_manager;
     $this->drushCommand = $drush_command;
-    $this->questions = $questions;
   }
 
   /**
@@ -64,9 +53,8 @@ class EnableStarterModuleTask extends BaseTask {
    */
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
-      $container->get('install_questions'),
       $container->get('drush_command'),
-      $container->get('file_loader'),
+      $container->get('starter_kit_manager'),
     );
   }
 
@@ -74,7 +62,8 @@ class EnableStarterModuleTask extends BaseTask {
    * {@inheritdoc}
    */
   public function preExecute(InputInterface $input, OutputInterface $output): int {
-    $isDemoContent = $this->questions->getAnswer("demo_content");
+    $answers = $this->starterKitManager->getAnswers();
+    $isDemoContent = $answers["demo_content"] ?? "";
     if ($isDemoContent != "yes") {
       return StatusCode::SKIP;
     }

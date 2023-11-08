@@ -3,8 +3,7 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Helpers\FileSystem\FileLoader;
-use AcquiaCMS\Cli\Helpers\InstallQuestions;
+use AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface;
 use AcquiaCMS\Cli\Helpers\Process\Commands\Drush;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
 use Symfony\Component\Console\Command\Command;
@@ -17,46 +16,36 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "enable_themes_task",
- *   weight = 6,
+ *   weight = 45,
  * )
  */
 class EnableThemesTask extends BaseTask {
 
   /**
-   * Holds the file_loader service object.
+   * Holds the starter_kit_manager service object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader
+   * @var \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface
    */
-  protected $fileLoader;
+  protected $starterKitManager;
 
   /**
-   * Holds the composer command service object.
+   * Holds the drush command object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Process\Commands\Drush
    */
   protected $drushCommand;
 
   /**
-   * Holds the install_questions service object.
-   *
-   * @var \AcquiaCMS\Cli\Helpers\InstallQuestions
-   */
-  protected $questions;
-
-  /**
    * Creates the task object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\InstallQuestions $questions
-   *   The install_questions service object.
    * @param \AcquiaCMS\Cli\Helpers\Process\Commands\Drush $drush_command
    *   The composer command service object.
-   * @param \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader $fileLoader
-   *   The file_loader service object.
+   * @param \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface $starter_kit_manager
+   *   The starter_kit_manager service object.
    */
-  public function __construct(InstallQuestions $questions, Drush $drush_command, FileLoader $fileLoader) {
-    $this->fileLoader = $fileLoader;
+  public function __construct(Drush $drush_command, StarterKitManagerInterface $starter_kit_manager) {
+    $this->starterKitManager = $starter_kit_manager;
     $this->drushCommand = $drush_command;
-    $this->questions = $questions;
   }
 
   /**
@@ -64,9 +53,8 @@ class EnableThemesTask extends BaseTask {
    */
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
-      $container->get('install_questions'),
       $container->get('drush_command'),
-      $container->get('file_loader'),
+      $container->get('starter_kit_manager'),
     );
   }
 
@@ -82,27 +70,29 @@ class EnableThemesTask extends BaseTask {
    * {@inheritdoc}
    */
   public function execute(InputInterface $input, OutputInterface $output): int {
-    $selected_starter_kit = $this->questions->getAnswer("starter_kit");
-    $themes = $this->fileLoader->getThemes($selected_starter_kit);
+    $selectedStarterKit = $this->starterKitManager->selectedStarterKit();
+    $themes = $selectedStarterKit->getThemes();
     $themesToInstall = $themes['install'] ?? [];
-    if (isset($themes['admin'])) {
-      $themesToInstall[] = $themes['admin'];
+    $adminTheme = $selectedStarterKit->getDefaultTheme();
+    $defaultTheme = $selectedStarterKit->getDefaultTheme();
+    if ($adminTheme && !in_array($adminTheme, $themesToInstall)) {
+      $themesToInstall[] = $adminTheme;
     }
-    if (isset($themes['default'])) {
-      $themesToInstall[] = $themes['default'];
+    if ($defaultTheme && !in_array($defaultTheme, $themesToInstall)) {
+      $themesToInstall[] = $defaultTheme;
     }
     // Enable themes.
     $command = array_merge(["theme:enable"], [implode(",", $themesToInstall)]);
     $this->drushCommand->prepare($command)->run();
 
     // Set default and/or admin theme.
-    if (isset($themes['admin'])) {
+    if ($adminTheme) {
       $command = array_merge([
         "config:set",
         "system.theme",
         "admin",
         "--yes",
-      ], [$themes['admin']]);
+      ], [$adminTheme]);
       $this->drushCommand->prepare($command)->run();
 
       // Use admin theme as acquia_claro.
@@ -115,13 +105,13 @@ class EnableThemesTask extends BaseTask {
       $this->drushCommand->prepare($command)->run();
     }
 
-    if (isset($themes['default'])) {
+    if ($defaultTheme) {
       $command = array_merge([
         "config:set",
         "system.theme",
         "default",
         "--yes",
-      ], [$themes['default']]);
+      ], [$defaultTheme]);
       $this->drushCommand->prepare($command)->run();
     }
     // Add user selected starter-kit to state.
@@ -129,7 +119,7 @@ class EnableThemesTask extends BaseTask {
     $command = array_merge([
       "state:set",
       "acquia_cms.starter_kit",
-    ], [$selected_starter_kit]);
+    ], [$selectedStarterKit->getId()]);
     $this->drushCommand->prepare($command)->run();
 
     return StatusCode::OK;

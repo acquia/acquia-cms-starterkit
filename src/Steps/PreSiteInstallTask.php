@@ -3,7 +3,6 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Helpers\FileSystem\FileLoader;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "pre_site_install_task",
- *   weight = -1,
+ *   weight = 5,
  * )
  */
 class PreSiteInstallTask extends BaseTask {
@@ -23,20 +22,20 @@ class PreSiteInstallTask extends BaseTask {
   const HEADLINE = "Welcome to Acquia CMS Starter Kit installer";
 
   /**
-   * Holds the file_loader service object.
+   * Holds the The starter_kit project directory.
    *
-   * @var \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader
+   * @var string
    */
-  protected $fileLoader;
+  protected $starterKitDirectory;
 
   /**
    * Creates the task object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader $fileLoader
-   *   The file_loader service object.
+   * @param string $starter_kit_dir
+   *   The starter_kit project directory.
    */
-  public function __construct(FileLoader $fileLoader) {
-    $this->fileLoader = $fileLoader;
+  public function __construct(string $starter_kit_dir) {
+    $this->starterKitDirectory = $starter_kit_dir;
   }
 
   /**
@@ -44,7 +43,7 @@ class PreSiteInstallTask extends BaseTask {
    */
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
-      $container->get('file_loader')
+      $container->getParameter("kernel.project_dir"),
     );
   }
 
@@ -52,7 +51,7 @@ class PreSiteInstallTask extends BaseTask {
    * {@inheritdoc}
    */
   public function execute(InputInterface $input, OutputInterface $output): int {
-    $output->writeln("<info>" . file_get_contents($this->fileLoader->getLogo()) . "</info>");
+    $output->writeln("<info>" . file_get_contents($this->starterKitDirectory . "/assets/acquia_cms.icon.ascii") . "</info>");
     $output->writeln("<fg=cyan;options=bold,underscore> " . self::HEADLINE . "</>");
     $output->writeln("");
     return StatusCode::OK;

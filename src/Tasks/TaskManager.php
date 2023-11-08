@@ -4,8 +4,6 @@ namespace AcquiaCMS\Cli\Tasks;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,21 +16,7 @@ class TaskManager {
    *
    * @var \AcquiaCMS\Cli\Tasks\TaskDiscovery
    */
-  private $discovery;
-
-  /**
-   * Holds an input object.
-   *
-   * @var \Symfony\Component\Console\Input\InputInterface
-   */
-  protected $input;
-
-  /**
-   * Holds an output object.
-   *
-   * @var \Symfony\Component\Console\Output\OutputInterface
-   */
-  protected $output;
+  protected $discovery;
 
   /**
    * Holds the symfony container object.
@@ -49,16 +33,32 @@ class TaskManager {
   protected $command;
 
   /**
+   * Holds the io service object.
+   *
+   * @var \AcquiaCMS\Cli\ConsoleIO
+   */
+  protected $io;
+
+  /**
    * Constructs an object.
    *
-   * @param \AcquiaCMS\Cli\Tasks\TaskDiscovery $discovery
-   *   The task discovery object.
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   The container object.
    */
-  public function __construct(TaskDiscovery $discovery, ContainerInterface $container) {
+  public function __construct(ContainerInterface $container) {
     $this->container = $container;
-    $this->discovery = $discovery;
+    $this->discovery = $container->get("task_discovery");
+    $this->io = $container->get('io');
+  }
+
+  /**
+   * Configures the task_manager service object.
+   *
+   * @param \Symfony\Component\Console\Command\Command $command
+   *   Given command object.
+   */
+  public function configure(Command $command): void {
+    $this->command = $command;
   }
 
   /**
@@ -97,41 +97,22 @@ class TaskManager {
   }
 
   /**
-   * Initialize an object from symfony command.
-   *
-   * @param \Symfony\Component\Console\Input\InputInterface $input
-   *   An input object.
-   * @param \Symfony\Component\Console\Output\OutputInterface $output
-   *   An output object.
-   * @param \Symfony\Component\Console\Command\Command $command
-   *   A symfony command object.
-   */
-  public function configure(InputInterface $input, OutputInterface $output, Command $command): void {
-    $this->input = $input;
-    $this->output = $output;
-    $this->command = $command;
-    $this->container->get('composer_command')->setInput($input);
-    $this->container->get('drush_command')->setInput($input);
-  }
-
-  /**
    * Execute the tasks.
    *
    * @throws \Exception
    */
   public function executeTasks(): void {
-    if (!class_exists($this->input::class) || !class_exists($this->input::class) || !class_exists($this->input::class)) {
-      throw new \Exception("You must first call method: \$taskManagerObject->configure(\$input, \$output, \$command)");
-    }
     $tasks = $this->getTasks();
+    $input = $this->io->getInput();
+    $output = $this->io->getOutput();
     foreach ($tasks as $task) {
       $class = $task->class;
       $taskObject = $class::create($this->command, $this->container);
-      $statusPre = $taskObject->preExecute($this->input, $this->output);
+      $statusPre = $taskObject->preExecute($input, $output);
       if (StatusCode::OK == $statusPre) {
-        $statusExe = $taskObject->execute($this->input, $this->output);
+        $statusExe = $taskObject->execute($input, $output);
         if (StatusCode::OK == $statusExe) {
-          $taskObject->postExecute($this->input, $this->output);
+          $taskObject->postExecute($input, $output);
         }
       }
     }

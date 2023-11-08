@@ -80,73 +80,94 @@ starter_kits:
       admin: acquia_claro
       default: olivero
 questions:
-  starter_kit:
-    question: "Please choose bundle from one of the above use case"
-    default_value: "acquia_cms_enterprise_low_code"
-  demo_content:
-    if: questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]
-    question: "Do you want to enable demo content (yes/no) ?"
-    allowed_values:
-      options:
+  build:
+    starter-kit:
+      question: "Please choose bundle from one of the above use case"
+      default_answer: "acquia_cms_enterprise_low_code"
+      answer: "${env.STARTER_KIT}"
+    demo-content:
+      if: questions["starter-kit"] in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]
+      question: "Do you want to enable demo content (yes/no) ?"
+      allowed_values:
         - yes
         - no
-    default_value: "no"
-  content_model:
-    if: questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"] && questions.demo_content == "no"
-    question: "Do you want to enable the content model (yes/no) ?"
-    allowed_values:
-      options:
+      default_answer: "no"
+      answer: "${env.DEMO_CONTENT}"
+      class: '\AcquiaCMS\Cli\Helpers\AlterStarterKit::postDemoContent'
+    content-model:
+      if: questions['starter-kit'] in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"] && questions['demo-content'] == "no"
+      question: "Do you want to enable the content model (yes/no) ?"
+      allowed_values:
         - yes
         - no
-    default_value: "no"
-  dam_integration:
-    if: questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]
-    question: "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?"
-    allowed_values:
-      options:
+      default_answer: "no"
+      answer: "${env.CONTENT_MODEL}"
+      class: '\AcquiaCMS\Cli\Helpers\AlterStarterKit::postContentModel'
+    dam-integration:
+      if: questions['starter-kit'] in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]
+      question: "Would you like to enable the Acquia DAM modules (configuration will need to be done manually later after site installation) ?"
+      allowed_values:
         - yes
         - no
-    default_value: "no"
-  nextjs_app:
-    if: questions.starter_kit == "acquia_cms_headless"
-    question: "Would you like to preconfigure a next.js site (yes/no) ?"
-    allowed_values:
-      options:
+      default_answer: "no"
+      answer: "${env.DAM_INTEGRATION}"
+      class: '\AcquiaCMS\Cli\Helpers\AlterStarterKit::postDamQuestion'
+    gdpr-integration:
+      if: questions['starter-kit'] in ["acquia_cms_enterprise_low_code", "acquia_cms_community"]
+      question: "Would you like to add GDPR functionality to the site (Yes/No) ?"
+      allowed_values:
         - yes
         - no
-    default_value: "no"
-  nextjs_app_site_url:
-    if: questions.starter_kit == "acquia_cms_headless" && questions.nextjs_app == "yes"
-    question: "Please provide the Next.js site url"
-    default_value: "http://localhost:3000"
-    warning: |-
-      The site url is not set. Using default: 'http://localhost:3000'.
-      You can set the site url later from: /admin/config/services/next.
-  nextjs_app_site_name:
-    if: questions.starter_kit == "acquia_cms_headless" && questions.nextjs_app == "yes"
-    question: "Please provide the Site Name"
-    default_value: "Headless Site"
-    warning: |-
-      The Site Name is not set. Site Name is set to 'Headless Site'.
-      You can set the site url later from: /admin/config/services/next.
-  nextjs_app_env_file:
-    if: questions.starter_kit == "acquia_cms_headless" && questions.nextjs_app == "yes"
-    question: "Please provide the .env.local file path"
-  GMAPS_KEY:
-    if: questions.starter_kit in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]
-    question: "Please provide the Google Maps API Key"
-    warning: |-
-      The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
-      You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
-  SITESTUDIO_API_KEY:
-    if: questions.starter_kit == "acquia_cms_enterprise_low_code"
-    question: "Please provide the Site Studio API Key"
-    warning: |-
-      The Site Studio API key is not set. The Site Studio packages won't get imported.
-      You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
-  SITESTUDIO_ORG_KEY:
-    if: questions.starter_kit == "acquia_cms_enterprise_low_code"
-    question: "Please provide the Site Studio Organization Key"
-    warning: |-
-      The Site Studio Organization key is not set. The Site Studio packages won't get imported.
-      You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
+      default_answer: "no"
+      answer: "${env.GDPR_INTEGRATION}"
+      class: '\AcquiaCMS\Cli\Helpers\AlterStarterKit::postGdprQuestion'
+  install:
+    nextjs-app:
+      if: questions['starter-kit'] == "acquia_cms_headless"
+      question: "Would you like to preconfigure a next.js site (yes/no) ?"
+      allowed_values:
+        - yes
+        - no
+      default_answer: "no"
+      answer: "${env.NEXTJS_APP}"
+    nextjs-app-site-url:
+      if: questions['starter-kit'] == "acquia_cms_headless" && questions['nextjs-app'] == "yes"
+      question: "Please provide the Next.js site url"
+      default_answer: "http://localhost:3000"
+      answer: "${env.NEXTJS_APP_SITE_URL}"
+      warning: |-
+        The site url is not set. Using default: 'http://localhost:3000'.
+        You can set the site url later from: /admin/config/services/next.
+    nextjs-app-site-name:
+      if: questions['starter-kit'] == "acquia_cms_headless" && questions['nextjs-app'] == "yes"
+      question: "Please provide the Site Name"
+      default_answer: "Headless Site"
+      answer: "${env.NEXTJS_APP_SITE_NAME}"
+      warning: |-
+        The Site Name is not set. Site Name is set to 'Headless Site'.
+        You can set the site url later from: /admin/config/services/next.
+    nextjs-app-env-file:
+      if: questions['starter-kit'] == "acquia_cms_headless" && questions['nextjs-app'] == "yes"
+      question: "Please provide the .env.local file path"
+      answer: "${env.NEXTJS_APP_ENV_FILE}"
+    gmaps-key:
+      if: questions['starter-kit'] in ["acquia_cms_enterprise_low_code", "acquia_cms_headless", "acquia_cms_community"]
+      question: "Please provide the Google Maps API Key"
+      answer: "${env.GMAPS_KEY}"
+      warning: |-
+        The Google Maps API key is not set. So, you might see errors, during enable modules step. They are technically harmless, but the maps will not work.
+        You can set the key later from: /admin/tour/dashboard and resave your starter content to generate them.
+    sitestudio-api-key:
+      if: questions['starter-kit'] == "acquia_cms_enterprise_low_code"
+      question: "Please provide the Site Studio API Key"
+      answer: "${env.SITESTUDIO_API_KEY}"
+      warning: |-
+        The Site Studio API key is not set. The Site Studio packages won't get imported.
+        You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.
+    sitestudio-org-key:
+      if: questions['starter-kit'] == "acquia_cms_enterprise_low_code"
+      question: "Please provide the Site Studio Organization Key"
+      answer: "${env.SITESTUDIO_ORG_KEY}"
+      warning: |-
+        The Site Studio Organization key is not set. The Site Studio packages won't get imported.
+        You can set the key later from: /admin/cohesion/configuration/account-settings to import Site Studio packages.

@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "download_drupal_task",
- *   weight = 2,
+ *   weight = 20,
  * )
  */
 class DownloadDrupalTask extends BaseTask {

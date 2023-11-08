@@ -3,12 +3,13 @@
 namespace AcquiaCMS\Cli\Commands;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Tasks\TaskManager;
+use AcquiaCMS\Cli\Exception\ListException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the Acquia CMS site:install command.
@@ -27,14 +28,22 @@ class AcmsInstallCommand extends Command {
   protected $taskManager;
 
   /**
+   * Holds the io service object.
+   *
+   * @var \AcquiaCMS\Cli\ConsoleIO
+   */
+  protected $io;
+
+  /**
    * Constructs an instance.
    *
-   * @param \AcquiaCMS\Cli\Tasks\TaskManager $task_manager
-   *   Provides the AcquiaCMS InstallerQuestions class object.
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The container service object.
    */
-  public function __construct(TaskManager $task_manager) {
-    $this->taskManager = $task_manager;
+  public function __construct(ContainerInterface $container) {
     parent::__construct();
+    $this->io = $container->get('io');
+    $this->taskManager = $container->get('task_manager');
   }
 
   /**
@@ -55,11 +64,16 @@ class AcmsInstallCommand extends Command {
    */
   protected function execute(InputInterface $input, OutputInterface $output) :int {
     try {
-      $this->taskManager->configure($input, $output, $this);
+      $this->io->setInputOutput($input, $output);
+      $this->taskManager->configure($this);
       $this->taskManager->executeTasks();
     }
+    catch (ListException $e) {
+      $e->displayMessage($output);
+      return StatusCode::ERROR;
+    }
     catch (\Exception $e) {
-      $output->writeln("<error>" . $e->getMessage() . "</error>");
+      $output->writeln($output->getFormatter()->format($e->getMessage()));
       return StatusCode::ERROR;
     }
     return StatusCode::OK;

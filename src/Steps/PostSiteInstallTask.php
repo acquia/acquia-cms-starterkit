@@ -3,7 +3,7 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Helpers\InstallQuestions;
+use AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\FormatterHelper;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "post_site_install_task",
- *   weight = 20,
+ *   weight = 65,
  * )
  */
 class PostSiteInstallTask extends BaseTask {
@@ -29,23 +29,23 @@ class PostSiteInstallTask extends BaseTask {
   protected $formatterHelper;
 
   /**
-   * Holds the install_questions object.
+   * Holds the starter_kit_manager service object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\InstallQuestions
+   * @var \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface
    */
-  protected $questions;
+  protected $starterKitManager;
 
   /**
    * Constrcts the task object.
    *
    * @param \Symfony\Component\Console\Helper\FormatterHelper $formatter_helper
    *   A format_helper object.
-   * @param \AcquiaCMS\Cli\Helpers\InstallQuestions $questions
-   *   An install_questions service object.
+   * @param \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface $starter_kit_manager
+   *   The starter_kit_manager service object.
    */
-  public function __construct(FormatterHelper $formatter_helper, InstallQuestions $questions) {
+  public function __construct(FormatterHelper $formatter_helper, StarterKitManagerInterface $starter_kit_manager) {
     $this->formatterHelper = $formatter_helper;
-    $this->questions = $questions;
+    $this->starterKitManager = $starter_kit_manager;
   }
 
   /**
@@ -54,7 +54,7 @@ class PostSiteInstallTask extends BaseTask {
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
       $command->getHelper('formatter'),
-      $container->get('install_questions'),
+      $container->get('starter_kit_manager'),
     );
   }
 
@@ -62,7 +62,7 @@ class PostSiteInstallTask extends BaseTask {
    * {@inheritdoc}
    */
   public function execute(InputInterface $input, OutputInterface $output): int {
-    $selected_starter_kit = $this->questions->getAnswer("starter_kit");
+    $selected_starter_kit = $this->starterKitManager->selectedStarterKit()->getId();
     $output->writeln("");
     $infoMessage = "[OK] Thank you for choosing Acquia CMS. We've successfully setup your project using bundle: `$selected_starter_kit`.";
     $formattedInfoBlock = $this->formatterHelper->formatBlock($infoMessage, 'fg=black;bg=green', TRUE);

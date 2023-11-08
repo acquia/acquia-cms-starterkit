@@ -3,7 +3,7 @@
 namespace AcquiaCMS\Cli\Steps;
 
 use AcquiaCMS\Cli\Enum\StatusCode;
-use AcquiaCMS\Cli\Helpers\FileSystem\FileLoader;
+use AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface;
 use AcquiaCMS\Cli\Tasks\TaskInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Task(
  *   id = "render_starter_kits",
- *   weight = 0,
+ *   weight = 10,
  * )
  */
 class RenderStarterKitsTask extends BaseTask {
@@ -24,18 +24,18 @@ class RenderStarterKitsTask extends BaseTask {
   /**
    * Holds the file-loader service object.
    *
-   * @var \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader
+   * @var \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface
    */
-  protected $fileLoader;
+  protected $starterKitManager;
 
   /**
    * Creates a task object.
    *
-   * @param \AcquiaCMS\Cli\Helpers\FileSystem\FileLoader $fileLoader
-   *   A file loader service object.
+   * @param \AcquiaCMS\Cli\FileSystem\StarterKitManagerInterface $starter_kit_manager
+   *   The starter_kit_manager service object.
    */
-  public function __construct(FileLoader $fileLoader) {
-    $this->fileLoader = $fileLoader;
+  public function __construct(StarterKitManagerInterface $starter_kit_manager) {
+    $this->starterKitManager = $starter_kit_manager;
   }
 
   /**
@@ -43,7 +43,7 @@ class RenderStarterKitsTask extends BaseTask {
    */
   public static function create(Command $command, ContainerInterface $container): TaskInterface {
     return new static(
-      $container->get('file_loader')
+      $container->get("starter_kit_manager"),
     );
   }
 
@@ -53,12 +53,18 @@ class RenderStarterKitsTask extends BaseTask {
   public function execute(InputInterface $input, OutputInterface $output): int {
     $table = new Table($output);
     $table->setHeaders(['ID', 'Name', 'Description']);
-    $starter_kits = $this->fileLoader->getStarterKits();
+    $starter_kits = $this->starterKitManager->getStarterKits();
     $total = count($starter_kits);
     $key = 0;
-    foreach ($starter_kits as $id => $starter_kit) {
-      $useCases[$id] = $starter_kit;
-      $table->addRow([$id, $starter_kit['name'], $starter_kit['description']]);
+
+    /** @var \AcquiaCMS\Cli\Helpers\StarterKit $starter_kit */
+    foreach ($starter_kits as $starter_kit) {
+      $useCases[$starter_kit->getId()] = $starter_kit;
+      $table->addRow([
+        $starter_kit->getId(),
+        $starter_kit->getName(),
+        $starter_kit->getDescription(),
+      ]);
       if ($key + 1 != $total) {
         $table->addRow(["", "", ""]);
       }
