@@ -7,13 +7,13 @@ describe('people', () => {
     cy.visit('http://127.0.0.1:3000/people')
   })
 
-	const links = [
-		"Home",
-		"Articles",
-		"Events",
-		"People",
-		"Places",
-	]
+    const links = [
+        "Home",
+        "Articles",
+        "Events",
+        "People",
+        "Places",
+    ]
 
   it('verify page header', () => {
     // We can go even further and check that the default todos each contain

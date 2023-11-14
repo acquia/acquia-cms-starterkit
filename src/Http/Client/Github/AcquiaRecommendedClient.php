@@ -11,7 +11,6 @@ class AcquiaRecommendedClient extends GithubBase {
 
   /**
    * For now let's hardcode branch name for Drupal Core 10.
-   * @todo: Remove after DRP team make a new release tag for Drupal 10.
    *
    * @var string
    */

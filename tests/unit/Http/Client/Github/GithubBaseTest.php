@@ -7,8 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class GithubBaseTest extends TestCase
-{
+class GithubBaseTest extends TestCase {
   use ProphecyTrait;
 
   /**
@@ -16,14 +15,13 @@ class GithubBaseTest extends TestCase
    *
    * @var \Prophecy\Prophecy\ObjectProphecy
    */
-  protected $http_client;
+  protected $httpClient;
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    $http_client = $this->prophesize(HttpClientInterface::class);
-    $this->http_client = $http_client->reveal();
+    $this->httpClient = $this->prophesize(HttpClientInterface::class)->reveal();
   }
 
   /**
@@ -32,7 +30,7 @@ class GithubBaseTest extends TestCase
    * @test
    */
   public function testAbstractMethod() :void {
-    $stub = $this->getMockForAbstractClass(GithubBase::class, [$this->http_client]);
+    $stub = $this->getMockForAbstractClass(GithubBase::class, [$this->httpClient]);
     $stub->expects($this->any())
       ->method('getRepoName')
       ->will($this->returnValue("acquia/acquia_cms"));
@@ -40,7 +38,7 @@ class GithubBaseTest extends TestCase
   }
 
   /**
-   * Test if methods: getLatestReleaseTag(), getFileContents() returns the expected string.
+   * Test getLatestReleaseTag(), getFileContents() returns the expected string.
    *
    * @test
    */
@@ -62,4 +60,3 @@ class GithubBaseTest extends TestCase
   }
 
 }
-
