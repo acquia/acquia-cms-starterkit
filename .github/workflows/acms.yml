@@ -72,7 +72,7 @@ jobs:
       CI: TRUE
     strategy:
       matrix:
-        core-version: ["CURRENT", "LATEST_LTS"]
+        core-version: ["CURRENT", "OLDEST_SUPPORTED"]
         starter-kits: ["acquia_cms_enterprise_low_code", "acquia_cms_community", "acquia_cms_headless"]
         demo-content: ["yes", "no"]
         content-model: ["yes", "no"]
@@ -150,7 +150,7 @@ jobs:
       CI: TRUE
     strategy:
       matrix:
-        core-version: ["CURRENT", "LATEST_LTS"]
+        core-version: ["CURRENT", "OLDEST_SUPPORTED"]
     steps:
       - uses: actions/checkout@v3
       - uses: shivammathur/setup-php@v2
