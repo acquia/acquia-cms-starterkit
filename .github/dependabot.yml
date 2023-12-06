@@ -7,6 +7,25 @@ updates:
       # Use Indian Standard Time (UTC +05:30)
       timezone: "Asia/Kolkata"
       time: "09:00"
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
+    versioning-strategy: auto
+    # Raise pull requests for version updates
+    # to pip against the `develop` branch
+    target-branch: "develop"
+
+  - package-ecosystem: "npm"
+    directory: "/tests/functional/cypress"
+    schedule:
+      interval: "daily"
+      # Use Indian Standard Time (UTC +05:30)
+      timezone: "Asia/Kolkata"
+      time: "09:00"
+    allow:
+      # Allow both direct and indirect updates for all packages
+      - dependency-type: "all"
+    versioning-strategy: auto
     # Raise pull requests for version updates
     # to pip against the `develop` branch
     target-branch: "develop"
