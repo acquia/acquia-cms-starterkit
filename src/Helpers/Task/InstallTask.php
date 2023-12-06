@@ -229,6 +229,14 @@ class InstallTask {
     // Get User password from shared factory or from option argument.
     $password = $siteInstallArgs['account-pass'] ?? SharedFactory::getData('password');
     $this->print("User name: admin, User password: $password", 'info');
+
+    // Enable themes.
+    $this->print("Enabling themes for the starter-kit:", 'headline');
+    $this->enableThemes->execute([
+      'themes' => $this->buildInformation['themes'],
+      'starter_kit' => $this->bundle,
+    ]);
+
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $isDemoContent = FALSE;
     $modulesList = JsonParser::installPackages($bundleModules);
@@ -242,13 +250,6 @@ class InstallTask {
     $this->enableModules->execute([
       'modules' => $modulesList,
       'keys' => $args['keys'],
-    ]);
-
-    // Enable themes.
-    $this->print("Enabling themes for the starter-kit:", 'headline');
-    $this->enableThemes->execute([
-      'themes' => $this->buildInformation['themes'],
-      'starter_kit' => $this->bundle,
     ]);
 
     // Toggle modules based on environments.
