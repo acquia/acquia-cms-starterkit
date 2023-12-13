@@ -23,26 +23,27 @@
         }
     ],
     "require": {
-        "acquia/drupal-environment-detector": "^1.4",
-        "composer/composer": "^2.2",
+        "acquia/drupal-environment-detector": "^1.6",
+        "composer/composer": "^2.5.8",
+        "justinrainbow/json-schema": "^5.2",
         "stecman/symfony-console-completion": "^0.11.0 || ^0.12.1",
-        "symfony/config": "^4.4 || ^5 || ^6",
-        "symfony/console": "^4.4 || ^5 || ^6",
-        "symfony/dependency-injection": "^4.4 || ^5 || ^6",
-        "symfony/filesystem": "^4.4 || ^5.4 || ^6",
-        "symfony/http-client": "^5 || ^6",
-        "symfony/http-kernel": "^4.4 || ^5 || ^6",
-        "symfony/process": "^4.4 || ^5 || ^6",
-        "symfony/yaml": "^4.4 || ^5 || ^6"
+        "symfony/config": "^6.2 || ^7.0",
+        "symfony/console": "^6.2 || ^7.0",
+        "symfony/dependency-injection": "^6.2 || ^7.0",
+        "symfony/filesystem": "^6.2 || ^7.0",
+        "symfony/http-client": "^6.2 || ^7.0",
+        "symfony/http-kernel": "^6.2 || ^7.0",
+        "symfony/process": "^6.2 || ^7.0",
+        "symfony/yaml": "^6.2 || ^7.0"
     },
     "require-dev": {
-        "acquia/coding-standards": "^1.0",
+        "acquia/coding-standards": "^1.0 || ^2.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
         "ergebnis/composer-normalize": "~2.15.0",
         "phpro/grumphp-shim": "^1.5",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^1.5",
-        "phpunit/phpunit": "^9"
+        "phpstan/phpstan": "^1.9",
+        "phpunit/phpunit": "^9.4 || ^10"
     },
     "config": {
         "allow-plugins": {
@@ -51,6 +52,7 @@
             "mnsami/composer-custom-directory-installer": true,
             "php-http/discovery": true,
             "phpro/grumphp-shim": true,
+            "phpstan/extension-installer": true,
             "webdriver-binary/binary-chromedriver": true
         }
     },
