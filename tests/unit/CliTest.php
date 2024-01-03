@@ -116,7 +116,6 @@ class CliTest extends TestCase {
             ],
             "install" => [
               "acquia_cms_site_studio",
-              "sitestudio_claro",
               "acquia_cms_page",
               "acquia_cms_search",
               "acquia_cms_tour",

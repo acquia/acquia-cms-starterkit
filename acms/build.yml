@@ -2,7 +2,6 @@ sites:
   default:
     modules:
       - acquia_cms_site_studio
-      - sitestudio_claro
       - acquia_cms_article
       - acquia_cms_document
       - acquia_cms_event
