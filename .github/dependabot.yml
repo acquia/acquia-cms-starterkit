@@ -10,3 +10,13 @@ updates:
     # Raise pull requests for version updates
     # to pip against the `develop` branch
     target-branch: "develop"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      # Use Indian Standard Time (UTC +05:30)
+      timezone: "Asia/Kolkata"
+      time: "09:00"
+    # Raise pull requests for version updates
+    # to pip against the `develop` branch
+    target-branch: "develop"
