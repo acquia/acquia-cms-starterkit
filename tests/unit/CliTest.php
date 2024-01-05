@@ -113,6 +113,7 @@ class CliTest extends TestCase {
               "recaptcha",
               "reroute_email",
               "shield",
+              "sitestudio_gin",
             ],
             "install" => [
               "acquia_cms_site_studio",
@@ -120,6 +121,7 @@ class CliTest extends TestCase {
               "acquia_cms_search",
               "acquia_cms_tour",
               "acquia_cms_toolbar",
+              "sitestudio_gin",
             ],
           ],
           "themes" => [
