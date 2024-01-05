@@ -15,12 +15,14 @@ starter_kits:
         - recaptcha
         - reroute_email
         - shield
+        - sitestudio_gin
       install:
         - acquia_cms_site_studio
         - acquia_cms_page
         - acquia_cms_search
         - acquia_cms_tour
         - acquia_cms_toolbar
+        - sitestudio_gin
     themes:
       require:
         - gin
