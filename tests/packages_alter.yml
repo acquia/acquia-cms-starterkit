@@ -3,22 +3,6 @@ acquia/acquia-cms-starterkit:
 
 # Do not install acquia_cms and Lightning modules.
 acquia/acquia_cms: ~
-drupal/lightning_core: ~
-drupal/lightning_api: ~
-drupal/lightning_layout: ~
-drupal/lightning_page: ~
-drupal/lightning_search: ~
-drupal/lightning_media: ~
-drupal/lightning_workflow: ~
-
-# Include company packages to ORCA fixture of release which acquia_cms supports
-drupal/acquia_search:
-  version: ^3.1.2
-
-# DO not install acquia_contenthub as one of the sub-module is not yet
-# Drupal Core 10 supported.
-# see here: https://git.drupalcode.org/project/acquia_contenthub/-/blob/3.0.3/modules/acquia_contenthub_dashboard/composer.json
-drupal/acquia_contenthub: ~
 
 # Adding allowed composer plugins for ORCA.
 phpro/grumphp-shim:
