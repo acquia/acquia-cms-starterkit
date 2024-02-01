@@ -122,7 +122,14 @@ jobs:
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
+
+          # For drupal core 10.1.x, we've to use Acquia CMS Common of release 3.2.x.
+          bash -c 'VERSION=$(composer show drupal/core | grep "versions" | sed "s/[^0-9.]//g"); [[ "${VERSION}" == 10.1.* ]] && sed -i "s/shield/shield\n        - acquia_cms_common:~3.2.8/" ../acquia-cms-starterkit/acms/acms.yml;'
+
           ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
+
+          # Revert back, after above command runs.
+          cd - && git checkout .
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script
@@ -189,7 +196,15 @@ jobs:
         run: |
           cd ../orca-build
           composer config -g github-oauth.github.com ${{ secrets.OAUTH_TOKEN }}
+
+          # The composer tries to download the latest minor release of Acquia CMS Common i.e 3.3.x,
+          # but it supports 10.2.x and above. So for drupal core 10.1.x, we've to use release 3.2.x.
+          bash -c 'VERSION=$(composer show drupal/core | grep "versions" | sed "s/[^0-9.]//g"); [[ "${VERSION}" == 10.1.* ]] && sed -i "s/shield/shield\n        - acquia_cms_common:~3.2.8/" ../acquia-cms-starterkit/acms/acms.yml;'
+
           ./vendor/bin/acms acms:install acquia_cms_headless --no-interaction
+
+          # Revert back acms.yml file changes that we've updated earlier to make sure CI pass for Drupal Core 10.1.x.
+          cd - && git checkout .
       - name: Execute all PHPUnit tests
         run: ./vendor/bin/phpunit
       - name: Before script
