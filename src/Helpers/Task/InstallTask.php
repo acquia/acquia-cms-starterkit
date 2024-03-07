@@ -11,6 +11,7 @@ use AcquiaCMS\Cli\Helpers\Task\Steps\InitNextjsApp;
 use AcquiaCMS\Cli\Helpers\Task\Steps\SiteInstall;
 use AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules;
 use AcquiaCMS\Cli\Helpers\Traits\StatusMessageTrait;
+use AcquiaCMS\Cli\Helpers\Traits\UserInputTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class InstallTask {
 
-  use StatusMessageTrait;
+  use StatusMessageTrait, UserInputTrait;
 
   /**
    * Holds the Acquia CMS cli object.
@@ -34,7 +35,7 @@ class InstallTask {
    *
    * @var mixed
    */
-  protected $starterKits;
+  protected $starterKitsData;
 
   /**
    * Holds the Validate Drupal step object.
@@ -204,6 +205,7 @@ class InstallTask {
     $this->input = $input;
     $this->output = $output;
     $this->siteUri = $site_uri;
+    $this->starterKitsData = $this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->bundle];
   }
 
   /**
@@ -215,14 +217,26 @@ class InstallTask {
   public function run(array $args): void {
     $this->print("Installing Site:", 'headline');
     $starterkitName = 'Existing Site';
-    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
-    if (isset($this->starterKits[$this->bundle])) {
-      $starterkitName = $this->starterKits[$this->bundle]['name'];
+    if (isset($this->starterKitsData)) {
+      $starterkitName = $this->starterKitsData['name'];
     }
-    $siteInstallArgs = array_filter($this->input->getOptions()) + [
+    $options = array_filter($this->input->getOptions());
+    $installArgs = [];
+    if (array_key_exists('no-interaction', $options) &&
+    $options['no-interaction'] === TRUE) {
+      $installArgs = [
+        'name' => $starterkitName,
+        'no-interaction' => TRUE,
+      ];
+    }
+
+    // Only options which is acceptable by drush.
+    $filterArgs = $this->filterDrushOptions($options);
+    $installArgs = !empty($installArgs) ? $installArgs : [
       'name' => $starterkitName,
     ];
-
+    // Prepare site install command options.
+    $siteInstallArgs = $filterArgs + $installArgs;
     $this->siteInstall->execute($siteInstallArgs);
 
     $bundleModules = $this->buildInformation['modules'] ?? [];
@@ -239,6 +253,25 @@ class InstallTask {
       unset($modulesList[$key]);
       $isDemoContent = TRUE;
     }
+    // For site studio configuration import, keys needs to be transformed.
+    // sitestudio-api-key => SITESTUDIO_API_KEY
+    // sitestudio-org-key => SITESTUDIO_ORG_KEY
+    // Called in hook acquia_cms_site_studio_install()
+    $siteStudioApiKey = $args['keys']['sitestudio-api-key'] ?? '';
+    if (array_key_exists('sitestudio-api-key', $args['keys'])) {
+      $args['keys']['SITESTUDIO_API_KEY'] = $siteStudioApiKey;
+      unset($args['keys']['sitestudio-api-key']);
+    }
+    $siteStudioOrgKey = $args['keys']['sitestudio-org-key'] ?? '';
+    if (array_key_exists('sitestudio-org-key', $args['keys'])) {
+      $args['keys']['SITESTUDIO_ORG_KEY'] = $siteStudioOrgKey;
+      unset($args['keys']['sitestudio-org-key']);
+    }
+    if (array_key_exists('gmaps-key', $args['keys'])) {
+      $args['keys']['GMAPS_KEY'] = $args['keys']['gmaps-key'];
+      unset($args['keys']['gmaps-key']);
+    }
+
     // Enable modules.
     $this->enableModules->execute([
       'modules' => $modulesList,
@@ -258,8 +291,6 @@ class InstallTask {
       'no-interaction' => $this->input->getOption('no-interaction'),
     ]);
 
-    $siteStudioApiKey = $args['keys']['SITESTUDIO_API_KEY'] ?? '';
-    $siteStudioOrgKey = $args['keys']['SITESTUDIO_ORG_KEY'] ?? '';
     // Trigger Site Studio Package import, if acquia_cms_site_studio module
     // is there in active bundle.
     if (in_array('acquia_cms_site_studio', $modulesList)) {
@@ -284,21 +315,20 @@ class InstallTask {
       ]);
     }
 
-    $isNextjsApp = $args['keys']['nextjs_app'] ?? '';
+    $isNextjsApp = $args['keys']['nextjs-app'] ?? '';
     // Initialize: NextJs application, create consumer, create nextjs site,
     // write/display nextjs site environment variables.
     if ($isNextjsApp == "yes") {
       $this->print("Initiating NextJs App for the starter-kit:", 'headline');
-      $isNextjsAppSiteUrl = $args['keys']['nextjs_app_site_url'] ?? '';
-      $isNextjsAppSiteName = $args['keys']['nextjs_app_site_name'] ?? '';
-      $isNextjsAppEnvFile = $args['keys']['nextjs_app_env_file'] ?? '';
+      $isNextjsAppSiteUrl = $args['keys']['nextjs-app-site-url'] ?? '';
+      $isNextjsAppSiteName = $args['keys']['nextjs-app-site-name'] ?? '';
+      $isNextjsAppEnvFile = $args['keys']['nextjs-app-env-file'] ?? '';
       $this->initNextjsApp->execute([
         '--site-url' => $isNextjsAppSiteUrl,
         '--site-name' => $isNextjsAppSiteName,
         '--env-file' => $isNextjsAppEnvFile,
       ]);
     }
-
     // Add user selected starter-kit to config.
     $command = array_merge([
       "config:set",
@@ -331,14 +361,15 @@ class InstallTask {
    *   Returns the starterkit name, machine name.
    */
   public function getStarterKitName(string $site_uri): array {
-    $starter_kit_name = 'Existing Site';
+    $starterKitName = 'Existing Site';
     $this->buildInformation = $this->acquiaCmsCli->getBuildInformtaion($site_uri);
     if ($this->buildInformation['starter_kit'] != 'acquia_cms_existing_site') {
-      $starter_kit_name = $this->acquiaCmsCli->getStarterKits()[$this->buildInformation['starter_kit']]['name'];
+      $starterKitName = $this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->buildInformation['starter_kit']]['name'];
     }
+
     return [
       $this->buildInformation['starter_kit'],
-      $starter_kit_name,
+      $starterKitName,
     ];
   }
 

@@ -16,7 +16,7 @@ class PHPParser {
    * @return string
    *   Returns parsed string.
    */
-  public static function parseEnvVars(string $input) :string {
+  public static function parseEnvVars(string $input): string {
     $pattern = '/\${?(\w+)}?/i';
     return preg_replace_callback($pattern, function ($matches) {
       return isset($matches[1]) ? getenv($matches[1]) : '';
@@ -34,19 +34,19 @@ class PHPParser {
    */
   public static function parseQuestionExpression(string $input): array {
     $input = trim($input);
-    $pattern = '/\${?(\w+)}?(\s)(==|>|>=|<|<=|!=)(\s)(".*"|(\d+\.?\d+))/i';
+    $pattern = '/\${?([\-\w]+[\/]?)}?(\s)(==|>|>=|<|<=|!=)(\s)(".*"|(\d+\.?\d+))/i';
     preg_match($pattern, $input, $matches);
     if (empty($matches) || (isset($matches[0]) && $input != $matches[0])) {
       $errorMessages = [
         "Invalid Question expression: $input",
         '',
         "It should exactly match from one of the following pattern: ",
-        ' ${some_question_key} == "<some_string_value>". Ex: ${some_question_key} == "yes"',
-        ' ${some_question_key} != "<some_string_value>". Ex: ${some_question_key} != "yes"',
-        ' ${some_question_key} > <some_numeric_value>. Ex: ${some_question_key} > 10',
-        ' ${some_question_key} >= <some_numeric_value>. Ex: ${some_question_key} >= 10',
-        ' ${some_question_key} < <some_numeric_value>. Ex: ${some_question_key} < 10',
-        ' ${some_question_key} <= <some_numeric_value>. Ex: ${some_question_key} <= 10',
+        ' ${some-question-key} == "<some_string_value>". Ex: ${some-question-key} == "yes"',
+        ' ${some-question-key} != "<some_string_value>". Ex: ${some-question-key} != "yes"',
+        ' ${some-question-key} > <some_numeric_value>. Ex: ${some-question-key} > 10',
+        ' ${some-question-key} >= <some_numeric_value>. Ex: ${some-question-key} >= 10',
+        ' ${some-question-key} < <some_numeric_value>. Ex: ${some-question-key} < 10',
+        ' ${some-question-key} <= <some_numeric_value>. Ex: ${some-question-key} <= 10',
       ];
       throw new \RuntimeException(implode(PHP_EOL, $errorMessages));
     }

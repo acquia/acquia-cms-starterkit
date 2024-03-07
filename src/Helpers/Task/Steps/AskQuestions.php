@@ -16,8 +16,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class AskQuestions {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
+  use StatusMessageTrait, UserInputTrait;
 
   /**
    * The AcquiaCMS Cli object.
@@ -52,15 +51,15 @@ class AskQuestions {
    * Providing input to user, asking to provide key.
    */
   public function askKeysQuestions(
+    array $options,
     InputInterface $input,
     OutputInterface $output,
     string $bundle,
     string $question_type,
-    QuestionHelper $helper) :array {
+    QuestionHelper $helper): array {
     // Get all questions for user selected use-case defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions($question_type), $bundle);
     $processedQuestions = $this->installerQuestions->process($questions);
-
     // Initialize the value with default answer for question, so that
     // if any question is dependent on other question which is skipped,
     // we can use the value for that question to make sure the cli
@@ -68,15 +67,15 @@ class AskQuestions {
     // @see AcquiaCMS\Cli\Helpers::shouldAskQuestion().
     $userInputValues = $processedQuestions['default'];
     foreach ($questions as $key => $question) {
-      $envVar = $this->installerQuestions->getEnvValue($question, $key);
-      if (empty($envVar)) {
+      $providedValue = $options[$key] ?? $this->installerQuestions->getEnvValue($question, $key);
+      if (empty($providedValue)) {
         if ($this->installerQuestions->shouldAskQuestion($question, $userInputValues)) {
 
           $userInputValues[$key] = $this->askQuestion($question, $key, $input, $output, $helper);
         }
       }
       else {
-        $userInputValues[$key] = $envVar;
+        $userInputValues[$key] = $providedValue;
       }
     }
 
@@ -102,7 +101,7 @@ class AskQuestions {
     string $key,
     InputInterface $input,
     OutputInterface $output,
-    QuestionHelper $helper) : string {
+    QuestionHelper $helper): string {
     $isRequired = $question['required'] ?? FALSE;
     $defaultValue = $this->installerQuestions->getDefaultValue($question, $key);
     $skipOnValue = $question['skip_on_value'] ?? TRUE;

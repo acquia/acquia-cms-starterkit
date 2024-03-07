@@ -60,15 +60,15 @@ jobs:
     name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, gdpr-integration=${{ matrix.gdpr-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
-      demo_content: ${{ matrix.demo-content }}
-      content_model: ${{ matrix.content-model }}
-      dam_integration: ${{ matrix.dam-integration }}
-      CONNECTOR_ID: ${{ secrets.CONNECTOR_ID }}
-      GMAPS_KEY: ${{ secrets.GMAPS_KEY }}
-      SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
-      SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
-      SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
-      gdpr_integration: ${{ matrix.gdpr-integration }}
+      demo-content: ${{ matrix.demo-content }}
+      content-model: ${{ matrix.content-model }}
+      dam-integration: ${{ matrix.dam-integration }}
+      connector-id: ${{ secrets.CONNECTOR_ID }}
+      gmaps-key: ${{ secrets.GMAPS_KEY }}
+      search-uuid: ${{ secrets.SEARCH_UUID }}
+      sitestudio-api-key: ${{ secrets.SITESTUDIO_API_KEY }}
+      sitestudio-org-key: ${{ secrets.SITESTUDIO_ORG_KEY }}
+      gdpr-integration: ${{ matrix.gdpr-integration }}
       CI: TRUE
     strategy:
       matrix:
@@ -146,14 +146,14 @@ jobs:
     name: "Verify ACMS Headless and NextJs with core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
-      demo_content: "yes"
-      CONNECTOR_ID: ${{ secrets.CONNECTOR_ID }}
-      GMAPS_KEY: ${{ secrets.GMAPS_KEY }}
-      SEARCH_UUID: ${{ secrets.SEARCH_UUID }}
-      nextjs_app: "yes"
-      nextjs_app_site_url: "http://localhost:3000"
-      nextjs_app_site_name: "Headless Site 1"
-      nextjs_app_env_file: ""
+      demo-content: "yes"
+      connector-id: ${{ secrets.CONNECTOR_ID }}
+      gmaps-key: ${{ secrets.GMAPS_KEY }}
+      search-uuid: ${{ secrets.SEARCH_UUID }}
+      nextjs-app: "yes"
+      nextjs-app-site-url: "http://localhost:3000"
+      nextjs-app-site-name: "Headless Site 1"
+      nextjs-app-env-file: ""
       CI: TRUE
     strategy:
       matrix:

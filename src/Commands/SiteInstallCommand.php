@@ -15,7 +15,6 @@ use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,8 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class SiteInstallCommand extends Command {
 
-  use StatusMessageTrait;
-  use UserInputTrait;
+  use StatusMessageTrait, UserInputTrait;
 
   /**
    * The AcquiaCMS Cli object.
@@ -86,32 +84,18 @@ class SiteInstallCommand extends Command {
    * {@inheritdoc}
    */
   protected function configure(): void {
+    // Command Arguments.
+    $definitions = [
+      new InputArgument('profile', InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
+      "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
+      "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
+    ];
+    // Options of drush and acms install.
+    $options = array_merge($this->getDrushOptions(), $this->acquiaCmsCli->getOptions('install'));
     $this->setName("site:install")
       ->setDescription("A wrapper command for drush site:install command.")
-      ->setDefinition([
-        new InputArgument('profile', InputArgument::IS_ARRAY,
-          "An install profile name. Defaults to <info>minimal</info> unless an install profile is marked as a distribution. " . PHP_EOL .
-        "Additional info for the install profile may also be provided with additional arguments. The key is in the form [form name].[parameter name]"),
-        new InputOption('db-url', '', InputOption::VALUE_OPTIONAL, "A Drupal 6 style database URL. Required for initial install, not re-install. If omitted and required, Drush prompts for this item."),
-        new InputOption('db-prefix', '', InputOption::VALUE_OPTIONAL, "An optional table prefix to use for initial install."),
-        new InputOption('db-su', '', InputOption::VALUE_OPTIONAL, "Account to use when creating a new database. Must have Grant permission (mysql only). Optional."),
-        new InputOption('db-su-pw', '', InputOption::VALUE_OPTIONAL, "Password for the <info>db-su</info> account. Optional."),
-        new InputOption('account-name', '', InputOption::VALUE_OPTIONAL, "uid1 name.", 'admin'),
-        new InputOption('account-mail', '', InputOption::VALUE_OPTIONAL, "uid1 email.", 'no-reply@example.com'),
-        new InputOption('site-mail', '', InputOption::VALUE_OPTIONAL, "<info>From</info>: for system mailings.", 'no-reply@example.com'),
-        new InputOption('account-pass', '', InputOption::VALUE_OPTIONAL, "uid1 pass. Defaults to a randomly generated password."),
-        new InputOption('locale', '', InputOption::VALUE_OPTIONAL, "A short language code. Sets the default site language. Language files must already be present.", 'en'),
-        new InputOption('site-name', '', InputOption::VALUE_OPTIONAL, "Name of the Drupal site.", 'Acquia CMS'),
-        new InputOption('site-pass', '', InputOption::VALUE_OPTIONAL),
-        new InputOption('sites-subdir', '', InputOption::VALUE_OPTIONAL, "Name of directory under <info>sites</info> which should be created."),
-        new InputOption('existing-config ', '', InputOption::VALUE_NONE, "Configuration from <info>sync</info> directory should be imported during installation."),
-        new InputOption('uri', 'l', InputOption::VALUE_OPTIONAL, "Multisite uri to setup drupal site.", 'default'),
-        new InputOption('yes', 'y', InputOption::VALUE_NONE, "Equivalent to --no-interaction."),
-        new InputOption('no', '', InputOption::VALUE_NONE, "Cancels at any confirmation prompt."),
-        new InputOption('hide-command', 'hide', InputOption::VALUE_NONE, "Doesn't show the command executed on terminal."),
-        new InputOption('display-command', 'd', InputOption::VALUE_NONE, "Doesn't show the command executed on terminal."),
-        new InputOption('without-product-info', 'wpi', InputOption::VALUE_NONE, "Doesn't show the product logo and headline."),
-      ])
+      // Prepare command options.
+      ->setDefinition(array_merge($definitions, $this->configureOptions($options)))
       ->setAliases(['site-install', 'si'])
       ->setHelp("The <info>site:install</info> command install Drupal along with modules/themes/configuration/profile.");
   }
@@ -126,16 +110,23 @@ class SiteInstallCommand extends Command {
         $this->acquiaCmsCli->printLogo();
         $this->acquiaCmsCli->printHeadline();
       }
-      $site_uri = $input->getOption('uri');
+      $siteUri = $input->getOption('uri');
       // Get starterkit name from build file.
-      [$starterkit_machine_name, $starterkit_name] = $this->installTask->getStarterKitName($site_uri);
+      [$starterkitMachineName, $starterkitName] = $this->installTask->getStarterKitName($siteUri);
+      // Get user input options for install process.
+      $options = array_filter($input->getOptions());
+      $envOptions = $this->acquiaCmsCli->envOptions($options, 'install');
+      $options = !empty($envOptions) ?
+      array_merge($options, $envOptions) : $options;
+      $installOptions = $this->getInputOptions($options, 'install');
+
       $helper = $this->getHelper('question');
       if ($helper instanceof QuestionHelper) {
-        $args['keys'] = $this->askQuestions->askKeysQuestions($input, $output, $starterkit_machine_name, 'install', $helper);
+        $args['keys'] = $this->askQuestions->askKeysQuestions($installOptions, $input, $output, $starterkitMachineName, 'install', $helper);
       }
-      $this->installTask->configure($input, $output, $starterkit_machine_name, $site_uri);
+      $this->installTask->configure($input, $output, $starterkitMachineName, $siteUri);
       $this->installTask->run($args);
-      $this->postSiteInstall($starterkit_name, $output);
+      $this->postSiteInstall($starterkitName, $output);
     }
     catch (AcmsCliException $e) {
       $output->writeln("<error>" . $e->getMessage() . "</error>");

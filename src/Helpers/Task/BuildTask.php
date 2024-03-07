@@ -32,7 +32,7 @@ class BuildTask {
    *
    * @var mixed
    */
-  protected $starterKits;
+  protected $starterKitsData;
 
   /**
    * Holds the Validate Drupal step object.
@@ -126,10 +126,11 @@ class BuildTask {
    * @poram Symfony\Component\Console\Command\Command $output
    *   The site:build Symfony console command object.
    */
-  public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
+  public function configure(InputInterface $input, OutputInterface $output, string $bundle): void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;
+    $this->starterKitsData = $this->acquiaCmsCli->getStarterKitsData('starter_kits')[$this->bundle];
   }
 
   /**
@@ -138,7 +139,7 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  public function run(array $args) :void {
+  public function run(array $args): void {
     $installedDrupalVersion = $this->validateDrupal->execute();
     if (!$installedDrupalVersion) {
       $this->print("Looks like, current project is not a Drupal project:", 'warning');
@@ -153,7 +154,7 @@ class BuildTask {
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
     $this->buildModulesAndThemes($args);
-    $this->downloadModules->execute($this->acquiaCmsCli->getStarterKits()[$this->bundle]);
+    $this->downloadModules->execute($this->starterKitsData);
   }
 
   /**
@@ -162,8 +163,8 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  protected function buildModulesAndThemes(array $args) :void {
-    $this->acquiaCmsCli->alterModulesAndThemes($this->acquiaCmsCli->getStarterKits()[$this->bundle], $args['keys']);
+  protected function buildModulesAndThemes(array $args): void {
+    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKitsData, $args['keys']);
   }
 
   /**
@@ -174,12 +175,11 @@ class BuildTask {
    * @param string $site
    *   The site uri.
    */
-  public function createBuild(array $args, string $site) :void {
+  public function createBuild(array $args, string $site): void {
     $build_path = $this->projectDir . '/acms';
     $this->buildModulesAndThemes($args);
-    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
-    $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
-    $installed_themes = $this->starterKits[$this->bundle]['themes'];
+    $installed_modules = $this->starterKitsData['modules']['install'];
+    $installed_themes = $this->starterKitsData['themes'];
 
     // Build array structure for build.yml.
     $build_content = [
@@ -223,7 +223,7 @@ class BuildTask {
    * @param string $type
    *   Type of styling the message.
    */
-  protected function print(string $message, string $type) :void {
+  protected function print(string $message, string $type): void {
     $this->output->writeln($this->style($message, $type));
   }
 

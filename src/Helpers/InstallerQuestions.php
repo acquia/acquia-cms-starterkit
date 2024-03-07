@@ -20,7 +20,7 @@ class InstallerQuestions {
    * @return array
    *   Returns the questions for the user selected use-case.
    */
-  public function getQuestions(array $questions, string $bundle) :array {
+  public function getQuestions(array $questions, string $bundle): array {
     $questionToAsk = [];
     foreach ($questions as $key => $question) {
       if ($this->filterByStarterKit($question, $bundle)) {
@@ -42,11 +42,10 @@ class InstallerQuestions {
    * @return bool
    *   Returns true|false, if question needs to ask.
    */
-  public function filterByStarterKit(array $question, string $bundle) :bool {
+  public function filterByStarterKit(array $question, string $bundle): bool {
     $isValid = TRUE;
     if (isset($question['dependencies']['starter_kits'])) {
-      $starterKits = array_map('trim', explode('||', $question['dependencies']['starter_kits']));
-      if (!in_array($bundle, $starterKits)) {
+      if (!in_array($bundle, $question['dependencies']['starter_kits'])) {
         $isValid = FALSE;
       }
     }
@@ -64,7 +63,7 @@ class InstallerQuestions {
    * @return bool
    *   Returns true|false, if question needs to ask.
    */
-  public function filterByQuestion(array $question, string $bundle) :bool {
+  public function filterByQuestion(array $question, string $bundle): bool {
     $isValid = FALSE;
     // Here, we are just filtering to check if we should ask question or not.
     // At this point, we don't know what answer user would give.
@@ -86,7 +85,7 @@ class InstallerQuestions {
    * @return array
    *   Returns an array of default values for questions and questions to ask.
    */
-  public function process(array $questions) :array {
+  public function process(array $questions): array {
     $defaultValues = $questionToAsk = [];
     foreach ($questions as $key => $question) {
       $defaultValue = $this->getDefaultValue($question, $key);
@@ -132,7 +131,8 @@ class InstallerQuestions {
    *   Returns the default value for question.
    */
   public function getEnvValue(array $question, string $key = ""): string {
-    return trim(PHPParser::parseEnvVars(!empty(getenv($key)) ? getenv($key) : ''));
+    $env = getenv(str_replace("-", "_", strtoupper($key)));
+    return trim(PHPParser::parseEnvVars(!empty($env) ? $env : ''));
   }
 
   /**
