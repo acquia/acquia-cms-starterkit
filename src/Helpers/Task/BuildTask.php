@@ -180,7 +180,6 @@ class BuildTask {
     $this->buildModulesAndThemes($args);
     $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
     $installed_themes = $this->starterKits[$this->bundle]['themes'];
-
     // Build array structure for build.yml.
     $build_content = [
       'sites' => [
