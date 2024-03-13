@@ -3,7 +3,6 @@
 namespace tests;
 
 use AcquiaCMS\Cli\Cli;
-use AcquiaCMS\Cli\Validation\StarterKitValidation;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,13 +40,6 @@ class CliTest extends TestCase {
   protected $acquiaCli;
 
   /**
-   * Starter-kit validator.
-   *
-   * @var \AcquiaCMS\Cli\Validation\StarterKitValidation
-   */
-  protected $starterKitValidation;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -56,8 +48,7 @@ class CliTest extends TestCase {
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
-    $this->starterKitValidation = new StarterKitValidation();
-    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container, $this->starterKitValidation);
+    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container);
   }
 
   /**
@@ -69,16 +60,6 @@ class CliTest extends TestCase {
     $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
     $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml'));
-  }
-
-  /**
-   * Tests starter-kit validation.
-   */
-  public function testValidateStarterKit(): void {
-    $starterKits = $this->getAcmsFileContents()['starter_kits'];
-    $schema = $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/schema.json');
-    $this->starterKitValidation->validateStarterKits($schema, $starterKits);
-    $this->assertIsArray($starterKits);
   }
 
   /**
