@@ -28,13 +28,6 @@ class BuildTask {
   protected $acquiaCmsCli;
 
   /**
-   * Holds an array of defined starter kits.
-   *
-   * @var mixed
-   */
-  protected $starterKits;
-
-  /**
    * Holds the Validate Drupal step object.
    *
    * @var \AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal
@@ -96,6 +89,13 @@ class BuildTask {
    * @var string
    */
   protected $projectDir;
+
+  /**
+   * An array of Starter Kit.
+   *
+   * @var array
+   */
+  protected $starterKits;
 
   /**
    * Constructs an object.
@@ -163,7 +163,7 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  protected function buildModulesAndThemes(array $args) :void {
+  protected function buildModulesAndThemes(array $args): void {
     $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
   }
 
@@ -180,7 +180,6 @@ class BuildTask {
     $this->buildModulesAndThemes($args);
     $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
     $installed_themes = $this->starterKits[$this->bundle]['themes'];
-
     // Build array structure for build.yml.
     $build_content = [
       'sites' => [
