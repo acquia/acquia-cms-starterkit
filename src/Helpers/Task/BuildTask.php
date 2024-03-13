@@ -91,6 +91,13 @@ class BuildTask {
   protected $projectDir;
 
   /**
+   * An array of Starter Kit.
+   *
+   * @var array
+   */
+  protected $starterKits;
+
+  /**
    * Constructs an object.
    *
    * @param string $root_dir
@@ -103,6 +110,7 @@ class BuildTask {
   public function __construct(string $root_dir, Cli $cli, ContainerInterface $container) {
     $this->projectDir = $root_dir;
     $this->acquiaCmsCli = $cli;
+    $this->starterKits = $this->acquiaCmsCli->getStarterKits();
     $this->validateDrupal = $container->get(ValidateDrupal::class);
     $this->downloadDrupal = $container->get(DownloadDrupal::class);
     $this->downloadModules = $container->get(DownloadModules::class);
@@ -145,8 +153,8 @@ class BuildTask {
       );
     }
     $this->print("Downloading all packages/modules/themes required by the starter-kit:", 'headline');
-    $starterKits = $this->buildModulesAndThemes($args);
-    $this->downloadModules->execute($starterKits);
+    $this->buildModulesAndThemes($args);
+    $this->downloadModules->execute($this->starterKits[$this->bundle]);
   }
 
   /**
@@ -155,8 +163,8 @@ class BuildTask {
    * @param array $args
    *   An array of params argument to pass.
    */
-  protected function buildModulesAndThemes(array $args) :array {
-    return $this->acquiaCmsCli->alterModulesAndThemes($this->acquiaCmsCli->getStarterKits()[$this->bundle], $args['keys']);
+  protected function buildModulesAndThemes(array $args): void {
+    $this->acquiaCmsCli->alterModulesAndThemes($this->starterKits[$this->bundle], $args['keys']);
   }
 
   /**
@@ -169,9 +177,10 @@ class BuildTask {
    */
   public function createBuild(array $args, string $site) :void {
     $build_path = $this->projectDir . '/acms';
-    $starterKits = $this->buildModulesAndThemes($args);
-    $installed_modules = $starterKits['modules']['install'];
-    $installed_themes = $starterKits['themes'];
+    $this->buildModulesAndThemes($args);
+    $installed_modules = $this->starterKits[$this->bundle]['modules']['install'];
+    $installed_themes = $this->starterKits[$this->bundle]['themes'];
+
     // Build array structure for build.yml.
     $build_content = [
       'sites' => [

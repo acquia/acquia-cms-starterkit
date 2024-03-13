@@ -4,7 +4,6 @@ namespace tests\Helpers;
 
 use AcquiaCMS\Cli\Cli;
 use AcquiaCMS\Cli\Helpers\InstallerQuestions;
-use AcquiaCMS\Cli\Validation\StarterKitValidation;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -74,13 +73,6 @@ class InstallerQuestionsTest extends TestCase {
   protected $acmsInstallQuestions;
 
   /**
-   * Starter-kit validator.
-   *
-   * @var \AcquiaCMS\Cli\Validation\StarterKitValidation
-   */
-  protected $starterKitValidation;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -89,8 +81,7 @@ class InstallerQuestionsTest extends TestCase {
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
-    $this->starterKitValidation = new StarterKitValidation();
-    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container, $this->starterKitValidation);
+    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container);
     $this->installerQuestions = new InstallerQuestions();
     $this->acmsBuildQuestions = $this->acquiaCli->getInstallerQuestions('build');
     $this->acmsInstallQuestions = $this->acquiaCli->getInstallerQuestions('install');
