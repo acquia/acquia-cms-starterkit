@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2333a2ff31e2280068fa2e4a5cdd15e9",
+    "content-hash": "36a5c58e275eadc58876059902e134e2",
     "packages": [
         {
             "name": "acquia/drupal-environment-detector",
@@ -210,16 +210,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.6.5",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "4b0fe89db9e65b1e64df633a992e70a7a215ab33"
+                "reference": "b826edb791571ab1eaf281eb1bd6e181a1192adc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/4b0fe89db9e65b1e64df633a992e70a7a215ab33",
-                "reference": "4b0fe89db9e65b1e64df633a992e70a7a215ab33",
+                "url": "https://api.github.com/repos/composer/composer/zipball/b826edb791571ab1eaf281eb1bd6e181a1192adc",
+                "reference": "b826edb791571ab1eaf281eb1bd6e181a1192adc",
                 "shasum": ""
             },
             "require": {
@@ -251,7 +251,7 @@
                 "phpstan/phpstan-phpunit": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1",
                 "phpstan/phpstan-symfony": "^1.2.10",
-                "symfony/phpunit-bridge": "^6.0 || ^7"
+                "symfony/phpunit-bridge": "^6.4.1 || ^7.0.1"
             },
             "suggest": {
                 "ext-openssl": "Enabling the openssl extension allows you to access https URLs for repositories and packages",
@@ -264,7 +264,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "2.6-dev"
+                    "dev-main": "2.7-dev"
                 },
                 "phpstan": {
                     "includes": [
@@ -304,7 +304,7 @@
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/composer/issues",
                 "security": "https://github.com/composer/composer/security/policy",
-                "source": "https://github.com/composer/composer/tree/2.6.5"
+                "source": "https://github.com/composer/composer/tree/2.7.2"
             },
             "funding": [
                 {
@@ -320,7 +320,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-06T08:11:52+00:00"
+            "time": "2024-03-11T16:12:18+00:00"
         },
         {
             "name": "composer/metadata-minifier",
@@ -5952,6 +5952,7 @@
                     "type": "github"
                 }
             ],
+            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {
@@ -6373,5 +6374,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
