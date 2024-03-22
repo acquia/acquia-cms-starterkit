@@ -3,6 +3,7 @@
 namespace tests;
 
 use AcquiaCMS\Cli\Cli;
+use AcquiaCMS\Cli\Helpers\Packages;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,7 +49,8 @@ class CliTest extends TestCase {
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
     $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
-    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container);
+    $package = $this->createMock(Packages::class);
+    $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container, $package);
   }
 
   /**
@@ -67,6 +69,7 @@ class CliTest extends TestCase {
    */
   public function testAlterModuleThemes(string $bundle, array $userValues, array $expected, string $message = ''): void {
     $starter_kit = $this->getAcmsFileContents()['starter_kits'][$bundle];
+
     $expected = array_replace_recursive($starter_kit, ...$expected);
     $this->acquiaCli->alterModulesAndThemes($starter_kit, $userValues);
     $this->assertEquals($starter_kit, $expected, $message);

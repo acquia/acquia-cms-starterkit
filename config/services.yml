@@ -27,6 +27,7 @@ services:
   AcquiaCMS\Cli\Helpers\Task\Steps\ValidateDrupal: ~
   AcquiaCMS\Cli\Helpers\Task\Steps\ToggleModules: ~
   Symfony\Component\Filesystem\Filesystem: ~
+  AcquiaCMS\Cli\Helpers\Packages: ~
   Symfony\Component\DependencyInjection\ContainerInterface: '@service_container'
 
   Symfony\Component\Console\Input\ArgvInput: ~
