@@ -7,6 +7,7 @@ use AcquiaCMS\Cli\Helpers\Packages;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CliTest extends TestCase {
   use ProphecyTrait;
@@ -48,7 +49,7 @@ class CliTest extends TestCase {
     $output = $this->output->reveal();
     $this->projectDirectory = getcwd();
     $this->rootDirectory = $this->projectDirectory;
-    $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
+    $container = $this->createMock(ContainerInterface::class);
     $package = $this->createMock(Packages::class);
     $this->acquiaCli = new Cli($this->projectDirectory, $this->rootDirectory, $output, $container, $package);
   }
@@ -73,6 +74,95 @@ class CliTest extends TestCase {
     $expected = array_replace_recursive($starter_kit, ...$expected);
     $this->acquiaCli->alterModulesAndThemes($starter_kit, $userValues);
     $this->assertEquals($starter_kit, $expected, $message);
+  }
+
+  public function testAlterPackagesForLowCode(): void {
+    $container = $this->createMock(ContainerInterface::class);
+    $package = $this->createMock(Packages::class);
+    $starter_kit = [
+      "name" => "Acquia CMS Enterprise Low-code",
+      "description" => "The low-code starter kit will install Acquia CMS with Site Studio and a UIkit",
+      "modules" => [
+        "require" => [
+          "acquia_cms_site_studio",
+          "acquia_cms_page",
+          "acquia_cms_search",
+          "acquia_cms_tour",
+          "acquia_cms_toolbar",
+          "google_tag",
+          "honeypot",
+          "mnsami/composer-custom-directory-installer",
+          "recaptcha",
+          "reroute_email",
+          "shield",
+          "sitestudio_gin",
+        ],
+        "install" => [
+          "acquia_cms_site_studio",
+          "acquia_cms_page",
+          "acquia_cms_search",
+          "acquia_cms_tour",
+          "acquia_cms_toolbar",
+          "sitestudio_gin",
+        ],
+      ],
+      "themes" => [
+        "require" => ["gin"],
+        "install" => ["gin"],
+        "admin" => "gin",
+        "default" => "cohesion_theme",
+      ],
+    ];
+    $package->method('getInstalledPackages')->willReturnCallback(function ($reset) {
+      return [
+        "acquia/cohesion" => $this->createPackage([
+          "name" => "acquia/cohesion",
+          "version" => "7.4.3",
+        ]),
+        "drupal/core" => $this->createPackage([
+          "name" => "drupal/core",
+          "version" => "10.1.2",
+        ]),
+      ];
+    });
+    $cli = new Cli($this->projectDirectory, $this->rootDirectory, $this->output->reveal(), $container, $package);
+    $expected = unserialize(serialize($starter_kit), ['allowed_classes' => FALSE]);
+    $expected['themes']['require'] = ["acquia_claro"];
+    $expected['themes']['install'] = ["acquia_claro"];
+    $expected['themes']['admin'] = "acquia_claro";
+    unset($expected['modules']['require'][11]);
+    unset($expected['modules']['install'][5]);
+    $this->assertEquals($expected, $cli->alterModulesAndThemes($starter_kit, []));
+
+    $package->method('getInstalledPackages')->willReturnCallback(function ($reset) {
+      return [
+        "acquia/cohesion" => $this->createPackage([
+          "name" => "acquia/cohesion",
+          "version" => "7.5.0",
+        ]),
+        "drupal/core" => $this->createPackage([
+          "name" => "drupal/core",
+          "version" => "10.1.2",
+        ]),
+      ];
+    });
+    $cli = new Cli($this->projectDirectory, $this->rootDirectory, $this->output->reveal(), $container, $package);
+    $expected = unserialize(serialize($starter_kit), ['allowed_classes' => FALSE]);
+    $this->assertEquals($expected, $cli->alterModulesAndThemes($starter_kit, []));
+  }
+
+  /**
+   * Returns a package object.
+   *
+   * @param array $data
+   *   An array of data for package.
+   */
+  private function createPackage(array $data): object {
+    $obj = new \stdClass();
+    foreach ($data as $key => $value) {
+      $obj->$key = $value;
+    }
+    return $obj;
   }
 
   /**
