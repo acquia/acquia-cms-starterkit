@@ -98,6 +98,7 @@ class UtilityTest extends TestCase {
     ];
     $expected = unserialize(serialize($actual), ['allowed_classes' => FALSE]);
     unset($expected["modules"]["require"][2]);
+    $expected["modules"]["require"] = array_values($expected["modules"]["require"]);
     $this->assertEquals($expected, Utility::removeValueByKey($actual, "modules.require", "acquia_cms_tour"));
   }
 
