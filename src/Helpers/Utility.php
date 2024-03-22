@@ -136,6 +136,11 @@ class Utility {
         if ($nestedKey === end($keys)) {
           if (is_array($current[$nestedKey])) {
             // Remove the value from the array.
+            $index = array_search($search, $current[$nestedKey], TRUE);
+            if ($index !== FALSE) {
+              // Remove the element without reindexing.
+              array_splice($current[$nestedKey], $index, 1);
+            }
             $current[$nestedKey] = array_filter($current[$nestedKey], function ($value) use ($search) {
               return $value !== $search;
             });
