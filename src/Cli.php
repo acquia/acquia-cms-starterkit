@@ -2,6 +2,8 @@
 
 namespace AcquiaCMS\Cli;
 
+use AcquiaCMS\Cli\Helpers\Packages;
+use AcquiaCMS\Cli\Helpers\Utility;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -48,6 +50,13 @@ class Cli {
   protected $filesystem;
 
   /**
+   * The packages object.
+   *
+   * @var \AcquiaCMS\Cli\Helpers\Packages
+   */
+  protected $packages;
+
+  /**
    * Constructs an object.
    *
    * @param string $project_dir
@@ -58,16 +67,20 @@ class Cli {
    *   Holds the symfony console output object.
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   A Symfony container class object.
+   * @param \AcquiaCMS\Cli\Helpers\Packages $packages
+   *   The packages object.
    */
   public function __construct(
     string $project_dir,
     string $root_dir,
     OutputInterface $output,
-    ContainerInterface $container) {
+    ContainerInterface $container,
+    Packages $packages) {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->output = $output;
     $this->filesystem = $container->get(Filesystem::class);
+    $this->packages = $packages;
   }
 
   /**
@@ -207,7 +220,31 @@ class Cli {
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
+
+    if ($starterKit['name'] == "Acquia CMS Enterprise Low-code") {
+      // @todo Revisit and update this based on key, instead of name.
+      $starterKit = $this->alterPackagesForLowCode($starterKit);
+    }
     return $starterKit;
+  }
+
+  /**
+   * Alter the themes & modules for Enterprise low-code Starterkit.
+   *
+   * @param array $starter_kit
+   *   An array of starter kit.
+   */
+  private function alterPackagesForLowCode(array $starter_kit): array {
+    $packages = $this->packages->getInstalledPackages();
+    $sitestudio_version = $packages['acquia/cohesion']->version ?? "";
+    if ($sitestudio_version && version_compare($sitestudio_version, "7.5", "<")) {
+      $starter_kit = Utility::replaceValueByKey($starter_kit, "themes.require", "gin", "acquia_claro");
+      $starter_kit = Utility::replaceValueByKey($starter_kit, "themes.install", "gin", "acquia_claro");
+      $starter_kit = Utility::removeValueByKey($starter_kit, "modules.require", "sitestudio_gin");
+      $starter_kit = Utility::removeValueByKey($starter_kit, "modules.install", "sitestudio_gin");
+      $starter_kit['themes']['admin'] = "acquia_claro";
+    }
+    return $starter_kit;
   }
 
 }
