@@ -49,6 +49,7 @@ starter_kits:
         - acquia_cms_search
         - acquia_cms_tour
         - acquia_cms_toolbar
+        - gin_toolbar
     themes:
       require:
         - gin
@@ -75,6 +76,7 @@ starter_kits:
         - acquia_cms_tour
         - acquia_cms_toolbar
         - consumer_image_styles
+        - gin_toolbar
     themes:
       require:
         - gin
