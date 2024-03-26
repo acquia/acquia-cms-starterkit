@@ -104,6 +104,7 @@ class CliTest extends TestCase {
           "acquia_cms_tour",
           "acquia_cms_toolbar",
           "sitestudio_gin",
+          "gin_toolbar",
         ],
       ],
       "themes" => [
@@ -132,6 +133,7 @@ class CliTest extends TestCase {
     $expected['themes']['admin'] = "acquia_claro";
     unset($expected['modules']['require'][11]);
     unset($expected['modules']['install'][5]);
+    unset($expected['modules']['install'][6]);
     $this->assertEquals($expected, $cli->alterModulesAndThemes($starter_kit, []));
 
     $package->method('getInstalledPackages')->willReturnCallback(function ($reset) {
@@ -196,6 +198,7 @@ class CliTest extends TestCase {
               "acquia_cms_tour",
               "acquia_cms_toolbar",
               "sitestudio_gin",
+              "gin_toolbar",
             ],
           ],
           "themes" => [

@@ -242,6 +242,7 @@ class Cli {
       $starter_kit = Utility::replaceValueByKey($starter_kit, "themes.install", "gin", "acquia_claro");
       $starter_kit = Utility::removeValueByKey($starter_kit, "modules.require", "sitestudio_gin");
       $starter_kit = Utility::removeValueByKey($starter_kit, "modules.install", "sitestudio_gin");
+      $starter_kit = Utility::removeValueByKey($starter_kit, "modules.install", "gin_toolbar");
       $starter_kit['themes']['admin'] = "acquia_claro";
     }
     return $starter_kit;
