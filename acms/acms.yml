@@ -23,6 +23,7 @@ starter_kits:
         - acquia_cms_tour
         - acquia_cms_toolbar
         - sitestudio_gin
+        - gin_toolbar
     themes:
       require:
         - gin
