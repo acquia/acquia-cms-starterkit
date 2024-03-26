@@ -15,19 +15,21 @@ starter_kits:
         - recaptcha
         - reroute_email
         - shield
+        - sitestudio_gin
       install:
         - acquia_cms_site_studio
-        - sitestudio_claro
         - acquia_cms_page
         - acquia_cms_search
         - acquia_cms_tour
         - acquia_cms_toolbar
+        - sitestudio_gin
+        - gin_toolbar
     themes:
       require:
-        - acquia_claro
+        - gin
       install:
-        - acquia_claro
-      admin: acquia_claro
+        - gin
+      admin: gin
       default: cohesion_theme
   acquia_cms_community:
     name: "Acquia CMS Community"
@@ -47,12 +49,13 @@ starter_kits:
         - acquia_cms_search
         - acquia_cms_tour
         - acquia_cms_toolbar
+        - gin_toolbar
     themes:
       require:
-        - acquia_claro
+        - gin
       install:
-        - acquia_claro
-      admin: acquia_claro
+        - gin
+      admin: gin
       default: olivero
   acquia_cms_headless:
     name: "Acquia CMS Headless"
@@ -73,12 +76,13 @@ starter_kits:
         - acquia_cms_tour
         - acquia_cms_toolbar
         - consumer_image_styles
+        - gin_toolbar
     themes:
       require:
-        - acquia_claro
+        - gin
       install:
-        - acquia_claro
-      admin: acquia_claro
+        - gin
+      admin: gin
       default: olivero
 questions:
   build:

@@ -9,6 +9,6 @@
   "author": "no-reply@acquia.com",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^12.9.0"
+    "cypress": "^13.7.0"
   }
 }
