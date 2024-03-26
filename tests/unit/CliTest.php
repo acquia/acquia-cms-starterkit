@@ -227,6 +227,7 @@ class CliTest extends TestCase {
               "acquia_cms_search",
               "acquia_cms_tour",
               "acquia_cms_toolbar",
+              "gin_toolbar",
             ],
           ],
           "themes" => [
@@ -256,6 +257,7 @@ class CliTest extends TestCase {
               "acquia_cms_tour",
               "acquia_cms_toolbar",
               "consumer_image_styles",
+              "gin_toolbar",
             ],
           ],
           "themes" => [
