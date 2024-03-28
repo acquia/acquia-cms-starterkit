@@ -239,17 +239,18 @@ class InstallTask {
       unset($modulesList[$key]);
       $isDemoContent = TRUE;
     }
-    // Enable modules.
-    $this->enableModules->execute([
-      'modules' => $modulesList,
-      'keys' => $args['keys'],
-    ]);
 
     // Enable themes.
     $this->print("Enabling themes for the starter-kit:", 'headline');
     $this->enableThemes->execute([
       'themes' => $this->buildInformation['themes'],
       'starter_kit' => $this->bundle,
+    ]);
+
+    // Enable modules.
+    $this->enableModules->execute([
+      'modules' => $modulesList,
+      'keys' => $args['keys'],
     ]);
 
     // Toggle modules based on environments.
