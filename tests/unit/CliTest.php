@@ -132,8 +132,8 @@ class CliTest extends TestCase {
     $expected['themes']['install'] = ["acquia_claro"];
     $expected['themes']['admin'] = "acquia_claro";
     unset($expected['modules']['require'][11]);
-    unset($expected['modules']['install'][5]);
     unset($expected['modules']['install'][6]);
+    $expected['modules']['install'][5] = "sitestudio_claro";
     $this->assertEquals($expected, $cli->alterModulesAndThemes($starter_kit, []));
 
     $package->method('getInstalledPackages')->willReturnCallback(function ($reset) {

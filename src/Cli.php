@@ -236,15 +236,21 @@ class Cli {
    */
   private function alterPackagesForLowCode(array $starter_kit): array {
     $packages = $this->packages->getInstalledPackages();
-    $sitestudio_version = $packages['acquia/cohesion']->version ?? "";
-    if ($sitestudio_version && version_compare($sitestudio_version, "7.5", "<")) {
+    $sitestudioVersion = $packages['acquia/cohesion']->version ?? "";
+    // If site studio version is 7.4.3 or less then
+    // replace themes and modules respectively.
+    if ($sitestudioVersion && version_compare($sitestudioVersion, "7.5", "<")) {
+      // Replace gin theme with acquia_claro.
       $starter_kit = Utility::replaceValueByKey($starter_kit, "themes.require", "gin", "acquia_claro");
       $starter_kit = Utility::replaceValueByKey($starter_kit, "themes.install", "gin", "acquia_claro");
       $starter_kit = Utility::removeValueByKey($starter_kit, "modules.require", "sitestudio_gin");
-      $starter_kit = Utility::removeValueByKey($starter_kit, "modules.install", "sitestudio_gin");
+      // Replace sitestudio_gin module with sitestudio_claro.
+      $starter_kit = Utility::replaceValueByKey($starter_kit, "modules.install", "sitestudio_gin", "sitestudio_claro");
+      // Removing gin_toolbar to corporate the claro theme.
       $starter_kit = Utility::removeValueByKey($starter_kit, "modules.install", "gin_toolbar");
       $starter_kit['themes']['admin'] = "acquia_claro";
     }
+
     return $starter_kit;
   }
 
