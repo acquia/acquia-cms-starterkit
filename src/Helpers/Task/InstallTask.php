@@ -236,10 +236,11 @@ class InstallTask {
     // List of modules to be installed separately.
     $isolateInstallModules = [
       'sitestudio_gin',
+      'sitestudio_claro',
       'gin_toolbar',
       'acquia_cms_starter',
     ];
-    $ginModules = [];
+    $dependencyModules = [];
     foreach ($isolateInstallModules as $mkey => $module) {
       if ($key = array_search($module, $modulesList)) {
         if ($module === 'acquia_cms_starter') {
@@ -250,7 +251,7 @@ class InstallTask {
           unset($isolateInstallModules[$mkey]);
         }
         if (!empty($isolateInstallModules[$mkey]) && $isolateInstallModules[$mkey] === $module) {
-          $ginModules[] = $isolateInstallModules[$mkey];
+          $dependencyModules[] = $isolateInstallModules[$mkey];
           unset($modulesList[$key]);
         }
 
@@ -269,12 +270,12 @@ class InstallTask {
       'starter_kit' => $this->bundle,
     ]);
 
-    // Enable modules required by gin theme as gin_toolbar and
-    // sitestudio_gin having system requirements to install theme first.
-    if (!empty($ginModules)) {
-      $this->print("Enabling modules for the gin theme:", 'headline');
+    // Enable modules required by theme as sitestudio_claro, sitestudio_gin
+    // and gin_toolbar having system requirements to install theme first.
+    if (!empty($dependencyModules)) {
+      $this->print("Enabling modules required for theme:", 'headline');
       $this->enableModules->execute([
-        'modules' => $ginModules,
+        'modules' => $dependencyModules,
         'keys' => $args['keys'],
       ]);
     }
