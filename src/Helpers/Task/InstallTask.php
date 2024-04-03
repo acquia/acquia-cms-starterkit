@@ -233,11 +233,29 @@ class InstallTask {
     $this->print("Enabling modules for the starter-kit:", 'headline');
     $isDemoContent = FALSE;
     $modulesList = JsonParser::installPackages($bundleModules);
-    if ($key = array_search('acquia_cms_starter', $modulesList)) {
-      // Remove acquia_cms_starter module in the list of modules to install.
-      // Because we install this module separately in the last.
-      unset($modulesList[$key]);
-      $isDemoContent = TRUE;
+    // List of modules to be installed separately.
+    $isolateInstallModules = [
+      'sitestudio_gin',
+      'sitestudio_claro',
+      'gin_toolbar',
+      'acquia_cms_starter',
+    ];
+    $dependencyModules = [];
+    foreach ($isolateInstallModules as $mkey => $module) {
+      if ($key = array_search($module, $modulesList)) {
+        if ($module === 'acquia_cms_starter') {
+          // Remove acquia_cms_starter module in the list of modules to install.
+          // Because we install this module separately in the last.
+          $isDemoContent = TRUE;
+          unset($modulesList[$key]);
+          unset($isolateInstallModules[$mkey]);
+        }
+        if (!empty($isolateInstallModules[$mkey]) && $isolateInstallModules[$mkey] === $module) {
+          $dependencyModules[] = $isolateInstallModules[$mkey];
+          unset($modulesList[$key]);
+        }
+
+      }
     }
     // Enable modules.
     $this->enableModules->execute([
@@ -251,6 +269,16 @@ class InstallTask {
       'themes' => $this->buildInformation['themes'],
       'starter_kit' => $this->bundle,
     ]);
+
+    // Enable modules required by theme as sitestudio_claro, sitestudio_gin
+    // and gin_toolbar having system requirements to install theme first.
+    if (!empty($dependencyModules)) {
+      $this->print("Enabling modules required for theme:", 'headline');
+      $this->enableModules->execute([
+        'modules' => $dependencyModules,
+        'keys' => $args['keys'],
+      ]);
+    }
 
     // Toggle modules based on environments.
     $this->print("Toggle modules for the starter-kit:", 'headline');
