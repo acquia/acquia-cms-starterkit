@@ -25,3 +25,7 @@ Run the following command to to set up site:
 ```
 ./vendor/bin/acms acms:install
 ```
+
+###### Note: Starter kit enable modules in bulk during installation which required minimum PHP memory limit to be 256M.
+
+Check memory_limit using command `php -i | grep "memory_limit"`,If php memory limit is less than 256 then locate php.ini file and update memory_limit to 256
