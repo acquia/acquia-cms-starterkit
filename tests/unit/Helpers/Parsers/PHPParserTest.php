@@ -24,7 +24,7 @@ class PHPParserTest extends TestCase {
    *
    * @dataProvider parseEnvVariablesDataProvider
    */
-  public function testPhpEnvVars(string $actual, string $expected, array $envVariables = []) :void {
+  public function testPhpEnvVars(string $actual, string $expected, array $envVariables = []): void {
     if ($envVariables) {
       foreach ($envVariables as $key => $value) {
         putenv("$key=$value");
@@ -36,7 +36,7 @@ class PHPParserTest extends TestCase {
   /**
    * @dataProvider parseValidQuestionExpression
    */
-  public function testParseValidQuestion(string $actual, array $expected, string $exception = NULL) :void {
+  public function testParseValidQuestion(string $actual, array $expected, string $exception = NULL): void {
     if ($exception) {
       $this->expectException($exception);
     }
@@ -46,7 +46,7 @@ class PHPParserTest extends TestCase {
   /**
    * Provides the data to test: testParseQuestionExpression().
    */
-  public function parseValidQuestionExpression(): array {
+  public static function parseValidQuestionExpression(): array {
     return [
       [
         '${site_studio} == "yes"',
@@ -87,7 +87,7 @@ class PHPParserTest extends TestCase {
   /**
    * Provides the data to test: testInstallPackages().
    */
-  public function parseEnvVariablesDataProvider(): array {
+  public static function parseEnvVariablesDataProvider(): array {
     return [
       [
         'Static Value',

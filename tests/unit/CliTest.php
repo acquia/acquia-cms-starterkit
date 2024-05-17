@@ -59,23 +59,28 @@ class CliTest extends TestCase {
    *
    * @test
    */
-  public function testExecute() :void {
+  public function testExecute(): void {
     $this->assertEquals("Welcome to Acquia CMS Starter Kit installer", $this->acquiaCli->headline);
     $this->assertEquals($this->projectDirectory . "/assets/acquia_cms.icon.ascii", $this->acquiaCli->getLogo());
-    $this->assertEquals($this->getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml'));
+    $this->assertEquals(self::getAcmsFileContents(), $this->acquiaCli->getAcquiaCmsFile($this->projectDirectory . '/acms/acms.yml'));
   }
 
   /**
+   * Test the alteration of modules and theme.
+   *
    * @dataProvider alterModuleThemesDataProvider
    */
   public function testAlterModuleThemes(string $bundle, array $userValues, array $expected, string $message = ''): void {
-    $starter_kit = $this->getAcmsFileContents()['starter_kits'][$bundle];
+    $starter_kit = self::getAcmsFileContents()['starter_kits'][$bundle];
 
     $expected = array_replace_recursive($starter_kit, ...$expected);
     $this->acquiaCli->alterModulesAndThemes($starter_kit, $userValues);
     $this->assertEquals($starter_kit, $expected, $message);
   }
 
+  /**
+   * Test the low code package.
+   */
   public function testAlterPackagesForLowCode(): void {
     $container = $this->createMock(ContainerInterface::class);
     $package = $this->createMock(Packages::class);
@@ -170,7 +175,7 @@ class CliTest extends TestCase {
   /**
    * An array of default contents for acms/acms.yml file.
    */
-  protected function getAcmsFileContents() :array {
+  public static function getAcmsFileContents(): array {
     return [
       "starter_kits" => [
         "acquia_cms_enterprise_low_code" => [
@@ -515,8 +520,11 @@ class CliTest extends TestCase {
 
   /**
    * Function to return data provider for method: alterModulesAndThemes().
+   *
+   * @return array[]
+   *   Returns the list of modules and theme.
    */
-  public function alterModuleThemesDataProvider() :array {
+  public static function alterModuleThemesDataProvider(): array {
     foreach (['acquia_cms_enterprise_low_code', 'acquia_cms_community', 'acquia_cms_headless'] as $bundle) {
       $returnArray = [
         [
@@ -528,12 +536,12 @@ class CliTest extends TestCase {
             [
               "modules" => [
                 "require" => array_unique(array_merge(
-                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  self::getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
+                  self::getUpdatedModulesThemesArray($bundle, 'demo_content'),
                 )),
                 "install" => array_unique(array_merge(
-                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'demo_content'),
+                  self::getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
+                  self::getUpdatedModulesThemesArray($bundle, 'demo_content'),
                 )),
               ],
             ],
@@ -553,12 +561,12 @@ class CliTest extends TestCase {
             [
               "modules" => [
                 "require" => array_unique(array_merge(
-                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  self::getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
+                  self::getUpdatedModulesThemesArray($bundle, 'content_model'),
                 )),
                 "install" => array_unique(array_merge(
-                  $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
-                  $this->getUpdatedModulesThemesArray($bundle, 'content_model'),
+                  self::getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
+                  self::getUpdatedModulesThemesArray($bundle, 'content_model'),
                 )),
               ],
             ],
@@ -577,8 +585,8 @@ class CliTest extends TestCase {
           [
             [
               "modules" => [
-                "require" => $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
-                "install" => $this->getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
+                "require" => self::getAcmsFileContents()['starter_kits'][$bundle]['modules']['require'],
+                "install" => self::getAcmsFileContents()['starter_kits'][$bundle]['modules']['install'],
               ],
             ],
             [
@@ -589,6 +597,7 @@ class CliTest extends TestCase {
         ],
       ];
     }
+
     return $returnArray;
   }
 
@@ -600,7 +609,7 @@ class CliTest extends TestCase {
    * @param string $question_type
    *   A question machine_name.
    */
-  public function getUpdatedModulesThemesArray(string $bundle, string $question_type = ''): array {
+  public static function getUpdatedModulesThemesArray(string $bundle, string $question_type = ''): array {
     switch ($question_type) :
       case 'content_model':
         $packages = [

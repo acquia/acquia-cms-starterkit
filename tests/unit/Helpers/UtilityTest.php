@@ -19,7 +19,7 @@ class UtilityTest extends TestCase {
    *
    * @dataProvider dataProviderDirectory
    */
-  public function testNormalizeDirectoryPath(string $expected, string $actual) :void {
+  public function testNormalizeDirectoryPath(string $expected, string $actual): void {
     $this->assertEquals($expected, Utility::normalizePath($actual));
   }
 
@@ -108,7 +108,7 @@ class UtilityTest extends TestCase {
    * @return array
    *   Returns an array of directories path.
    */
-  public function dataProviderDirectory() :array {
+  public static function dataProviderDirectory(): array {
     return [
       [
         "/acquia/acquia-cms-project",
@@ -132,7 +132,7 @@ class UtilityTest extends TestCase {
   /**
    * Tests the method generateRandomPassword().
    */
-  public function testGeneratedPassword() :void {
+  public function testGeneratedPassword(): void {
     $password = Utility::generateRandomPassword(12);
     $this->assertMatchesRegularExpression("/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}/", $password);
   }
