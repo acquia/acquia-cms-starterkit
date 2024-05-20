@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true"
-         cacheResultFile="var/phpunit/test-results"
-         bootstrap="vendor/autoload.php"
->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
   <php>
     <ini name="error_reporting" value="-1"/>
-    <env name="COLUMNS" value="80" force="true" />
+    <env name="COLUMNS" value="80" force="true"/>
   </php>
-
-    <testsuites>
-        <testsuite name="Acquia CMS Starterkit">
-            <directory suffix="Test.php">./tests</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist>
-            <directory>./</directory>
-            <exclude>
-                <directory>./bin</directory>
-                <directory>./tests</directory>
-                <directory>./vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+  <testsuites>
+    <testsuite name="Acquia CMS Starterkit">
+      <directory suffix="Test.php">./tests</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory>./</directory>
+    </include>
+    <exclude>
+      <directory>./bin</directory>
+      <directory>./tests</directory>
+      <directory>./vendor</directory>
+    </exclude>
+  </source>
 </phpunit>
