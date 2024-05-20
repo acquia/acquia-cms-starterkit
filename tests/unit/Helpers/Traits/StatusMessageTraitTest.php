@@ -23,7 +23,7 @@ class StatusMessageTraitTest extends TestCase {
    *
    * @dataProvider styleDataProvider
    */
-  public function testStyle(array $actual, array $expected) :void {
+  public function testStyle(array $actual, array $expected): void {
     $this->assertEquals($this->style(...$actual), $expected);
   }
 
@@ -33,7 +33,7 @@ class StatusMessageTraitTest extends TestCase {
    * @return array[]
    *   Returns an array of actual/expected data.
    */
-  public function styleDataProvider() {
+  public static function styleDataProvider(): array {
     return [
       [
         ['This is headline message.', 'headline'],
