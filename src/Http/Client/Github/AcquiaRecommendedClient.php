@@ -15,7 +15,7 @@ class AcquiaRecommendedClient extends GithubBase {
    *
    * @var string
    */
-  protected $latestReleaseTag = "master";
+  protected $latestReleaseTag = "drupal11";
 
   /**
    * Returns the GitHub repo name.
