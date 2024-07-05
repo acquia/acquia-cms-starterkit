@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e096cf89662268c9b90917374d35b56",
+    "content-hash": "824908710a52fc0a3dc0c069b1341184",
     "packages": [
         {
             "name": "acquia/drupal-environment-detector",
@@ -1160,21 +1160,21 @@
         },
         {
             "name": "stecman/symfony-console-completion",
-            "version": "v0.12.2",
+            "version": "v0.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
-                "reference": "17e105a12ad8ce0ae1347e6ef5d2cf4c96b8fd1b"
+                "reference": "769e6b49123847648ae80f10d3ccb0f128cbb953"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/17e105a12ad8ce0ae1347e6ef5d2cf4c96b8fd1b",
-                "reference": "17e105a12ad8ce0ae1347e6ef5d2cf4c96b8fd1b",
+                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/769e6b49123847648ae80f10d3ccb0f128cbb953",
+                "reference": "769e6b49123847648ae80f10d3ccb0f128cbb953",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0.2",
-                "symfony/console": "~6.3"
+                "symfony/console": "~6.3 || ^7.0"
             },
             "require-dev": {
                 "dms/phpunit-arraysubset-asserts": "^0.4.0",
@@ -1183,7 +1183,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.12.x-dev"
+                    "dev-master": "0.14.x-dev"
                 }
             },
             "autoload": {
@@ -1204,9 +1204,9 @@
             "description": "Automatic BASH completion for Symfony Console Component based applications.",
             "support": {
                 "issues": "https://github.com/stecman/symfony-console-completion/issues",
-                "source": "https://github.com/stecman/symfony-console-completion/tree/v0.12.2"
+                "source": "https://github.com/stecman/symfony-console-completion/tree/v0.13.0"
             },
-            "time": "2023-06-27T23:55:08+00:00"
+            "time": "2024-07-05T11:49:57+00:00"
         },
         {
             "name": "symfony/config",
