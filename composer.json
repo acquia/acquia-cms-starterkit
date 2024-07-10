@@ -25,7 +25,7 @@
     "require": {
         "acquia/drupal-environment-detector": "^1.6",
         "composer/composer": "^2.7.0",
-        "stecman/symfony-console-completion": "^0.13.0",
+        "stecman/symfony-console-completion": "^0.12.1 || ^0.13.0",
         "symfony/config": "^6.2 || ^7.0",
         "symfony/console": "^6.2 || ^7.0",
         "symfony/dependency-injection": "^6.2 || ^7.0",
@@ -40,9 +40,9 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
         "ergebnis/composer-normalize": "~2.15.0",
         "phpro/grumphp-shim": "^1.5",
-        "phpspec/prophecy-phpunit": "^2.1",
+        "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^1.9",
-        "phpunit/phpunit": "^9 || ^10"
+        "phpunit/phpunit": "^9.4 || ^10"
     },
     "config": {
         "allow-plugins": {
@@ -66,7 +66,7 @@
             "url": "https://asset-packagist.org"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "bin": [
         "bin/acms"
