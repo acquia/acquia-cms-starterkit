@@ -22,7 +22,7 @@ class JsonParserTest extends TestCase {
    *
    * @dataProvider downloadPackagesDataProvider
    */
-  public function testDownloadPackages(array $actual, array $expected) :void {
+  public function testDownloadPackages(array $actual, array $expected): void {
     $this->assertEquals($expected, JsonParser::downloadPackages($actual));
   }
 
@@ -36,14 +36,14 @@ class JsonParserTest extends TestCase {
    *
    * @dataProvider installPackagesDataProvider
    */
-  public function testInstallPackages(array $actual, array $expected) :void {
+  public function testInstallPackages(array $actual, array $expected): void {
     $this->assertEquals($expected, JsonParser::installPackages($actual));
   }
 
   /**
    * Provides the data to test: testDownloadPackages().
    */
-  public function downloadPackagesDataProvider(): array {
+  public static function downloadPackagesDataProvider(): array {
     return [
       [
         ["acquia_cms_common", "acquia/cohesion", "drupal/acquia_cms_article", "acquia/cohesion_theme"],
@@ -59,7 +59,7 @@ class JsonParserTest extends TestCase {
   /**
    * Provides the data to test: testInstallPackages().
    */
-  public function installPackagesDataProvider(): array {
+  public static function installPackagesDataProvider(): array {
     return [
       [
         ["acquia_cms_common", "acquia/cohesion", "drupal/acquia_cms_article", "acquia/cohesion_theme"],

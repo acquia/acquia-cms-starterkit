@@ -47,7 +47,7 @@ class GenericCommandTest extends TestCase {
   /**
    * Test exception for generic command.
    */
-  public function testExceptionCommand() :void {
+  public function testExceptionCommand(): void {
     $this->expectExceptionMessage("Command can not be empty. Provide command name. Ex: drush, php etc.");
     $this->genericCommand->prepare()->run();
   }
@@ -76,7 +76,7 @@ class GenericCommandTest extends TestCase {
    *
    * @dataProvider dataProviderWithEnvVariable
    */
-  public function testExecuteCommandWithEnvironmentVariables(array $actual, string $expected) :void {
+  public function testExecuteCommandWithEnvironmentVariables(array $actual, string $expected): void {
     $this->genericCommand->setCommand('php');
     $output = $this->genericCommand->prepare([
       '-r',
@@ -89,7 +89,7 @@ class GenericCommandTest extends TestCase {
   /**
    * An array of some commands to execute.
    */
-  public function dataProviderWithEnvVariable() :array {
+  public static function dataProviderWithEnvVariable(): array {
     return [
       [
         [
