@@ -37,7 +37,7 @@
     },
     "require-dev": {
         "acquia/coding-standards": "^1.0 || ^2.0",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
         "ergebnis/composer-normalize": "~2.15.0",
         "phpro/grumphp-shim": "^1.5",
         "phpspec/prophecy-phpunit": "^2.0",
