@@ -191,6 +191,7 @@ class Cli {
     $isDemoContent = $userInputValues['demo_content'] ?? '';
     $isDamIntegration = $userInputValues['dam_integration'] ?? '';
     $isGdprIntegration = $userInputValues['gdpr_integration'] ?? '';
+    $isCanvasIntegration = $userInputValues['canvas_integration'] ?? '';
     $contentModelModules = [
       'acquia_cms_article',
       'acquia_cms_page',
@@ -215,6 +216,11 @@ class Cli {
     }
     if ($isGdprIntegration == "yes") {
       $gdprModules = ['gdpr', 'eu_cookie_compliance', 'gdpr_fields'];
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $gdprModules);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $gdprModules);
+    }
+    if ($isCanvasIntegration == "yes") {
+      $gdprModules = ['experience_builder'];
       $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $gdprModules);
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $gdprModules);
     }

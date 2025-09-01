@@ -57,7 +57,7 @@ jobs:
           ../orca/bin/ci/after_script.sh
   VERIFY_ACMS_STARTERKIT_ON_DRUPAL_PROJECT:
     if: ${{ github.event_name == 'push' || github.event_name == 'schedule' }}
-    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, gdpr-integration=${{ matrix.gdpr-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
+    name: "Verify ${{ matrix.starter-kits }} with demo-content=${{ matrix.demo-content }}, content-model=${{ matrix.content-model }}, dam-integration=${{ matrix.dam-integration }}, gdpr-integration=${{ matrix.gdpr-integration }}, canvas-integration=${{ matrix.canvas-integration }}, core-version=${{ matrix.core-version }} on acquia/drupal-recommended-project"
     runs-on: ubuntu-latest
     env:
       demo_content: ${{ matrix.demo-content }}
@@ -69,6 +69,7 @@ jobs:
       SITESTUDIO_API_KEY: ${{ secrets.SITESTUDIO_API_KEY }}
       SITESTUDIO_ORG_KEY: ${{ secrets.SITESTUDIO_ORG_KEY }}
       gdpr_integration: ${{ matrix.gdpr-integration }}
+      canvas_integration: ${{ matrix.canvas-integration }}
       CI: TRUE
     strategy:
       matrix:
@@ -78,6 +79,7 @@ jobs:
         content-model: ["yes", "no"]
         dam-integration: ["yes", "no"]
         gdpr-integration: ["yes", "no"]
+        canvas-integration: ["yes", "no"]
         exclude:
           - demo-content: "yes"
             content-model: "yes"
@@ -87,12 +89,15 @@ jobs:
           - demo-content: "yes"
             content-model: "no"
             dam-integration: "no"
+            canvas-integration: "no"
           - demo-content: "no"
             content-model: "no"
             gdpr-integration: "yes"
+            canvas-integration: "yes"
           - demo-content: "yes"
             content-model: "no"
             gdpr-integration: "no"
+            canvas-integration: "no"
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
