@@ -36,7 +36,7 @@
         "symfony/yaml": "^6.2 || ^7.0"
     },
     "require-dev": {
-        "acquia/coding-standards": "^1.0 || ^2.0",
+        "acquia/coding-standards": "^1.0 || ^2.0 || ^3.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
         "ergebnis/composer-normalize": "~2.15.0",
         "phpro/grumphp-shim": "^1.5",
