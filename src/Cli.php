@@ -220,9 +220,9 @@ class Cli {
       $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $gdprModules);
     }
     if ($isCanvasIntegration == "yes") {
-      $gdprModules = ['experience_builder'];
-      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $gdprModules);
-      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $gdprModules);
+      $canvasModules = ['canvas'];
+      $starterKit['modules']['require'] = array_merge($starterKit['modules']['require'], $canvasModules);
+      $starterKit['modules']['install'] = array_merge($starterKit['modules']['install'], $canvasModules);
     }
     $starterKit['modules']['require'] = array_unique($starterKit['modules']['require']);
     $starterKit['modules']['install'] = array_values(array_unique($starterKit['modules']['install']));
