@@ -128,6 +128,8 @@ jobs:
 
           ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
 
+          if [ $? -ne 0 ]; then exit 1; fi
+
           # Revert back, after above command runs.
           cd - && git checkout .
       - name: Execute all PHPUnit tests
