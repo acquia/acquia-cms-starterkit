@@ -201,14 +201,14 @@ class BuildTask {
     if ($this->filesystem->exists($build_path)) {
       $file_name = $build_path . '/build.yml';
       if (!$this->filesystem->exists($file_name)) {
-        $yaml_build_content = Yaml::dump($build_content, 4, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+        $yaml_build_content = Yaml::dump($build_content, 4, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE);
         $this->filesystem->dumpFile($file_name, $yaml_build_content);
       }
       // Write data to the file.
       if ($this->filesystem->exists($file_name)) {
         $value = Yaml::parseFile($file_name);
         $updated_value['sites'] = array_merge($value['sites'], $build_content['sites']);
-        $yaml_updated_value = Yaml::dump($updated_value, 4, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+        $yaml_updated_value = Yaml::dump($updated_value, 4, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE);
         $this->filesystem->dumpFile($file_name, $yaml_updated_value);
       }
     }
