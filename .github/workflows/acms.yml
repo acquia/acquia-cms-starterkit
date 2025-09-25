@@ -235,7 +235,9 @@ jobs:
           mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
           mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
       - name: Download Composer Dependencies
-        run: composer install
+        run: |
+          composer install
+          composer update -W
       - name: Install
         shell: 'script -q -e -c "bash {0}"'
         run: ./bin/acms acms:install --no-interaction
