@@ -42,7 +42,7 @@
         "phpro/grumphp-shim": "^1.5 || ^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^1.9 || ^2",
-        "phpunit/phpunit": "^9.4 || ^10 || ^11 || ^12"
+        "phpunit/phpunit": "^9.4 || ^10 || ^11"
     },
     "config": {
         "allow-plugins": {
