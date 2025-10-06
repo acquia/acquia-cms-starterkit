@@ -120,12 +120,12 @@ class BuildTask {
   /**
    * Configures the BuildTask class object.
    *
-   * @poram Symfony\Component\Console\Input\InputInterface $input
+   * @param \Symfony\Component\Console\Input\InputInterface $input
    *   A Symfony input interface object.
-   * @poram Symfony\Component\Console\Input\OutputInterface $output
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    *   A Symfony output interface object.
-   * @poram Symfony\Component\Console\Command\Command $output
-   *   The site:build Symfony console command object.
+   * @param string $bundle
+   *   The bundle name.
    */
   public function configure(InputInterface $input, OutputInterface $output, string $bundle) :void {
     $this->bundle = $bundle;
@@ -201,14 +201,14 @@ class BuildTask {
     if ($this->filesystem->exists($build_path)) {
       $file_name = $build_path . '/build.yml';
       if (!$this->filesystem->exists($file_name)) {
-        $yaml_build_content = Yaml::dump($build_content, 4, 2);
+        $yaml_build_content = Yaml::dump($build_content, 4, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE);
         $this->filesystem->dumpFile($file_name, $yaml_build_content);
       }
       // Write data to the file.
       if ($this->filesystem->exists($file_name)) {
         $value = Yaml::parseFile($file_name);
         $updated_value['sites'] = array_merge($value['sites'], $build_content['sites']);
-        $yaml_updated_value = Yaml::dump($updated_value, 4, 2);
+        $yaml_updated_value = Yaml::dump($updated_value, 4, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE | Yaml::DUMP_NULL_AS_TILDE);
         $this->filesystem->dumpFile($file_name, $yaml_updated_value);
       }
     }
