@@ -20,7 +20,7 @@ env:
   DB_DATABASE: drupal
   DB_USER: drupal
   DB_PASSWORD: drupal
-  ORCA_PHPCS_STANDARD: AcquiaPHPStrict
+  ORCA_PHPCS_STANDARD: AcquiaDrupalStrict
   COMPOSER_PROCESS_TIMEOUT: 1800
 jobs:
   # @todo add tests to validate each starter-kit use case.

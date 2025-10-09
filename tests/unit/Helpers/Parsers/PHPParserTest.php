@@ -36,7 +36,7 @@ class PHPParserTest extends TestCase {
   /**
    * @dataProvider parseValidQuestionExpression
    */
-  public function testParseValidQuestion(string $actual, array $expected, string $exception = NULL): void {
+  public function testParseValidQuestion(string $actual, array $expected, ?string $exception = NULL): void {
     if ($exception) {
       $this->expectException($exception);
     }
