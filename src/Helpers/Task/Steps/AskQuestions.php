@@ -43,7 +43,8 @@ class AskQuestions {
    */
   public function __construct(
     Cli $cli,
-    InstallerQuestions $installerQuestions) {
+    InstallerQuestions $installerQuestions,
+  ) {
     $this->acquiaCmsCli = $cli;
     $this->installerQuestions = $installerQuestions;
   }
@@ -56,7 +57,8 @@ class AskQuestions {
     OutputInterface $output,
     string $bundle,
     string $question_type,
-    QuestionHelper $helper) :array {
+    QuestionHelper $helper,
+  ) :array {
     // Get all questions for user selected use-case defined in acms.yml file.
     $questions = $this->installerQuestions->getQuestions($this->acquiaCmsCli->getInstallerQuestions($question_type), $bundle);
     $processedQuestions = $this->installerQuestions->process($questions);
@@ -102,7 +104,8 @@ class AskQuestions {
     string $key,
     InputInterface $input,
     OutputInterface $output,
-    QuestionHelper $helper) : string {
+    QuestionHelper $helper,
+  ) : string {
     $isRequired = $question['required'] ?? FALSE;
     $defaultValue = $this->installerQuestions->getDefaultValue($question, $key);
     $skipOnValue = $question['skip_on_value'] ?? TRUE;

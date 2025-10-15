@@ -74,7 +74,8 @@ class SiteInstallCommand extends Command {
     Cli $cli,
     InstallTask $installTask,
     InstallerQuestions $installerQuestions,
-    AskQuestions $askQuestions) {
+    AskQuestions $askQuestions,
+  ) {
     $this->acquiaCmsCli = $cli;
     $this->installTask = $installTask;
     $this->installerQuestions = $installerQuestions;
