@@ -274,7 +274,7 @@ class CliTest extends TestCase {
         ],
       ],
       "questions" => [
-        "build" => array_merge (
+        "build" => array_merge(
           self::getContentModel(),
           self::getDemoContent(),
           self::getDamIntegration(),

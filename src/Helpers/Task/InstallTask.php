@@ -171,7 +171,8 @@ class InstallTask {
     string $project_dir,
     string $root_dir,
     Cli $cli,
-    ContainerInterface $container) {
+    ContainerInterface $container,
+  ) {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->acquiaCmsCli = $cli;
@@ -200,7 +201,8 @@ class InstallTask {
     InputInterface $input,
     OutputInterface $output,
     string $bundle,
-    string $site_uri): void {
+    string $site_uri,
+  ): void {
     $this->bundle = $bundle;
     $this->input = $input;
     $this->output = $output;

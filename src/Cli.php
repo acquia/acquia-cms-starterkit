@@ -75,7 +75,8 @@ class Cli {
     string $root_dir,
     OutputInterface $output,
     ContainerInterface $container,
-    Packages $packages) {
+    Packages $packages,
+  ) {
     $this->projectDirectory = $project_dir;
     $this->rootDirectory = $root_dir;
     $this->output = $output;
