@@ -41,7 +41,7 @@ class EnableThemes {
     ];
 
     // Enable themes.
-    $command = array_merge(["theme:enable"], [implode(",", $packages)]);
+    $command = array_merge(["theme:enable", "--yes"], [implode(",", $packages)]);
     $this->drushCommand->prepare($command)->run();
 
     // Set admin theme.
