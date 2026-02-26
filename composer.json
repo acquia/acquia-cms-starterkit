@@ -36,13 +36,13 @@
         "symfony/yaml": "^6.2 || ^7.0"
     },
     "require-dev": {
-        "acquia/coding-standards": "^1.0 || ^2.0",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
-        "ergebnis/composer-normalize": "~2.15.0",
-        "phpro/grumphp-shim": "^1.5",
+        "acquia/coding-standards": "^1.0 || ^2.0 || ^3.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2 || ^1.0",
+        "ergebnis/composer-normalize": "^2.0",
+        "phpro/grumphp-shim": "^1.5 || ^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan": "^1.9",
-        "phpunit/phpunit": "^9.4 || ^10"
+        "phpstan/phpstan": "^1.9 || ^2",
+        "phpunit/phpunit": "^9.4 || ^10 || ^11"
     },
     "config": {
         "allow-plugins": {

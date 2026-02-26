@@ -76,7 +76,8 @@ class AcmsBuildCommand extends Command {
     BuildTask $buildTask,
     Cli $cli,
     InstallerQuestions $installerQuestions,
-    AskQuestions $askQuestions) {
+    AskQuestions $askQuestions,
+  ) {
     $this->acquiaCmsCli = $cli;
     $this->buildTask = $buildTask;
     $this->installerQuestions = $installerQuestions;

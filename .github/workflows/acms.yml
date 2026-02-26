@@ -14,13 +14,13 @@ on:
 env:
   ORCA_SUT_NAME: acquia/acquia-cms-starterkit
   ORCA_SUT_BRANCH: develop
-  ORCA_VERSION: ^4
+  ORCA_VERSION: ^5
   ORCA_PACKAGES_CONFIG_ALTER: ../acquia-cms-starterkit/tests/packages_alter.yml
   ORCA_ENABLE_NIGHTWATCH: "FALSE"
   DB_DATABASE: drupal
   DB_USER: drupal
   DB_PASSWORD: drupal
-  ORCA_PHPCS_STANDARD: AcquiaPHP
+  ORCA_PHPCS_STANDARD: AcquiaDrupalStrict
   COMPOSER_PROCESS_TIMEOUT: 1800
 jobs:
   # @todo add tests to validate each starter-kit use case.
@@ -127,6 +127,8 @@ jobs:
           bash -c 'VERSION=$(composer show drupal/core | grep "versions" | sed "s/[^0-9.]//g"); [[ "${VERSION}" == 10.1.* ]] && sed -i "s/shield/shield\n        - acquia_cms_common:~3.2.8/" ../acquia-cms-starterkit/acms/acms.yml;'
 
           ./vendor/bin/acms acms:install ${{ matrix.starter-kits }} --uri=${{ matrix.starter-kits }} --no-interaction
+
+          if [ $? -ne 0 ]; then exit 1; fi
 
           # Revert back, after above command runs.
           cd - && git checkout .
@@ -235,7 +237,9 @@ jobs:
           mysql -e 'FLUSH PRIVILEGES;' -uroot -proot
           mysql -e 'SHOW GRANTS FOR "drupal"@"localhost";' -uroot -proot
       - name: Download Composer Dependencies
-        run: composer install
+        run: |
+          composer install
+          composer update -W
       - name: Install
         shell: 'script -q -e -c "bash {0}"'
         run: ./bin/acms acms:install --no-interaction
